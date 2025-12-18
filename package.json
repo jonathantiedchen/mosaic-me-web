@@ -1,0 +1,16 @@
+{
+  "name": "mosaic-me-web",
+  "version": "1.0.0",
+  "description": "Transform photographs into LEGO mosaic artwork",
+  "private": true,
+  "scripts": {
+    "install:all": "cd frontend && npm install && cd ../backend && pip install -r requirements.txt",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && python -m uvicorn src.main:app --reload --port 8000",
+    "build:frontend": "cd frontend && npm run build",
+    "setup": "npm run install:all && cp frontend/.env.example frontend/.env && cp backend/.env.example backend/.env"
+  },
+  "keywords": ["lego", "mosaic", "image-processing"],
+  "author": "",
+  "license": "ISC"
+}
