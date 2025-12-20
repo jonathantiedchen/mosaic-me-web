@@ -67,3 +67,50 @@ export interface UploadResponse {
 }
 
 export type ExportType = 'mosaic-png' | 'instructions-png' | 'shopping-csv';
+
+// Admin and Authentication Types
+export interface Admin {
+  id: string;
+  email: string;
+  fullName: string | null;
+  isActive: boolean;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface TokenResponse {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+}
+
+// Analytics Types
+export interface AnalyticsMetrics {
+  unique_visitors: number;
+  mosaics_created: number;
+  downloads: {
+    mosaic_png: number;
+    instructions_png: number;
+    shopping_csv: number;
+    total: number;
+  };
+  period_days: number;
+}
+
+export interface AnalyticsSummary {
+  date: string;
+  unique_visitors: number;
+  mosaics_created: number;
+  mosaic_downloads: number;
+  instruction_downloads: number;
+  csv_downloads: number;
+  total_downloads: number;
+}
+
+export interface PopularBaseplateSize {
+  baseplate_size: number;
+  count: number;
+}

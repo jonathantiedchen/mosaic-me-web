@@ -1,19 +1,27 @@
 """Export API endpoint."""
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request, Depends
 from fastapi.responses import Response
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Literal
+import logging
 
 from ..services.export_service import ExportService
+from ..services.analytics import analytics_service
+from ..config import config
+from ..db.database import get_db
 from .storage import get_mosaic_data
 
 router = APIRouter()
 export_service = ExportService()
+logger = logging.getLogger(__name__)
 
 
 @router.get('/export/{session_id}/{export_type}')
 async def export_file(
+    request: Request,
     session_id: str,
-    export_type: Literal['mosaic-png', 'instructions-png', 'shopping-csv']
+    export_type: Literal['mosaic-png', 'instructions-png', 'shopping-csv'],
+    db: AsyncSession = Depends(get_db)
 ):
     """
     Export a mosaic file.
@@ -70,6 +78,21 @@ async def export_file(
                     'message': 'Export type must be mosaic-png, instructions-png, or shopping-csv'
                 }
             )
+
+        # Track analytics event
+        if config.ANALYTICS_ENABLED:
+            try:
+                visitor_hash = getattr(request.state, 'visitor_hash', 'unknown')
+                await analytics_service.track_event(
+                    db=db,
+                    event_type="export_download",
+                    visitor_hash=visitor_hash,
+                    session_id=session_id,
+                    export_type=export_type
+                )
+            except Exception as e:
+                # Log error but don't fail the request
+                logger.error(f"Error tracking export download analytics: {e}")
 
         return Response(
             content=file_bytes,

@@ -1,16 +1,21 @@
 """Upload and mosaic generation API endpoint."""
-from fastapi import APIRouter, File, UploadFile, Form, HTTPException
+from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Request, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 from pathlib import Path
 import shutil
 import base64
 from typing import Literal
+import logging
 
 from ..services.mosaic_generator import MosaicGenerator
 from ..services.color_matcher import ColorMatcher
+from ..services.analytics import analytics_service
 from ..config import config
+from ..db.database import get_db
 from .storage import save_mosaic_data, save_mosaic_preview
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 # Load color palettes
 color_matchers = {}
@@ -21,9 +26,11 @@ for palette_file in config.PALETTES_DIR.glob('*.json'):
 
 @router.post('/upload')
 async def upload_image(
+    request: Request,
     file: UploadFile = File(...),
     baseplateSize: int = Form(...),
-    pieceType: Literal['round', 'square'] = Form(...)
+    pieceType: Literal['round', 'square'] = Form(...),
+    db: AsyncSession = Depends(get_db)
 ):
     """
     Upload an image and generate a mosaic.
@@ -110,6 +117,22 @@ async def upload_image(
 
         # Save mosaic data
         save_mosaic_data(mosaic_data)
+
+        # Track analytics event
+        if config.ANALYTICS_ENABLED:
+            try:
+                visitor_hash = getattr(request.state, 'visitor_hash', 'unknown')
+                await analytics_service.track_event(
+                    db=db,
+                    event_type="mosaic_created",
+                    visitor_hash=visitor_hash,
+                    session_id=mosaic_data['sessionId'],
+                    baseplate_size=baseplateSize,
+                    piece_type=pieceType
+                )
+            except Exception as e:
+                # Log error but don't fail the request
+                logger.error(f"Error tracking mosaic creation analytics: {e}")
 
         # Clean up temp file
         temp_file.unlink(missing_ok=True)
