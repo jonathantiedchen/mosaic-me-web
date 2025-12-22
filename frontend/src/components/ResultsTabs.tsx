@@ -1,16 +1,18 @@
 import { useState } from 'react';
-import { Download, ZoomIn, ZoomOut, Image as ImageIcon, BookOpen, ShoppingCart, Loader2 } from 'lucide-react';
+import { Download, ZoomIn, ZoomOut, Image as ImageIcon, BookOpen, ShoppingCart, Loader2, Edit } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 import { useExport } from '../hooks/useExport';
-import type { ShoppingListItem } from '../types';
+import { MosaicEditor } from './MosaicEditor';
+import type { ShoppingListItem, MosaicGridCell } from '../types';
 
 type TabType = 'preview' | 'instructions' | 'shopping';
 
 export function ResultsTabs() {
-  const { mosaicData } = useMosaic();
+  const { mosaicData, updateMosaicGrid } = useMosaic();
   const { exportFile, isExporting } = useExport();
   const [activeTab, setActiveTab] = useState<TabType>('preview');
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(0.5);
+  const [isEditing, setIsEditing] = useState(false);
 
   if (!mosaicData) {
     return (
@@ -33,6 +35,19 @@ export function ResultsTabs() {
 
   const handleZoomIn = () => setZoom((z) => Math.min(z + 0.25, 3));
   const handleZoomOut = () => setZoom((z) => Math.max(z - 0.25, 0.5));
+
+  const handleEditMosaic = () => {
+    setIsEditing(true);
+  };
+
+  const handleSaveEdits = (newGrid: MosaicGridCell[], newShoppingList: ShoppingListItem[]) => {
+    updateMosaicGrid(newGrid, newShoppingList);
+    setIsEditing(false);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+  };
 
   return (
     <div className="glass-card overflow-hidden">
@@ -98,69 +113,92 @@ export function ResultsTabs() {
       <div className="p-8">
         {activeTab === 'preview' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={handleZoomOut}
-                  disabled={zoom <= 0.5}
-                  className="p-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:scale-105"
-                  aria-label="Zoom out"
-                >
-                  <ZoomOut className="w-5 h-5 text-purple-200" />
-                </button>
-                <span className="text-sm font-bold text-white min-w-[70px] text-center px-4 py-2 bg-white/10 rounded-xl border border-white/20">
-                  {Math.round(zoom * 100)}%
-                </span>
-                <button
-                  onClick={handleZoomIn}
-                  disabled={zoom >= 3}
-                  className="p-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:scale-105"
-                  aria-label="Zoom in"
-                >
-                  <ZoomIn className="w-5 h-5 text-purple-200" />
-                </button>
+            {!isEditing ? (
+              <>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={handleZoomOut}
+                      disabled={zoom <= 0.5}
+                      className="p-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:scale-105"
+                      aria-label="Zoom out"
+                    >
+                      <ZoomOut className="w-5 h-5 text-purple-200" />
+                    </button>
+                    <span className="text-sm font-bold text-white min-w-[70px] text-center px-4 py-2 bg-white/10 rounded-xl border border-white/20">
+                      {Math.round(zoom * 100)}%
+                    </span>
+                    <button
+                      onClick={handleZoomIn}
+                      disabled={zoom >= 3}
+                      className="p-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:scale-105"
+                      aria-label="Zoom in"
+                    >
+                      <ZoomIn className="w-5 h-5 text-purple-200" />
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={handleEditMosaic}
+                      className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:shadow-glow transition-all hover:scale-105 font-semibold"
+                    >
+                      <Edit className="w-4 h-4" />
+                      Edit Mosaic
+                    </button>
+                    <button
+                      onClick={() => handleExport('mosaic-png', `mosaic-${mosaicData.sessionId}.png`)}
+                      disabled={isExporting}
+                      className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:shadow-glow transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                    >
+                      {isExporting ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Download className="w-4 h-4" />
+                      )}
+                      Download PNG
+                    </button>
+                  </div>
+                </div>
+                <div className="overflow-auto border border-white/20 rounded-xl bg-white/5 p-4 max-h-[600px]">
+                  <img
+                    src={mosaicData.previewUrl}
+                    alt="Mosaic preview"
+                    style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}
+                    className="max-w-none rounded-lg"
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="bg-white/10 border border-white/20 rounded-xl p-4">
+                    <p className="text-purple-300 text-xs font-medium mb-1">Size</p>
+                    <p className="text-white font-bold">{mosaicData.metadata.baseplateSize}×{mosaicData.metadata.baseplateSize}</p>
+                  </div>
+                  <div className="bg-white/10 border border-white/20 rounded-xl p-4">
+                    <p className="text-purple-300 text-xs font-medium mb-1">Total Pieces</p>
+                    <p className="text-white font-bold">{mosaicData.metadata.totalPieces}</p>
+                  </div>
+                  <div className="bg-white/10 border border-white/20 rounded-xl p-4">
+                    <p className="text-purple-300 text-xs font-medium mb-1">Colors</p>
+                    <p className="text-white font-bold">{mosaicData.metadata.uniqueColors}</p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="bg-white/5 border border-white/20 rounded-xl overflow-hidden" style={{ height: '800px' }}>
+                <MosaicEditor
+                  grid={mosaicData.grid}
+                  shoppingList={mosaicData.shoppingList}
+                  pieceType={mosaicData.metadata.pieceType}
+                  onSave={handleSaveEdits}
+                  onCancel={handleCancelEdit}
+                />
               </div>
-              <button
-                onClick={() => handleExport('mosaic-png', `mosaic-${mosaicData.sessionId}.png`)}
-                disabled={isExporting}
-                className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:shadow-glow transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
-              >
-                {isExporting ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Download className="w-4 h-4" />
-                )}
-                Download PNG
-              </button>
-            </div>
-            <div className="overflow-auto border border-white/20 rounded-xl bg-white/5 p-4 max-h-[600px]">
-              <img
-                src={mosaicData.previewUrl}
-                alt="Mosaic preview"
-                style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}
-                className="max-w-none rounded-lg"
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white/10 border border-white/20 rounded-xl p-4">
-                <p className="text-purple-300 text-xs font-medium mb-1">Size</p>
-                <p className="text-white font-bold">{mosaicData.metadata.baseplateSize}×{mosaicData.metadata.baseplateSize}</p>
-              </div>
-              <div className="bg-white/10 border border-white/20 rounded-xl p-4">
-                <p className="text-purple-300 text-xs font-medium mb-1">Total Pieces</p>
-                <p className="text-white font-bold">{mosaicData.metadata.totalPieces}</p>
-              </div>
-              <div className="bg-white/10 border border-white/20 rounded-xl p-4">
-                <p className="text-purple-300 text-xs font-medium mb-1">Colors</p>
-                <p className="text-white font-bold">{mosaicData.metadata.uniqueColors}</p>
-              </div>
-            </div>
+            )}
           </div>
         )}
 
         {activeTab === 'instructions' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-end">
+            <div className="flex items-center justify-end flex-wrap gap-3">
               <button
                 onClick={() => handleExport('instructions-png', `instructions-${mosaicData.sessionId}.png`)}
                 disabled={isExporting}

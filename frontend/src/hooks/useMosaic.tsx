@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import type { MosaicData, MosaicConfig } from '../types';
+import type { MosaicData, MosaicConfig, MosaicGridCell, ShoppingListItem } from '../types';
 import { apiService } from '../services/api';
+import { generatePreviewFromGrid } from '../utils/canvasUtils';
 
 interface MosaicContextType {
   mosaicData: MosaicData | null;
@@ -12,6 +13,7 @@ interface MosaicContextType {
   setUploadedFile: (file: File | null) => void;
   generateMosaic: (file: File) => Promise<void>;
   clearMosaic: () => void;
+  updateMosaicGrid: (newGrid: MosaicGridCell[][], newShoppingList: ShoppingListItem[]) => void;
 }
 
 const defaultConfig: MosaicConfig = {
@@ -54,6 +56,24 @@ export function MosaicProvider({ children }: { children: ReactNode }) {
     setError(null);
   }, []);
 
+  const updateMosaicGrid = useCallback((newGrid: MosaicGridCell[][], newShoppingList: ShoppingListItem[]) => {
+    if (!mosaicData) return;
+
+    // Generate new preview from the edited grid
+    const newPreviewUrl = generatePreviewFromGrid(newGrid);
+
+    setMosaicData({
+      ...mosaicData,
+      grid: newGrid,
+      shoppingList: newShoppingList,
+      previewUrl: newPreviewUrl,
+      metadata: {
+        ...mosaicData.metadata,
+        uniqueColors: newShoppingList.length,
+      },
+    });
+  }, [mosaicData]);
+
   const value: MosaicContextType = {
     mosaicData,
     config,
@@ -64,6 +84,7 @@ export function MosaicProvider({ children }: { children: ReactNode }) {
     setUploadedFile,
     generateMosaic,
     clearMosaic,
+    updateMosaicGrid,
   };
 
   return <MosaicContext.Provider value={value}>{children}</MosaicContext.Provider>;

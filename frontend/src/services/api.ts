@@ -67,6 +67,18 @@ class ApiService {
     return response.data.palettes;
   }
 
+  async getPaletteColors(paletteType: 'round' | 'square'): Promise<ColorPalette> {
+    const response = await this.request<ApiResponse<{ palette: ColorPalette }>>(
+      `/palettes/${paletteType}/colors`
+    );
+
+    if (!response.success || !response.data) {
+      throw new Error(response.error?.message || 'Failed to fetch palette colors');
+    }
+
+    return response.data.palette;
+  }
+
   async exportFile(
     sessionId: string,
     exportType: ExportType

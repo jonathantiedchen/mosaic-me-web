@@ -114,3 +114,11 @@ export interface PopularBaseplateSize {
   baseplate_size: number;
   count: number;
 }
+
+// Mosaic Editor Types
+export type EditorTool = 'brush' | 'fill';
+
+export interface CellPosition {
+  row: number;
+  col: number;
+}
