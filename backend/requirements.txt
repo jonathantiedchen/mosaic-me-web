@@ -9,6 +9,7 @@ python-dotenv==1.0.0
 # Authentication and Security
 passlib[bcrypt]==1.7.4
 python-jose[cryptography]==3.3.0
+email-validator==2.1.0
 
 # Database ORM and Migrations
 sqlalchemy==2.0.25
