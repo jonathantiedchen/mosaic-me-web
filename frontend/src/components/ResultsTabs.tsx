@@ -40,7 +40,7 @@ export function ResultsTabs() {
     setIsEditing(true);
   };
 
-  const handleSaveEdits = (newGrid: MosaicGridCell[], newShoppingList: ShoppingListItem[]) => {
+  const handleSaveEdits = (newGrid: MosaicGridCell[][], newShoppingList: ShoppingListItem[]) => {
     updateMosaicGrid(newGrid, newShoppingList);
     setIsEditing(false);
   };
