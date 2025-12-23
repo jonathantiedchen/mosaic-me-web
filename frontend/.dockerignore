@@ -16,10 +16,11 @@ build/
 *.swo
 *~
 
-# Environment
-.env
+# Environment (keep .env.production for deployment)
 .env.local
+.env.development
 .env.*.local
+!.env.production
 
 # Git
 .git/
