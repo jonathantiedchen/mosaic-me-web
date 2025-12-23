@@ -13,9 +13,9 @@ RUN npm install --frozen-lockfile
 # Copy frontend source code
 COPY frontend/ .
 
-# Accept build argument for API URL
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
+# Hardcode the backend URL for production
+# This gets baked into the JavaScript bundle at build time
+ENV VITE_API_URL=https://mosaic-me-web-backend-production.up.railway.app
 
 # Build the application
 RUN npm run build
