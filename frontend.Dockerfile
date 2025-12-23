@@ -10,17 +10,10 @@ COPY frontend/package.json frontend/package-lock.json ./
 # Install dependencies
 RUN npm install --frozen-lockfile
 
-# Copy frontend source code
+# Copy frontend source code (includes .env.production)
 COPY frontend/ .
 
-# Accept backend URL as build argument
-ARG VITE_API_URL=https://mosaic-me-web-backend-production.up.railway.app/api/v1
-
-# Inject build-time environment variable for Vite
-# This creates .env.production which Vite reads during build
-RUN echo "VITE_API_URL=${VITE_API_URL}" > .env.production
-
-# Build the application
+# Build the application (uses .env.production from source)
 RUN npm run build
 
 # Production stage with nginx
