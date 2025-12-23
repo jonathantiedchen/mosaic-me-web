@@ -13,9 +13,9 @@ RUN npm install --frozen-lockfile
 # Copy frontend source code
 COPY frontend/ .
 
-# Hardcode the backend URL for production
-# This gets baked into the JavaScript bundle at build time
-ENV VITE_API_URL=https://mosaic-me-web-backend-production.up.railway.app
+# Inject build-time environment variable for Vite
+# This creates .env.production which Vite reads during build
+RUN echo "VITE_API_URL=https://mosaic-me-web-backend-production.up.railway.app" > .env.production
 
 # Build the application
 RUN npm run build
