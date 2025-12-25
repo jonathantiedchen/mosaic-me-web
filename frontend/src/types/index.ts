@@ -28,6 +28,7 @@ export interface ShoppingListItem {
   quantity: number;
   rgb: [number, number, number];
   hex: string;
+  legoId?: string;
 }
 
 export interface MosaicMetadata {
@@ -66,7 +67,7 @@ export interface UploadResponse {
   mosaic: MosaicData;
 }
 
-export type ExportType = 'mosaic-png' | 'instructions-png' | 'shopping-csv';
+export type ExportType = 'mosaic-png' | 'instructions-png' | 'shopping-csv' | 'pickabrick-csv';
 
 // Admin and Authentication Types
 export interface Admin {

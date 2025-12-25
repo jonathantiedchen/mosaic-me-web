@@ -191,3 +191,39 @@ class ExportService:
         # Convert to bytes
         csv_content = buffer.getvalue()
         return csv_content.encode('utf-8')
+
+    def generate_pickabrick_csv(
+        self,
+        shopping_list: List[Dict]
+    ) -> bytes:
+        """
+        Generate a LEGO Pick-a-Brick compatible CSV.
+
+        This format can be uploaded directly to LEGO's Pick-a-Brick service
+        to automatically add all required pieces to your cart.
+
+        Format: elementId    quantity
+
+        Args:
+            shopping_list: List of colors with quantities and legoIds
+
+        Returns:
+            CSV file bytes in Pick-a-Brick format
+        """
+        buffer = io.StringIO()
+        writer = csv.writer(buffer, delimiter='\t')
+
+        # Write header
+        writer.writerow(['elementId', 'quantity'])
+
+        # Write data (sorted by quantity descending for better readability)
+        sorted_list = sorted(shopping_list, key=lambda x: x['quantity'], reverse=True)
+        for item in sorted_list:
+            writer.writerow([
+                item['legoId'],
+                item['quantity']
+            ])
+
+        # Convert to bytes
+        csv_content = buffer.getvalue()
+        return csv_content.encode('utf-8')

@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 async def export_file(
     request: Request,
     session_id: str,
-    export_type: Literal['mosaic-png', 'instructions-png', 'shopping-csv'],
+    export_type: Literal['mosaic-png', 'instructions-png', 'shopping-csv', 'pickabrick-csv'],
     db: AsyncSession = Depends(get_db)
 ):
     """
@@ -28,7 +28,7 @@ async def export_file(
 
     Args:
         session_id: Session ID of the mosaic
-        export_type: Type of export (mosaic-png, instructions-png, shopping-csv)
+        export_type: Type of export (mosaic-png, instructions-png, shopping-csv, pickabrick-csv)
 
     Returns:
         File download response
@@ -70,12 +70,20 @@ async def export_file(
             filename = f"shopping-list-{session_id}.csv"
             media_type = "text/csv"
 
+        elif export_type == 'pickabrick-csv':
+            # Generate LEGO Pick-a-Brick compatible CSV
+            file_bytes = export_service.generate_pickabrick_csv(
+                mosaic_data['shoppingList']
+            )
+            filename = f"pickabrick-{session_id}.csv"
+            media_type = "text/csv"
+
         else:
             raise HTTPException(
                 status_code=400,
                 detail={
                     'code': 'INVALID_EXPORT_TYPE',
-                    'message': 'Export type must be mosaic-png, instructions-png, or shopping-csv'
+                    'message': 'Export type must be mosaic-png, instructions-png, shopping-csv, or pickabrick-csv'
                 }
             )
 

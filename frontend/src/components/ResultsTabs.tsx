@@ -29,7 +29,7 @@ export function ResultsTabs() {
     );
   }
 
-  const handleExport = (type: 'mosaic-png' | 'instructions-png' | 'shopping-csv', filename: string) => {
+  const handleExport = (type: 'mosaic-png' | 'instructions-png' | 'shopping-csv' | 'pickabrick-csv', filename: string) => {
     exportFile(mosaicData.sessionId, type, filename);
   };
 
@@ -220,25 +220,58 @@ export function ResultsTabs() {
 
         {activeTab === 'shopping' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="px-4 py-2 bg-white/10 border border-white/20 rounded-xl">
                 <p className="text-sm font-semibold text-purple-200">
                   Total: <span className="text-white">{mosaicData.metadata.totalPieces} pieces</span>
                 </p>
               </div>
-              <button
-                onClick={() => handleExport('shopping-csv', `shopping-list-${mosaicData.sessionId}.csv`)}
-                disabled={isExporting}
-                className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:shadow-glow transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
-              >
-                {isExporting ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Download className="w-4 h-4" />
-                )}
-                Download CSV
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => handleExport('pickabrick-csv', `pickabrick-${mosaicData.sessionId}.csv`)}
+                  disabled={isExporting}
+                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl hover:shadow-glow transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                >
+                  {isExporting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4" />
+                  )}
+                  LEGO Pick-a-Brick
+                </button>
+                <button
+                  onClick={() => handleExport('shopping-csv', `shopping-list-${mosaicData.sessionId}.csv`)}
+                  disabled={isExporting}
+                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:shadow-glow transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                >
+                  {isExporting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4" />
+                  )}
+                  Download CSV
+                </button>
+              </div>
             </div>
+
+            {/* Pick-a-Brick Instructions */}
+            <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/30 rounded-xl p-5">
+              <h4 className="font-bold text-orange-200 mb-3 flex items-center gap-2">
+                <ShoppingCart className="w-5 h-5" />
+                How to Order from LEGO Pick-a-Brick
+              </h4>
+              <ol className="text-sm text-orange-100/90 space-y-2 list-decimal list-inside">
+                <li>Click the <strong>"LEGO Pick-a-Brick"</strong> button above to download the special CSV file</li>
+                <li>Visit <a href="https://www.lego.com/pick-and-build/pick-a-brick" target="_blank" rel="noopener noreferrer" className="text-orange-300 hover:text-orange-200 underline font-semibold">LEGO Pick-a-Brick</a></li>
+                <li>Click the <strong>"Upload List"</strong> button on the Pick-a-Brick page</li>
+                <li>Select the downloaded CSV file</li>
+                <li>All pieces will be automatically added to your cart!</li>
+              </ol>
+              <p className="mt-3 text-xs text-orange-200/70 italic">
+                💡 This file contains the exact LEGO element IDs and quantities needed for your mosaic.
+              </p>
+            </div>
+
             <ShoppingListView items={mosaicData.shoppingList} />
           </div>
         )}
