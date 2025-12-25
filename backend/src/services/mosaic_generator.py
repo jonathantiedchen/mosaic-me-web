@@ -62,7 +62,8 @@ class MosaicGenerator:
                     'colorId': closest_color['id'],
                     'colorName': closest_color['name'],
                     'rgb': closest_color['rgb'],
-                    'hex': closest_color['hex']
+                    'hex': closest_color['hex'],
+                    'legoId': closest_color.get('legoId')
                 })
             grid.append(grid_row)
 
@@ -81,6 +82,7 @@ class MosaicGenerator:
                         'colorName': cell['colorName'],
                         'rgb': cell['rgb'],
                         'hex': cell['hex'],
+                        'legoId': cell.get('legoId'),
                         'quantity': 0
                     }
                 color_counts[color_id]['quantity'] += 1
