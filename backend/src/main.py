@@ -77,6 +77,25 @@ async def startup_event():
     try:
         await init_db()
         logger.info("Database connection initialized successfully")
+
+        # Cleanup old analytics data for GDPR compliance
+        if config.ANALYTICS_ENABLED:
+            try:
+                from sqlalchemy import text
+                async with SessionLocal() as db:
+                    result = await db.execute(
+                        text(f"SELECT cleanup_old_analytics({config.ANALYTICS_RETENTION_DAYS})")
+                    )
+                    deleted_count = result.scalar()
+                    await db.commit()
+                    if deleted_count and deleted_count > 0:
+                        logger.info(
+                            f"Cleaned up {deleted_count} old analytics events "
+                            f"(>{config.ANALYTICS_RETENTION_DAYS} days)"
+                        )
+            except Exception as e:
+                logger.warning(f"Analytics cleanup skipped: {e}")
+
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")
         logger.warning("Application starting without database connection")

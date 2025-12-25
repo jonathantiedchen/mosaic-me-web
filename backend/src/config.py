@@ -45,6 +45,7 @@ class Config:
     # Analytics
     ANALYTICS_ENABLED = os.getenv("ANALYTICS_ENABLED", "true").lower() == "true"
     ANALYTICS_SALT = os.getenv("ANALYTICS_SALT", "change-me-in-production-random-salt")
+    ANALYTICS_RETENTION_DAYS = int(os.getenv("ANALYTICS_RETENTION_DAYS", 90))  # GDPR compliance: auto-delete old data
 
     # Initial Admin (for setup)
     INITIAL_ADMIN_EMAIL = os.getenv("INITIAL_ADMIN_EMAIL", "admin@example.com")

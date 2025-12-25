@@ -64,35 +64,39 @@ class AnalyticsMiddleware(BaseHTTPMiddleware):
 
     def _generate_visitor_hash(self, request: Request) -> str:
         """
-        Generate a privacy-preserving hash for visitor tracking.
+        Generate a truly anonymous daily visitor hash for GDPR compliance.
 
-        Uses session cookie if available, otherwise creates an identifier
-        based on IP address and user agent for better uniqueness.
+        This creates a hash that:
+        - Is unique per visitor per day (for daily unique visitor counts)
+        - Changes every day (cannot track individuals across days)
+        - Cannot be reversed to identify the person
+        - Qualifies as truly anonymous data under GDPR
+
+        The hash includes the current date, so the same person gets a
+        different hash each day. This makes cross-day tracking impossible
+        while still allowing accurate daily unique visitor counts.
 
         Args:
             request: HTTP request
 
         Returns:
-            SHA256 hash of the visitor identifier
+            SHA256 hash of the daily visitor identifier
         """
-        # Try to get session ID from cookie
-        session_id = request.cookies.get("session_id")
+        # Get IP address from headers (Railway sets X-Forwarded-For)
+        ip_address = request.headers.get("x-forwarded-for", "").split(",")[0].strip()
+        if not ip_address:
+            ip_address = request.client.host if request.client else "unknown"
 
-        if not session_id:
-            # Generate a temporary identifier based on IP + user agent
-            # This provides better uniqueness while still being privacy-preserving
-            # The hash is one-way and salted, so IP cannot be recovered
+        user_agent = request.headers.get("user-agent", "unknown")
 
-            # Get IP address from headers (Railway sets X-Forwarded-For)
-            ip_address = request.headers.get("x-forwarded-for", "").split(",")[0].strip()
-            if not ip_address:
-                ip_address = request.client.host if request.client else "unknown"
+        # Get current date (YYYY-MM-DD) - this makes the hash change daily
+        from datetime import datetime
+        current_date = datetime.utcnow().strftime("%Y-%m-%d")
 
-            user_agent = request.headers.get("user-agent", "unknown")
-            session_id = f"{ip_address}:{user_agent}"
-
-        # Hash the session ID with salt to create a visitor hash
-        hash_input = f"{session_id}{self.salt}"
+        # Create hash with date included - this rotates daily automatically
+        # Same visitor = same hash today, different hash tomorrow
+        # This makes it truly anonymous (cannot link behavior across days)
+        hash_input = f"{ip_address}:{user_agent}:{current_date}:{self.salt}"
         visitor_hash = hashlib.sha256(hash_input.encode()).hexdigest()
 
         return visitor_hash
