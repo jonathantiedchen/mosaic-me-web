@@ -187,36 +187,38 @@ export function MosaicEditor({ grid, shoppingList, pieceType, onSave, onCancel }
       {/* Main editing area */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Zoom controls */}
-        <div className="px-6 py-3 border-b border-white/10 flex items-center gap-3">
-          <button
-            onClick={handleZoomOut}
-            disabled={zoom <= 0.5}
-            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-            aria-label="Zoom out"
-          >
-            <ZoomOut className="w-4 h-4 text-purple-200" />
-          </button>
-          <span className="text-xs font-bold text-white min-w-[60px] text-center px-3 py-1.5 bg-white/10 rounded-lg border border-white/20">
-            {Math.round(zoom * 100)}%
-          </span>
-          <button
-            onClick={handleZoomIn}
-            disabled={zoom >= 3}
-            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-            aria-label="Zoom in"
-          >
-            <ZoomIn className="w-4 h-4 text-purple-200" />
-          </button>
+        <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 border-b border-white/10 flex flex-col xs:flex-row items-stretch xs:items-center gap-2 xs:gap-3">
+          <div className="flex items-center gap-2 xs:gap-3 justify-center xs:justify-start">
+            <button
+              onClick={handleZoomOut}
+              disabled={zoom <= 0.5}
+              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all touch-manipulation"
+              aria-label="Zoom out"
+            >
+              <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-200" />
+            </button>
+            <span className="text-[10px] xs:text-xs font-bold text-white min-w-[50px] xs:min-w-[60px] text-center px-2 xs:px-3 py-1.5 bg-white/10 rounded-lg border border-white/20">
+              {Math.round(zoom * 100)}%
+            </span>
+            <button
+              onClick={handleZoomIn}
+              disabled={zoom >= 3}
+              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all touch-manipulation"
+              aria-label="Zoom in"
+            >
+              <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-200" />
+            </button>
+          </div>
           {editor.selectedCells.size > 0 && (
-            <div className="ml-4 text-sm text-purple-300">
-              {editor.selectedCells.size} pixel{editor.selectedCells.size !== 1 ? 's' : ''} selected - click a color to apply
+            <div className="text-[10px] xs:text-xs sm:text-sm text-purple-300 text-center xs:text-left xs:ml-2">
+              {editor.selectedCells.size} pixel{editor.selectedCells.size !== 1 ? 's' : ''} selected - tap a color to apply
             </div>
           )}
         </div>
 
-        <div className="flex-1 flex overflow-hidden">
-          {/* Grid area (left, 70%) */}
-          <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+          {/* Grid area */}
+          <div className="flex-1 overflow-auto p-2 sm:p-4 lg:p-6">
             <div className="flex items-start justify-center min-h-full">
               <EditableGrid
                 grid={editor.editedGrid}
@@ -232,8 +234,8 @@ export function MosaicEditor({ grid, shoppingList, pieceType, onSave, onCancel }
             </div>
           </div>
 
-          {/* Color palette (right, smaller sidebar) */}
-          <div className="w-56 border-l border-white/10 bg-white/5 flex flex-col">
+          {/* Color palette - horizontal on mobile, vertical sidebar on desktop */}
+          <div className="lg:w-56 border-t lg:border-t-0 lg:border-l border-white/10 bg-white/5 flex flex-col max-h-[200px] lg:max-h-none">
             <ColorPalette
               colors={availableColors}
               selectedColor={editor.selectedColor}
@@ -243,7 +245,7 @@ export function MosaicEditor({ grid, shoppingList, pieceType, onSave, onCancel }
         </div>
 
         {/* Note about preview */}
-        <div className="px-6 py-3 bg-yellow-500/10 border-t border-yellow-500/20 text-xs text-yellow-200">
+        <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-yellow-500/10 border-t border-yellow-500/20 text-[10px] xs:text-xs text-yellow-200">
           Note: Changes apply to the instructions grid. The preview image shows the original generated mosaic.
         </div>
       </div>

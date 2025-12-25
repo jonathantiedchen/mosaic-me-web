@@ -17,14 +17,14 @@ export function HomePage() {
 
       <div className="relative z-10">
         <header className="backdrop-blur-sm bg-white/5 border-b border-white/10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="flex items-center gap-3">
-              <Sparkles className="w-8 h-8 text-purple-400" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400 flex-shrink-0" />
               <div>
-                <h1 className="text-4xl font-bold gradient-text">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text">
                   Mosaic-Me
                 </h1>
-                <p className="text-purple-200 mt-1">
+                <p className="text-xs sm:text-sm lg:text-base text-purple-200 mt-0.5 sm:mt-1">
                   Transform your photos into LEGO mosaic artwork
                 </p>
               </div>
@@ -32,18 +32,18 @@ export function HomePage() {
           </div>
         </header>
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
           {error && (
-            <div className="mb-6 glass-card border-red-500/50 p-5 flex items-start gap-3 animate-in fade-in duration-300">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <div className="mb-4 sm:mb-6 glass-card border-red-500/50 p-3 sm:p-4 lg:p-5 flex items-start gap-2 sm:gap-3 animate-in fade-in duration-300">
+              <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-400 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="text-sm font-semibold text-red-300">Error</h3>
-                <p className="text-sm text-red-200 mt-1">{error}</p>
+                <h3 className="text-xs sm:text-sm font-semibold text-red-300">Error</h3>
+                <p className="text-xs sm:text-sm text-red-200 mt-1">{error}</p>
               </div>
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             <div className="lg:col-span-1">
               <ConfigPanel />
             </div>
@@ -53,9 +53,9 @@ export function HomePage() {
           </div>
         </main>
 
-        <footer className="backdrop-blur-sm bg-white/5 border-t border-white/10 mt-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <p className="text-sm text-purple-200 text-center">
+        <footer className="backdrop-blur-sm bg-white/5 border-t border-white/10 mt-8 sm:mt-12 lg:mt-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+            <p className="text-xs sm:text-sm text-purple-200 text-center">
               Mosaic-Me v1.0.0 | Not affiliated with LEGO Group
             </p>
           </div>
