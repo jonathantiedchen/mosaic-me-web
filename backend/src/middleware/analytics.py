@@ -66,8 +66,8 @@ class AnalyticsMiddleware(BaseHTTPMiddleware):
         """
         Generate a privacy-preserving hash for visitor tracking.
 
-        Uses session cookie if available, otherwise creates a temporary identifier.
-        This does NOT use IP addresses to preserve privacy.
+        Uses session cookie if available, otherwise creates an identifier
+        based on IP address and user agent for better uniqueness.
 
         Args:
             request: HTTP request
@@ -79,11 +79,17 @@ class AnalyticsMiddleware(BaseHTTPMiddleware):
         session_id = request.cookies.get("session_id")
 
         if not session_id:
-            # Generate a temporary session ID based on user agent + salt
-            # This provides some continuity within a browser session
-            # but doesn't track across sessions or devices
+            # Generate a temporary identifier based on IP + user agent
+            # This provides better uniqueness while still being privacy-preserving
+            # The hash is one-way and salted, so IP cannot be recovered
+
+            # Get IP address from headers (Railway sets X-Forwarded-For)
+            ip_address = request.headers.get("x-forwarded-for", "").split(",")[0].strip()
+            if not ip_address:
+                ip_address = request.client.host if request.client else "unknown"
+
             user_agent = request.headers.get("user-agent", "unknown")
-            session_id = f"temp-{user_agent}"
+            session_id = f"{ip_address}:{user_agent}"
 
         # Hash the session ID with salt to create a visitor hash
         hash_input = f"{session_id}{self.salt}"

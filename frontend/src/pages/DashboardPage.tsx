@@ -20,11 +20,16 @@ export function DashboardPage() {
     loadAnalytics();
   }, [days]);
 
-  const loadAnalytics = async () => {
+  const loadAnalytics = async (refreshView: boolean = false) => {
     setIsLoading(true);
     setError('');
 
     try {
+      // Optionally refresh the materialized view first (for latest data)
+      if (refreshView) {
+        await analyticsService.refreshSummaryView();
+      }
+
       const [metricsData, summaryData] = await Promise.all([
         analyticsService.getMetrics(days),
         analyticsService.getSummary()
@@ -126,7 +131,7 @@ export function DashboardPage() {
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={loadAnalytics}
+                onClick={() => loadAnalytics(true)}
                 disabled={isLoading}
                 className="flex items-center gap-2 px-4 py-2 glass-card hover:bg-white/10 text-purple-200 rounded-lg transition-colors disabled:opacity-50"
               >
