@@ -127,6 +127,10 @@ class AnalyticsService:
         """
         Get count of unique visitors for the past N days.
 
+        Counts unique visitor_hash values across ALL event types, not just page_view.
+        This is necessary because the frontend and backend are on separate domains,
+        so page_view events may not be tracked.
+
         Args:
             db: Database session
             days: Number of days to look back (default: 30)
@@ -141,7 +145,7 @@ class AnalyticsService:
                 select(func.count(func.distinct(AnalyticsEvent.visitor_hash)))
                 .where(
                     and_(
-                        AnalyticsEvent.event_type == 'page_view',
+                        AnalyticsEvent.visitor_hash.isnot(None),
                         AnalyticsEvent.created_at >= start_date
                     )
                 )

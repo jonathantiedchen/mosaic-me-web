@@ -132,6 +132,7 @@ createdb mosaicme
 cd backend
 psql -d mosaicme -f migrations/001_initial_schema.sql
 psql -d mosaicme -f migrations/002_admin_auth_analytics.sql
+psql -d mosaicme -f migrations/003_fix_visitor_count.sql
 ```
 
 ### 5. Create Admin User
