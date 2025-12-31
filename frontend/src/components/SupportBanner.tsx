@@ -56,7 +56,7 @@ export function SupportBanner() {
               This tool is free forever. If it saved you time, consider buying me a coffee!
             </p>
             <a
-              href="https://paypal.me/jonathantiedchen"
+              href="https://buymeacoffee.com/jonathantie"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white rounded-lg transition-all font-medium text-sm shadow-lg"
