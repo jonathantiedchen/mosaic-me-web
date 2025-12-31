@@ -14,7 +14,7 @@ export function SupportBanner() {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-white font-semibold text-sm group-hover:text-purple-200 transition-colors">
-            Support & Connect
+            Support me by leaving a tip and connect
           </p>
         </div>
       </a>
