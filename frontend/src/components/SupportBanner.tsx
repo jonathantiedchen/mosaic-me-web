@@ -27,16 +27,16 @@ export function SupportBanner() {
               Enjoying Mosaic-Me?
             </h3>
             <p className="text-purple-200 text-sm mb-3">
-              This tool is free forever. If it saved you time, consider buying me a coffee!
+              This tool is free forever. Support the project or connect with me!
             </p>
             <a
-              href="https://buymeacoffee.com/jonathantie"
+              href="https://linktr.ee/jonathantie"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white rounded-lg transition-all font-medium text-sm shadow-lg"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-lg transition-all font-medium text-sm shadow-lg"
             >
               <Coffee className="w-4 h-4" />
-              <span>Buy me a coffee</span>
+              <span>Support & Connect</span>
             </a>
           </div>
         </div>
