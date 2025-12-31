@@ -1,10 +1,11 @@
 import { ConfigPanel } from '../components/ConfigPanel';
 import { ResultsTabs } from '../components/ResultsTabs';
+import { SupportBanner } from '../components/SupportBanner';
 import { AlertCircle, Sparkles } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 
 export function HomePage() {
-  const { error } = useMosaic();
+  const { error, mosaicData } = useMosaic();
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -61,6 +62,9 @@ export function HomePage() {
           </div>
         </footer>
       </div>
+
+      {/* Show support banner after mosaic is generated */}
+      {mosaicData && <SupportBanner />}
     </div>
   );
 }
