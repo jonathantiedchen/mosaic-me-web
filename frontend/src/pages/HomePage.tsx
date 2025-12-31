@@ -63,8 +63,8 @@ export function HomePage() {
         </footer>
       </div>
 
-      {/* Show support banner after mosaic is generated */}
-      {mosaicData && <SupportBanner />}
+      {/* Show support banner */}
+      <SupportBanner />
     </div>
   );
 }
