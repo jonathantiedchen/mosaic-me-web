@@ -5,7 +5,7 @@ import { AlertCircle, Sparkles } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 
 export function HomePage() {
-  const { error, mosaicData } = useMosaic();
+  const { error } = useMosaic();
 
   return (
     <div className="min-h-screen relative overflow-hidden">
