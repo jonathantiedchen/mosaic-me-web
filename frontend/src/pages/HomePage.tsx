@@ -45,8 +45,9 @@ export function HomePage() {
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 space-y-4 sm:space-y-6">
               <ConfigPanel />
+              <SupportBanner />
             </div>
             <div className="lg:col-span-2">
               <ResultsTabs />
@@ -62,9 +63,6 @@ export function HomePage() {
           </div>
         </footer>
       </div>
-
-      {/* Show support banner */}
-      <SupportBanner />
     </div>
   );
 }
