@@ -1,31 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Coffee, X } from 'lucide-react';
+import { Coffee } from 'lucide-react';
 
 export function SupportBanner() {
   const [isVisible, setIsVisible] = useState(false);
-  const [shouldShow, setShouldShow] = useState(false);
 
   useEffect(() => {
-    // Check if user has already dismissed the banner
-    const dismissed = localStorage.getItem('supportBannerDismissed');
-    if (!dismissed) {
-      setShouldShow(true);
-      // Show banner with a slight delay for better UX
-      const timer = setTimeout(() => setIsVisible(true), 1000);
-      return () => clearTimeout(timer);
-    }
+    // Show banner with a slight delay for better UX
+    const timer = setTimeout(() => setIsVisible(true), 1000);
+    return () => clearTimeout(timer);
   }, []);
-
-  const handleDismiss = () => {
-    setIsVisible(false);
-    // Wait for animation to complete before removing from DOM
-    setTimeout(() => {
-      setShouldShow(false);
-      localStorage.setItem('supportBannerDismissed', 'true');
-    }, 300);
-  };
-
-  if (!shouldShow) return null;
 
   return (
     <div
@@ -33,18 +16,9 @@ export function SupportBanner() {
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
       }`}
     >
-      <div className="glass-card p-4 shadow-2xl border-2 border-purple-500/30 relative">
-        {/* Close button */}
-        <button
-          onClick={handleDismiss}
-          className="absolute top-2 right-2 text-purple-300 hover:text-purple-100 transition-colors"
-          aria-label="Dismiss"
-        >
-          <X className="w-4 h-4" />
-        </button>
-
+      <div className="glass-card p-4 shadow-2xl border-2 border-purple-500/30">
         {/* Content */}
-        <div className="flex items-start gap-3 pr-6">
+        <div className="flex items-start gap-3">
           <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-full flex items-center justify-center">
             <Coffee className="w-5 h-5 text-white" />
           </div>
