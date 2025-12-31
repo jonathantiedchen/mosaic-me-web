@@ -19,18 +19,23 @@ export function HomePage() {
       <div className="relative z-10">
         <header className="backdrop-blur-sm bg-white/5 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400 flex-shrink-0" />
-              <div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text">
-                  Mosaic-Me
-                </h1>
-                <p className="text-xs sm:text-sm lg:text-base text-purple-200 mt-0.5 sm:mt-1">
-                  Transform your photos into LEGO mosaic artwork
-                </p>
-                <p className="text-xs sm:text-sm text-purple-300/80 mt-1 sm:mt-2">
-                  100% Free • Tips appreciated • Your images are never stored
-                </p>
+            <div className="flex items-center justify-between gap-4 sm:gap-6 lg:gap-8">
+              <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400 flex-shrink-0" />
+                <div className="min-w-0">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text">
+                    Mosaic-Me
+                  </h1>
+                  <p className="text-xs sm:text-sm lg:text-base text-purple-200 mt-0.5 sm:mt-1">
+                    Transform your photos into LEGO mosaic artwork
+                  </p>
+                  <p className="text-xs sm:text-sm text-purple-300/80 mt-1 sm:mt-2">
+                    100% Free • Tips appreciated • Your images are never stored
+                  </p>
+                </div>
+              </div>
+              <div className="hidden md:block flex-shrink-0">
+                <SupportBanner />
               </div>
             </div>
           </div>
@@ -48,9 +53,8 @@ export function HomePage() {
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            <div className="lg:col-span-1 space-y-4 sm:space-y-6">
+            <div className="lg:col-span-1">
               <ConfigPanel />
-              <SupportBanner />
             </div>
             <div className="lg:col-span-2">
               <ResultsTabs />
