@@ -28,6 +28,9 @@ export function HomePage() {
                 <p className="text-xs sm:text-sm lg:text-base text-purple-200 mt-0.5 sm:mt-1">
                   Transform your photos into LEGO mosaic artwork
                 </p>
+                <p className="text-xs sm:text-sm text-purple-300/80 mt-1 sm:mt-2">
+                  100% Free • Tips appreciated • Your images are never stored
+                </p>
               </div>
             </div>
           </div>
