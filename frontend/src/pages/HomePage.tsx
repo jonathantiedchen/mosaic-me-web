@@ -1,6 +1,5 @@
 import { ConfigPanel } from '../components/ConfigPanel';
 import { ResultsTabs } from '../components/ResultsTabs';
-import { SupportBanner } from '../components/SupportBanner';
 import { AlertCircle, Sparkles } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 
@@ -30,12 +29,9 @@ export function HomePage() {
                     Transform your photos into LEGO mosaic artwork
                   </p>
                   <p className="text-xs sm:text-sm text-purple-300/80 mt-1 sm:mt-2">
-                    100% Free • Tips appreciated • Your images are never stored
+                    100% Free • Your images are never stored
                   </p>
                 </div>
-              </div>
-              <div className="hidden md:block flex-shrink-0">
-                <SupportBanner />
               </div>
             </div>
           </div>
