@@ -39,64 +39,61 @@ export function ResultsTabs() {
   };
 
   return (
-    <div className="glass-card overflow-hidden shadow-glow-lg">
-      <div className="border-b border-white/10 bg-gradient-to-r from-white/5 to-white/10">
+    <div className="card overflow-hidden">
+      <div className="border-b border-subtle">
         <nav className="flex">
           <button
             onClick={() => setActiveTab('preview')}
             className={`
-              flex-1 px-2 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5 text-xs sm:text-sm font-semibold transition-all duration-200
-              flex items-center justify-center gap-1 sm:gap-2 relative touch-manipulation
+              flex-1 px-4 py-3 text-sm font-medium transition-colors
+              flex items-center justify-center gap-2 relative
               ${
                 activeTab === 'preview'
-                  ? 'text-white'
-                  : 'text-purple-300 hover:text-purple-100'
+                  ? 'text-gray-50'
+                  : 'text-gray-500 hover:text-gray-300'
               }
             `}
           >
-            <ImageIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span className="hidden xs:inline">Mosaic</span>
-            <span className="hidden sm:inline"> Preview</span>
+            <ImageIcon className="w-4 h-4" />
+            <span>Preview</span>
             {activeTab === 'preview' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-blue-500"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500"></div>
             )}
           </button>
           <button
             onClick={() => setActiveTab('instructions')}
             className={`
-              flex-1 px-2 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5 text-xs sm:text-sm font-semibold transition-all duration-200
-              flex items-center justify-center gap-1 sm:gap-2 relative touch-manipulation
+              flex-1 px-4 py-3 text-sm font-medium transition-colors
+              flex items-center justify-center gap-2 relative
               ${
                 activeTab === 'instructions'
-                  ? 'text-white'
-                  : 'text-purple-300 hover:text-purple-100'
+                  ? 'text-gray-50'
+                  : 'text-gray-500 hover:text-gray-300'
               }
             `}
           >
-            <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span className="hidden xs:inline">Instructions</span>
-            <span className="xs:hidden">Guide</span>
+            <BookOpen className="w-4 h-4" />
+            <span>Instructions</span>
             {activeTab === 'instructions' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-blue-500"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500"></div>
             )}
           </button>
           <button
             onClick={() => setActiveTab('shopping')}
             className={`
-              flex-1 px-2 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5 text-xs sm:text-sm font-semibold transition-all duration-200
-              flex items-center justify-center gap-1 sm:gap-2 relative touch-manipulation
+              flex-1 px-4 py-3 text-sm font-medium transition-colors
+              flex items-center justify-center gap-2 relative
               ${
                 activeTab === 'shopping'
-                  ? 'text-white'
-                  : 'text-purple-300 hover:text-purple-100'
+                  ? 'text-gray-50'
+                  : 'text-gray-500 hover:text-gray-300'
               }
             `}
           >
-            <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span className="hidden xs:inline">Shopping</span>
-            <span className="xs:hidden">Cart</span>
+            <ShoppingCart className="w-4 h-4" />
+            <span>Shopping</span>
             {activeTab === 'shopping' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-blue-500"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500"></div>
             )}
           </button>
         </nav>
@@ -112,67 +109,65 @@ export function ResultsTabs() {
                     <button
                       onClick={handleZoomOut}
                       disabled={zoom <= 0.5}
-                      className="p-2.5 sm:p-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:scale-105 touch-manipulation"
+                      className="btn-secondary p-2.5 disabled:opacity-30 disabled:cursor-not-allowed"
                       aria-label="Zoom out"
                     >
-                      <ZoomOut className="w-4 h-4 sm:w-5 sm:h-5 text-purple-200" />
+                      <ZoomOut className="w-4 h-4 text-gray-400" />
                     </button>
-                    <span className="text-xs sm:text-sm font-bold text-white min-w-[60px] sm:min-w-[70px] text-center px-3 py-2 sm:px-4 bg-white/10 rounded-xl border border-white/20">
+                    <span className="text-sm font-medium text-gray-300 min-w-[60px] text-center px-4 py-2 card">
                       {Math.round(zoom * 100)}%
                     </span>
                     <button
                       onClick={handleZoomIn}
                       disabled={zoom >= 3}
-                      className="p-2.5 sm:p-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:scale-105 touch-manipulation"
+                      className="btn-secondary p-2.5 disabled:opacity-30 disabled:cursor-not-allowed"
                       aria-label="Zoom in"
                     >
-                      <ZoomIn className="w-4 h-4 sm:w-5 sm:h-5 text-purple-200" />
+                      <ZoomIn className="w-4 h-4 text-gray-400" />
                     </button>
                   </div>
-                  <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={handleEditMosaic}
-                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:shadow-glow transition-all hover:scale-105 font-semibold text-sm touch-manipulation"
+                      className="btn-secondary flex items-center gap-2 px-4 py-2.5 text-sm"
                     >
-                      <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      <span className="hidden xs:inline">Edit Mosaic</span>
-                      <span className="xs:hidden">Edit</span>
+                      <Edit className="w-4 h-4" />
+                      <span>Edit</span>
                     </button>
                     <button
                       onClick={() => handleExport('mosaic-png', `mosaic-${mosaicData.sessionId}.png`)}
                       disabled={isExporting}
-                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:shadow-glow transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm touch-manipulation"
+                      className="btn-primary flex items-center gap-2 px-4 py-2.5 text-sm disabled:opacity-40"
                     >
                       {isExporting ? (
-                        <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
+                        <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
-                        <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        <Download className="w-4 h-4" />
                       )}
-                      <span className="hidden xs:inline">Download PNG</span>
-                      <span className="xs:hidden">Download</span>
+                      <span>Download</span>
                     </button>
                   </div>
                 </div>
-                <div className="overflow-auto border border-white/20 rounded-xl bg-white/5 p-2 sm:p-4 max-h-[400px] sm:max-h-[500px] lg:max-h-[600px]">
+                <div className="overflow-auto card p-3 max-h-[500px]">
                   <img
                     src={mosaicData.previewUrl}
                     alt="Mosaic preview"
                     style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}
-                    className="max-w-none rounded-lg"
+                    className="max-w-none rounded"
                   />
                 </div>
-                <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
-                  <div className="bg-white/10 border border-white/20 rounded-lg sm:rounded-xl p-3 sm:p-4">
-                    <p className="text-purple-300 text-[10px] xs:text-xs font-medium mb-1">Size</p>
-                    <p className="text-white font-bold text-sm sm:text-base">{mosaicData.metadata.baseplateSize}×{mosaicData.metadata.baseplateSize}</p>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="card p-3">
+                    <p className="text-gray-500 text-xs font-medium mb-1">Size</p>
+                    <p className="text-gray-50 font-semibold text-sm">{mosaicData.metadata.baseplateSize}×{mosaicData.metadata.baseplateSize}</p>
                   </div>
-                  <div className="bg-white/10 border border-white/20 rounded-lg sm:rounded-xl p-3 sm:p-4">
-                    <p className="text-purple-300 text-[10px] xs:text-xs font-medium mb-1">Total Pieces</p>
-                    <p className="text-white font-bold text-sm sm:text-base">{mosaicData.metadata.totalPieces}</p>
+                  <div className="card p-3">
+                    <p className="text-gray-500 text-xs font-medium mb-1">Pieces</p>
+                    <p className="text-gray-50 font-semibold text-sm">{mosaicData.metadata.totalPieces}</p>
                   </div>
-                  <div className="bg-white/10 border border-white/20 rounded-lg sm:rounded-xl p-3 sm:p-4">
-                    <p className="text-purple-300 text-[10px] xs:text-xs font-medium mb-1">Colors</p>
-                    <p className="text-white font-bold text-sm sm:text-base">{mosaicData.metadata.uniqueColors}</p>
+                  <div className="card p-3">
+                    <p className="text-gray-500 text-xs font-medium mb-1">Colors</p>
+                    <p className="text-gray-50 font-semibold text-sm">{mosaicData.metadata.uniqueColors}</p>
                   </div>
                 </div>
               </>
@@ -192,19 +187,18 @@ export function ResultsTabs() {
 
         {activeTab === 'instructions' && (
           <div className="space-y-4 sm:space-y-6">
-            <div className="flex items-center justify-end flex-wrap gap-2 sm:gap-3">
+            <div className="flex justify-end">
               <button
                 onClick={() => handleExport('instructions-png', `instructions-${mosaicData.sessionId}.png`)}
                 disabled={isExporting}
-                className="flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:shadow-glow transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm touch-manipulation"
+                className="btn-primary flex items-center gap-2 px-4 py-2.5 text-sm disabled:opacity-40"
               >
                 {isExporting ? (
-                  <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <Download className="w-4 h-4" />
                 )}
-                <span className="hidden xs:inline">Download PNG</span>
-                <span className="xs:hidden">Download</span>
+                <span>Download</span>
               </button>
             </div>
             <div className="bg-white/5 border border-white/20 rounded-xl p-3 sm:p-4 lg:p-6">
@@ -214,59 +208,52 @@ export function ResultsTabs() {
         )}
 
         {activeTab === 'shopping' && (
-          <div className="space-y-4 sm:space-y-6">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
-              <div className="px-3 py-2 sm:px-4 bg-white/10 border border-white/20 rounded-xl text-center sm:text-left">
-                <p className="text-xs sm:text-sm font-semibold text-purple-200">
-                  Total: <span className="text-white">{mosaicData.metadata.totalPieces} pieces</span>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between gap-4">
+              <div className="card px-4 py-2">
+                <p className="text-sm font-medium text-gray-300">
+                  Total: <span className="text-gray-50">{mosaicData.metadata.totalPieces}</span> pieces
                 </p>
               </div>
-              <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 sm:gap-3">
+              <div className="flex gap-2">
                 <button
                   onClick={() => handleExport('pickabrick-csv', `pickabrick-${mosaicData.sessionId}.csv`)}
                   disabled={isExporting}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl hover:shadow-glow transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm touch-manipulation"
+                  className="btn-primary flex items-center gap-2 px-4 py-2.5 text-sm disabled:opacity-40"
                 >
                   {isExporting ? (
-                    <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <Download className="w-4 h-4" />
                   )}
-                  <span className="hidden xs:inline">LEGO Pick-a-Brick</span>
-                  <span className="xs:hidden">Pick-a-Brick</span>
+                  <span>Pick-a-Brick</span>
                 </button>
                 <button
                   onClick={() => handleExport('shopping-csv', `shopping-list-${mosaicData.sessionId}.csv`)}
                   disabled={isExporting}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:shadow-glow transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm touch-manipulation"
+                  className="btn-secondary flex items-center gap-2 px-4 py-2.5 text-sm disabled:opacity-40"
                 >
                   {isExporting ? (
-                    <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <Download className="w-4 h-4" />
                   )}
-                  <span className="hidden xs:inline">Download CSV</span>
-                  <span className="xs:hidden">CSV</span>
+                  <span>CSV</span>
                 </button>
               </div>
             </div>
 
             {/* Pick-a-Brick Instructions */}
-            <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/30 rounded-xl p-4 sm:p-5">
-              <h4 className="font-bold text-orange-200 mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
-                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-                How to Order from LEGO Pick-a-Brick
+            <div className="card p-4">
+              <h4 className="font-medium text-gray-200 mb-3 text-sm">
+                How to order from LEGO Pick-a-Brick
               </h4>
-              <ol className="text-xs sm:text-sm text-orange-100/90 space-y-1.5 sm:space-y-2 list-decimal list-inside">
-                <li>Click the <strong>"LEGO Pick-a-Brick"</strong> button above to download the special CSV file</li>
-                <li>Visit <a href="https://www.lego.com/pick-and-build/pick-a-brick" target="_blank" rel="noopener noreferrer" className="text-orange-300 hover:text-orange-200 underline font-semibold">LEGO Pick-a-Brick</a></li>
-                <li>Click the <strong>"Upload List"</strong> button on the Pick-a-Brick page</li>
-                <li>Select the downloaded CSV file</li>
-                <li>All pieces will be automatically added to your cart!</li>
+              <ol className="text-sm text-gray-400 space-y-2 list-decimal list-inside">
+                <li>Download the Pick-a-Brick CSV file using the button above</li>
+                <li>Visit <a href="https://www.lego.com/pick-and-build/pick-a-brick" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:text-red-400 underline">LEGO Pick-a-Brick</a></li>
+                <li>Click "Upload List" and select the CSV file</li>
+                <li>All pieces will be added to your cart automatically</li>
               </ol>
-              <p className="mt-2 sm:mt-3 text-[10px] xs:text-xs text-orange-200/70 italic">
-                💡 This file contains the exact LEGO element IDs and quantities needed for your mosaic.
-              </p>
             </div>
 
             <ShoppingListView items={mosaicData.shoppingList} />

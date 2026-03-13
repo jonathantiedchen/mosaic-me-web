@@ -8,38 +8,46 @@
   }
 
   body {
-    @apply bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900;
-    @apply text-gray-100;
+    @apply bg-gradient-to-br from-gray-950 via-gray-900 to-slate-950;
+    @apply text-gray-50;
     @apply min-h-screen;
     margin: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  }
-
-  * {
-    @apply transition-colors duration-200;
+    letter-spacing: -0.011em;
   }
 }
 
 @layer components {
-  .glass-card {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-xl;
+  .card {
+    @apply bg-white/[0.03] border border-white/[0.08] rounded-lg;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3);
   }
 
-  .glass-button {
-    @apply bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl;
-    @apply transition-all duration-300 ease-out;
+  .card-hover {
+    @apply transition-all duration-200 hover:bg-white/[0.05] hover:border-white/[0.12];
   }
 
-  .gradient-text {
-    @apply bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent;
+  .btn-primary {
+    @apply bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg;
+    @apply transition-colors duration-150;
+  }
+
+  .btn-secondary {
+    @apply bg-white/[0.06] hover:bg-white/[0.1] text-gray-200 font-medium rounded-lg border border-white/[0.08];
+    @apply transition-colors duration-150;
+  }
+
+  .text-brand {
+    @apply text-red-500;
+  }
+
+  .border-subtle {
+    @apply border-white/[0.08];
   }
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Courier New', monospace;
 }
