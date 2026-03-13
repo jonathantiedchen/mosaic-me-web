@@ -15,18 +15,7 @@ export function ResultsTabs() {
   const [isEditing, setIsEditing] = useState(false);
 
   if (!mosaicData) {
-    return (
-      <div className="glass-card p-8 sm:p-12 lg:p-16 text-center">
-        <div className="flex flex-col items-center gap-3 sm:gap-4">
-          <div className="p-4 sm:p-6 bg-white/10 rounded-full">
-            <ImageIcon className="w-8 h-8 sm:w-12 sm:h-12 text-purple-300" />
-          </div>
-          <p className="text-purple-200 text-sm sm:text-base lg:text-lg">
-            Upload an image and generate a mosaic to see results
-          </p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   const handleExport = (type: 'mosaic-png' | 'instructions-png' | 'shopping-csv' | 'pickabrick-csv', filename: string) => {
@@ -50,8 +39,8 @@ export function ResultsTabs() {
   };
 
   return (
-    <div className="glass-card overflow-hidden">
-      <div className="border-b border-white/10 bg-white/5">
+    <div className="glass-card overflow-hidden shadow-glow-lg">
+      <div className="border-b border-white/10 bg-gradient-to-r from-white/5 to-white/10">
         <nav className="flex">
           <button
             onClick={() => setActiveTab('preview')}

@@ -111,9 +111,9 @@ export function ImageUpload() {
             </div>
           </div>
 
-          <div>
+          <div className="relative">
             <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-4 h-4 text-purple-300" />
+              <Sparkles className="w-4 h-4 text-purple-300 animate-pulse" />
               <h3 className="text-sm font-semibold text-purple-200">
                 Try Sample Images
               </h3>
@@ -123,18 +123,21 @@ export function ImageUpload() {
                 <button
                   key={index}
                   onClick={() => handleSampleClick(sample.raw, sample.name)}
-                  className="group glass-card p-2 sm:p-3 hover:shadow-glow transition-all duration-300 hover:scale-105 active:scale-95"
+                  className="group glass-card p-2 sm:p-3 hover:shadow-glow transition-all duration-300 hover:scale-105 active:scale-95 relative overflow-hidden"
                 >
-                  <div className="aspect-square rounded-lg overflow-hidden mb-2">
-                    <img
-                      src={sample.raw}
-                      alt={sample.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-blue-500/0 group-hover:from-purple-500/10 group-hover:to-blue-500/10 transition-all duration-300"></div>
+                  <div className="relative">
+                    <div className="aspect-square rounded-lg overflow-hidden mb-2 ring-1 ring-white/20 group-hover:ring-purple-400/50 transition-all duration-300">
+                      <img
+                        src={sample.raw}
+                        alt={sample.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                    </div>
+                    <p className="text-xs text-purple-200 text-center font-medium group-hover:text-white transition-colors">
+                      {sample.name}
+                    </p>
                   </div>
-                  <p className="text-xs text-purple-200 text-center font-medium">
-                    {sample.name}
-                  </p>
                 </button>
               ))}
             </div>

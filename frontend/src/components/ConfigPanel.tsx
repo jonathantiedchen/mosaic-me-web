@@ -25,7 +25,7 @@ export function ConfigPanel() {
   };
 
   return (
-    <div className="glass-card p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 lg:space-y-8 lg:sticky lg:top-8">
+    <div className="glass-card p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 lg:space-y-8 transition-all duration-300 hover:shadow-2xl">
       <div>
         <div className="flex items-center gap-2 mb-3 sm:mb-4 lg:mb-5">
           <Grid3x3 className="w-4 h-4 sm:w-5 sm:h-5 text-purple-300" />
@@ -136,22 +136,28 @@ export function ConfigPanel() {
             hover:scale-105 active:scale-95 touch-manipulation
             disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
             transition-all duration-200 flex items-center justify-center gap-2
-            text-sm sm:text-base
+            text-sm sm:text-base relative overflow-hidden
           "
         >
-          {isLoading ? (
-            <>
-              <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
-              <span className="hidden xs:inline">Generating...</span>
-              <span className="xs:hidden">...</span>
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden xs:inline">Generate Mosaic</span>
-              <span className="xs:hidden">Generate</span>
-            </>
+          {!uploadedFile && !isLoading && (
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"
+                 style={{ backgroundSize: '1000px 100%' }}></div>
           )}
+          <span className="relative z-10 flex items-center gap-2">
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                <span className="hidden xs:inline">Generating...</span>
+                <span className="xs:hidden">...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden xs:inline">Generate Mosaic</span>
+                <span className="xs:hidden">Generate</span>
+              </>
+            )}
+          </span>
         </button>
         <button
           onClick={handleReset}
