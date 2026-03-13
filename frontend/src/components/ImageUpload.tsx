@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, Sparkles } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -9,6 +9,11 @@ const ACCEPTED_FORMATS = {
   'image/png': ['.png'],
   'image/webp': ['.webp'],
 };
+
+const SAMPLE_IMAGES = [
+  { raw: '/samples/raw_1.jpg', mosaic: '/samples/mosaic_1.png', name: 'Sample 1' },
+  { raw: '/samples/raw_2.jpeg', mosaic: '/samples/mosaic_2.png', name: 'Sample 2' },
+];
 
 export function ImageUpload() {
   const { uploadedFile, setUploadedFile, clearMosaic } = useMosaic();
@@ -35,6 +40,17 @@ export function ImageUpload() {
     clearMosaic();
   };
 
+  const handleSampleClick = async (samplePath: string, sampleName: string) => {
+    try {
+      const response = await fetch(samplePath);
+      const blob = await response.blob();
+      const file = new File([blob], sampleName, { type: blob.type });
+      setUploadedFile(file);
+    } catch (error) {
+      console.error('Failed to load sample image:', error);
+    }
+  };
+
   const hasErrors = fileRejections.length > 0;
   const errorMessage = hasErrors
     ? fileRejections[0].errors[0].code === 'file-too-large'
@@ -45,54 +61,85 @@ export function ImageUpload() {
     : null;
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-4">
       {!uploadedFile ? (
-        <div
-          {...getRootProps()}
-          className={`
-            glass-card border-2 border-dashed p-6 sm:p-8 lg:p-10 text-center cursor-pointer
-            transition-all duration-300 ease-out group hover:scale-[1.02]
-            ${
-              isDragActive
-                ? 'border-purple-400 bg-purple-500/20 shadow-glow'
-                : hasErrors
-                ? 'border-red-400 bg-red-500/20'
-                : 'border-white/30 hover:border-purple-400/50 hover:shadow-glow'
-            }
-          `}
-        >
-          <input {...getInputProps()} />
-          <div className="flex flex-col items-center gap-3 sm:gap-4 lg:gap-5">
-            <div className={`p-3 sm:p-4 lg:p-5 rounded-xl sm:rounded-2xl transition-all duration-300 ${
-              isDragActive
-                ? 'bg-purple-500/30 scale-110'
-                : hasErrors
-                ? 'bg-red-500/20'
-                : 'bg-white/10 group-hover:bg-purple-500/20'
-            }`}>
-              <Upload
-                className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 transition-colors ${
-                  hasErrors ? 'text-red-300' : 'text-purple-300 group-hover:text-purple-200'
-                }`}
-              />
-            </div>
-            <div>
-              <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">
-                {isDragActive
-                  ? 'Drop your image here'
-                  : 'Drag & drop an image, or click to select'}
-              </p>
-              <p className="text-xs sm:text-sm text-purple-200 mt-1 sm:mt-2">
-                JPEG, PNG, or WebP (max 10MB)
-              </p>
-            </div>
-            {hasErrors && (
-              <div className="mt-2 px-3 py-2 sm:px-4 bg-red-500/20 border border-red-400/30 rounded-lg">
-                <p className="text-xs sm:text-sm text-red-200 font-medium">{errorMessage}</p>
+        <>
+          <div
+            {...getRootProps()}
+            className={`
+              glass-card border-2 border-dashed p-6 sm:p-8 lg:p-10 text-center cursor-pointer
+              transition-all duration-300 ease-out group hover:scale-[1.02]
+              ${
+                isDragActive
+                  ? 'border-purple-400 bg-purple-500/20 shadow-glow'
+                  : hasErrors
+                  ? 'border-red-400 bg-red-500/20'
+                  : 'border-white/30 hover:border-purple-400/50 hover:shadow-glow'
+              }
+            `}
+          >
+            <input {...getInputProps()} />
+            <div className="flex flex-col items-center gap-3 sm:gap-4 lg:gap-5">
+              <div className={`p-3 sm:p-4 lg:p-5 rounded-xl sm:rounded-2xl transition-all duration-300 ${
+                isDragActive
+                  ? 'bg-purple-500/30 scale-110'
+                  : hasErrors
+                  ? 'bg-red-500/20'
+                  : 'bg-white/10 group-hover:bg-purple-500/20'
+              }`}>
+                <Upload
+                  className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 transition-colors ${
+                    hasErrors ? 'text-red-300' : 'text-purple-300 group-hover:text-purple-200'
+                  }`}
+                />
               </div>
-            )}
+              <div>
+                <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">
+                  {isDragActive
+                    ? 'Drop your image here'
+                    : 'Drag & drop an image, or click to select'}
+                </p>
+                <p className="text-xs sm:text-sm text-purple-200 mt-1 sm:mt-2">
+                  JPEG, PNG, or WebP (max 10MB)
+                </p>
+              </div>
+              {hasErrors && (
+                <div className="mt-2 px-3 py-2 sm:px-4 bg-red-500/20 border border-red-400/30 rounded-lg">
+                  <p className="text-xs sm:text-sm text-red-200 font-medium">{errorMessage}</p>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="w-4 h-4 text-purple-300" />
+              <h3 className="text-sm font-semibold text-purple-200">
+                Try Sample Images
+              </h3>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              {SAMPLE_IMAGES.map((sample, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSampleClick(sample.raw, sample.name)}
+                  className="group glass-card p-2 sm:p-3 hover:shadow-glow transition-all duration-300 hover:scale-105 active:scale-95"
+                >
+                  <div className="aspect-square rounded-lg overflow-hidden mb-2">
+                    <img
+                      src={sample.raw}
+                      alt={sample.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  </div>
+                  <p className="text-xs text-purple-200 text-center font-medium">
+                    {sample.name}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
       ) : (
         <div className="glass-card p-3 sm:p-4 lg:p-5 hover:shadow-glow transition-all duration-300">
           <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
