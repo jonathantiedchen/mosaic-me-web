@@ -67,69 +67,74 @@ export function ImageUpload() {
           <div
             {...getRootProps()}
             className={`
-              card border-dashed p-8 sm:p-10 text-center cursor-pointer
-              transition-all duration-200
+              relative overflow-hidden border-2 border-dashed rounded-2xl p-10 sm:p-12 text-center cursor-pointer
+              transition-all duration-300 group
               ${
                 isDragActive
-                  ? 'border-red-500/50 bg-red-500/5'
+                  ? 'border-blue-500 bg-blue-500/10 scale-[1.02]'
                   : hasErrors
-                  ? 'border-red-500/30 bg-red-500/5'
-                  : 'hover:border-white/20 hover:bg-white/[0.02]'
+                  ? 'border-red-500/50 bg-red-500/5'
+                  : 'border-white/10 hover:border-blue-500/30 hover:bg-white/5'
               }
             `}
           >
             <input {...getInputProps()} />
-            <div className="flex flex-col items-center gap-4">
-              <div className={`p-4 rounded-lg transition-colors ${
+
+            {/* Gradient background on hover */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+
+            <div className="relative flex flex-col items-center gap-5">
+              <div className={`p-5 rounded-2xl transition-all duration-300 ${
                 isDragActive
-                  ? 'bg-red-500/10'
+                  ? 'bg-blue-500/20 scale-110'
                   : hasErrors
-                  ? 'bg-red-500/10'
-                  : 'bg-white/[0.03]'
+                  ? 'bg-red-500/20'
+                  : 'bg-gradient-to-br from-blue-500/10 to-purple-500/10 group-hover:scale-110'
               }`}>
                 <Upload
-                  className={`w-8 h-8 transition-colors ${
-                    hasErrors ? 'text-red-400' : 'text-gray-400'
+                  className={`w-10 h-10 transition-colors ${
+                    hasErrors ? 'text-red-400' : isDragActive ? 'text-blue-400' : 'text-blue-300'
                   }`}
+                  strokeWidth={2}
                 />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-200 mb-1">
+                <p className="text-base font-semibold text-gray-100 mb-2">
                   {isDragActive
-                    ? 'Drop your image here'
-                    : 'Drop an image here, or click to browse'}
+                    ? 'Drop it like it\'s hot'
+                    : 'Drop an image or click to browse'}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-sm text-gray-400">
                   JPEG, PNG, or WebP • Max 10MB
                 </p>
               </div>
               {hasErrors && (
-                <div className="mt-1 px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded">
-                  <p className="text-xs text-red-400 font-medium">{errorMessage}</p>
+                <div className="mt-2 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-lg">
+                  <p className="text-sm text-red-300 font-medium">{errorMessage}</p>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-subtle">
-            <p className="text-xs text-gray-500 mb-3 font-medium">
-              OR TRY AN EXAMPLE
+          <div className="pt-6 border-t border-white/10">
+            <p className="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">
+              Or try an example
             </p>
-            <div className="flex gap-2">
+            <div className="grid grid-cols-2 gap-3">
               {SAMPLE_IMAGES.map((sample, index) => (
                 <button
                   key={index}
                   onClick={() => handleSampleClick(sample.raw, sample.name)}
-                  className="card card-hover flex-1 p-1.5 group"
+                  className="group relative overflow-hidden rounded-xl border border-white/10 hover:border-blue-500/30 bg-white/5 hover:bg-white/10 p-2 transition-all duration-300 hover:scale-105"
                 >
-                  <div className="aspect-square rounded overflow-hidden mb-1.5 bg-white/[0.02]">
+                  <div className="aspect-square rounded-lg overflow-hidden mb-2 bg-black/20">
                     <img
                       src={sample.raw}
                       alt={sample.name}
-                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                      className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300"
                     />
                   </div>
-                  <p className="text-[10px] text-gray-500 text-center font-medium">
+                  <p className="text-xs text-gray-400 group-hover:text-gray-200 text-center font-medium transition-colors">
                     {sample.name}
                   </p>
                 </button>
@@ -138,24 +143,24 @@ export function ImageUpload() {
           </div>
         </>
       ) : (
-        <div className="card p-3 flex items-center gap-3">
-          <div className="p-2 bg-white/[0.06] rounded flex-shrink-0">
-            <ImageIcon className="w-5 h-5 text-gray-400" />
+        <div className="card p-4 flex items-center gap-4 group">
+          <div className="p-3 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl flex-shrink-0">
+            <ImageIcon className="w-6 h-6 text-blue-300" strokeWidth={2} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-200 truncate">
+            <p className="text-sm font-semibold text-gray-100 truncate">
               {uploadedFile.name}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-400 mt-0.5">
               {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
             </p>
           </div>
           <button
             onClick={handleClear}
-            className="flex-shrink-0 p-1.5 text-gray-500 hover:text-gray-300 hover:bg-white/[0.06] rounded transition-colors"
+            className="flex-shrink-0 p-2.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-200"
             aria-label="Remove image"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" strokeWidth={2.5} />
           </button>
         </div>
       )}

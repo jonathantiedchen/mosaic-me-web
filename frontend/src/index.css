@@ -8,46 +8,63 @@
   }
 
   body {
-    @apply bg-gradient-to-br from-gray-950 via-gray-900 to-slate-950;
+    @apply bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950;
     @apply text-gray-50;
     @apply min-h-screen;
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    letter-spacing: -0.011em;
+    letter-spacing: -0.015em;
+  }
+
+  * {
+    @apply border-white/10;
   }
 }
 
 @layer components {
   .card {
-    @apply bg-white/[0.03] border border-white/[0.08] rounded-lg;
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3);
+    @apply bg-gradient-to-br from-white/[0.07] to-white/[0.03] backdrop-blur-xl;
+    @apply border border-white/10 rounded-2xl;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+      0 8px 32px -8px rgba(0, 0, 0, 0.4);
   }
 
   .card-hover {
-    @apply transition-all duration-200 hover:bg-white/[0.05] hover:border-white/[0.12];
+    @apply transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10;
+    @apply hover:border-white/20 hover:from-white/[0.09] hover:to-white/[0.04];
   }
 
   .btn-primary {
-    @apply bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg;
-    @apply transition-colors duration-150;
+    @apply bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-[length:200%_100%];
+    @apply hover:bg-right-bottom text-white font-semibold rounded-xl;
+    @apply shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-600/40;
+    @apply transition-all duration-300 hover:scale-[1.02] active:scale-[0.98];
+    background-position: left;
   }
 
   .btn-secondary {
-    @apply bg-white/[0.06] hover:bg-white/[0.1] text-gray-200 font-medium rounded-lg border border-white/[0.08];
-    @apply transition-colors duration-150;
+    @apply bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20;
+    @apply text-gray-200 hover:text-white font-semibold rounded-xl;
+    @apply transition-all duration-300;
   }
 
-  .text-brand {
-    @apply text-red-500;
+  .input-field {
+    @apply bg-white/5 border border-white/10 rounded-xl px-4 py-3;
+    @apply text-gray-100 placeholder:text-gray-500;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50;
+    @apply transition-all duration-200;
   }
 
-  .border-subtle {
-    @apply border-white/[0.08];
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold;
+    @apply bg-gradient-to-r from-blue-500/10 to-purple-500/10;
+    @apply border border-blue-500/20 text-blue-300;
   }
 }
 
 code {
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Courier New', monospace;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
 }
