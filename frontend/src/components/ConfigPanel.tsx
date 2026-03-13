@@ -25,27 +25,27 @@ export function ConfigPanel() {
   };
 
   return (
-    <div className="card p-6 sm:p-8 space-y-8">
+    <div className="card card-hover p-8 sm:p-10 space-y-10">
       <div>
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-1 h-6 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full"></div>
-          <h3 className="text-lg font-bold text-white">Upload Image</h3>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-1.5 h-8 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full shadow-lg shadow-indigo-500/50"></div>
+          <h3 className="text-xl font-black text-white tracking-tight">Upload Image</h3>
         </div>
         <ImageUpload />
       </div>
 
       <div>
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-1 h-6 bg-gradient-to-b from-purple-500 to-amber-500 rounded-full"></div>
-          <h3 className="text-lg font-bold text-white">Configure Mosaic</h3>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-1.5 h-8 bg-gradient-to-b from-purple-500 to-pink-600 rounded-full shadow-lg shadow-purple-500/50"></div>
+          <h3 className="text-xl font-black text-white tracking-tight">Configure Mosaic</h3>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-8">
           <div>
-            <label className="block text-sm font-semibold text-gray-200 mb-3">
+            <label className="block text-sm font-bold text-white mb-4 uppercase tracking-wider">
               Baseplate Size
             </label>
-            <div className="grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-5 gap-2.5">
               {BASEPLATE_SIZES.map((size) => (
                 <button
                   key={size}
@@ -54,46 +54,52 @@ export function ConfigPanel() {
                   }
                   disabled={isLoading}
                   className={`
-                    px-3 py-3 rounded-xl text-sm font-bold transition-all
+                    relative px-3 py-4 rounded-2xl text-sm font-black transition-all duration-300
                     ${
                       config.baseplateSize === size
-                        ? 'bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/30 scale-105'
-                        : 'bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 hover:border-blue-500/30'
+                        ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white scale-110 z-10'
+                        : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10 hover:border-white/20'
                     }
-                    disabled:opacity-30 disabled:cursor-not-allowed
+                    disabled:opacity-20 disabled:cursor-not-allowed
                   `}
+                  style={config.baseplateSize === size ? {
+                    boxShadow: '0 0 0 1px rgba(99, 102, 241, 0.5) inset, 0 12px 32px -8px rgba(99, 102, 241, 0.6), 0 0 60px -15px rgba(139, 92, 246, 0.8)'
+                  } : {}}
                 >
                   {size}
                 </button>
               ))}
             </div>
-            <p className="text-xs text-gray-400 mt-2.5 flex items-center gap-1.5">
-              <span className="w-1 h-1 rounded-full bg-blue-400"></span>
+            <p className="text-xs text-gray-500 mt-4 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-lg shadow-indigo-400/50"></span>
               Size in studs (1×1 LEGO pieces)
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-200 mb-3">
+            <label className="block text-sm font-bold text-white mb-4 uppercase tracking-wider">
               Piece Type
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <button
                 onClick={() =>
                   setConfig({ ...config, pieceType: 'square' })
                 }
                 disabled={isLoading}
                 className={`
-                  px-5 py-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2.5 transition-all
+                  relative px-6 py-5 rounded-2xl text-base font-black flex items-center justify-center gap-3 transition-all duration-300
                   ${
                     config.pieceType === 'square'
-                      ? 'bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/30 scale-105'
-                      : 'bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 hover:border-blue-500/30'
+                      ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white scale-105'
+                      : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10 hover:border-white/20'
                   }
-                  disabled:opacity-30 disabled:cursor-not-allowed
+                  disabled:opacity-20 disabled:cursor-not-allowed
                 `}
+                style={config.pieceType === 'square' ? {
+                  boxShadow: '0 0 0 1px rgba(99, 102, 241, 0.5) inset, 0 12px 32px -8px rgba(99, 102, 241, 0.6), 0 0 60px -15px rgba(139, 92, 246, 0.8)'
+                } : {}}
               >
-                <Square className="w-5 h-5" strokeWidth={2.5} />
+                <Square className="w-6 h-6" strokeWidth={2.5} />
                 Square
               </button>
               <button
@@ -102,16 +108,19 @@ export function ConfigPanel() {
                 }
                 disabled={isLoading}
                 className={`
-                  px-5 py-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2.5 transition-all
+                  relative px-6 py-5 rounded-2xl text-base font-black flex items-center justify-center gap-3 transition-all duration-300
                   ${
                     config.pieceType === 'round'
-                      ? 'bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/30 scale-105'
-                      : 'bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 hover:border-blue-500/30'
+                      ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white scale-105'
+                      : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10 hover:border-white/20'
                   }
-                  disabled:opacity-30 disabled:cursor-not-allowed
+                  disabled:opacity-20 disabled:cursor-not-allowed
                 `}
+                style={config.pieceType === 'round' ? {
+                  boxShadow: '0 0 0 1px rgba(99, 102, 241, 0.5) inset, 0 12px 32px -8px rgba(99, 102, 241, 0.6), 0 0 60px -15px rgba(139, 92, 246, 0.8)'
+                } : {}}
               >
-                <Circle className="w-5 h-5" strokeWidth={2.5} />
+                <Circle className="w-6 h-6" strokeWidth={2.5} />
                 Round
               </button>
             </div>
@@ -119,20 +128,20 @@ export function ConfigPanel() {
         </div>
       </div>
 
-      <div className="flex gap-3 pt-2">
+      <div className="flex gap-4 pt-4">
         <button
           onClick={handleGenerate}
           disabled={!uploadedFile || isLoading}
-          className="btn-primary flex-1 px-6 py-4 flex items-center justify-center gap-2.5 text-base disabled:opacity-30 disabled:cursor-not-allowed"
+          className="btn-primary flex-1 px-8 py-5 flex items-center justify-center gap-3 text-lg disabled:opacity-20 disabled:cursor-not-allowed"
         >
           {isLoading ? (
             <>
-              <Loader2 className="w-5 h-5 animate-spin" strokeWidth={2.5} />
+              <Loader2 className="w-6 h-6 animate-spin" strokeWidth={2.5} />
               <span>Generating...</span>
             </>
           ) : (
             <>
-              <Sparkles className="w-5 h-5" strokeWidth={2.5} />
+              <Sparkles className="w-6 h-6" strokeWidth={2.5} />
               <span>Generate Mosaic</span>
             </>
           )}
@@ -140,9 +149,9 @@ export function ConfigPanel() {
         <button
           onClick={handleReset}
           disabled={isLoading}
-          className="btn-secondary px-5 py-4 flex items-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
+          className="btn-secondary px-6 py-5 flex items-center gap-2 disabled:opacity-20 disabled:cursor-not-allowed"
         >
-          <RotateCcw className="w-5 h-5" strokeWidth={2.5} />
+          <RotateCcw className="w-6 h-6" strokeWidth={2.5} />
         </button>
       </div>
     </div>

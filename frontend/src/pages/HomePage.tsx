@@ -8,62 +8,76 @@ export function HomePage() {
   const hasResults = !!mosaicData;
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-white/10 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-amber-500/5">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg shadow-blue-500/20">
-              <Sparkles className="w-5 h-5 text-white" strokeWidth={2.5} />
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-amber-400 bg-clip-text text-transparent">
-                Mosaic Me
-              </h1>
-              <p className="text-sm text-gray-400 mt-0.5">
-                Turn photos into LEGO art
-              </p>
+    <div className="min-h-screen relative">
+      <header className="border-b border-white/5 backdrop-blur-xl bg-white/[0.02] sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl blur-lg opacity-50"></div>
+                <div className="relative p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl">
+                  <Sparkles className="w-5 h-5 text-white" strokeWidth={2.5} />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white">
+                  Mosaic Me
+                </h1>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  LEGO mosaic generator
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+      <main className="max-w-6xl mx-auto px-6 py-16 sm:py-24">
         {error && (
-          <div className="mb-8 card border-red-500/30 p-5 flex items-start gap-3 animate-in slide-in-from-top duration-300">
-            <div className="p-2 bg-red-500/10 rounded-lg">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+          <div className="mb-8 card border-red-500/30 p-6 flex items-start gap-4 animate-in slide-in-from-top duration-300">
+            <div className="p-3 bg-red-500/10 rounded-xl backdrop-blur-xl">
+              <AlertCircle className="w-6 h-6 text-red-400 flex-shrink-0" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-red-300">Error</h3>
-              <p className="text-sm text-red-300/80 mt-1">{error}</p>
+              <h3 className="text-base font-bold text-red-300">Error</h3>
+              <p className="text-sm text-red-300/80 mt-1.5">{error}</p>
             </div>
           </div>
         )}
 
         {/* Hero when no upload */}
         {!uploadedFile && !hasResults && (
-          <div className="mb-16 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-amber-500/10 border border-blue-500/20 mb-6">
-              <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></div>
-              <span className="text-sm font-medium text-blue-300">Free • No signup • Instant</span>
-            </div>
+          <div className="mb-20 text-center relative">
+            {/* Floating orbs */}
+            <div className="absolute top-0 left-1/4 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl animate-float-slow"></div>
+            <div className="absolute top-20 right-1/4 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl animate-float-slow" style={{ animationDelay: '2s' }}></div>
 
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-amber-400 bg-clip-text text-transparent">
-                Transform photos into
-              </span>
-              <br />
-              <span className="text-white">buildable LEGO art</span>
-            </h2>
+            <div className="relative">
+              <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full glass-intense border border-white/20 mb-8 backdrop-blur-xl">
+                <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse shadow-lg shadow-indigo-400/50"></div>
+                <span className="text-sm font-bold text-white">Free • No signup • Instant results</span>
+              </div>
 
-            <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Upload any image to generate a complete LEGO mosaic with assembly instructions,
-              shopping lists, and direct Pick-a-Brick import.
-            </p>
+              <h2 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black mb-8 tracking-tighter leading-[0.9]">
+                <span className="block bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-3">
+                  Transform photos
+                </span>
+                <span className="block text-white">
+                  into LEGO art
+                </span>
+              </h2>
 
-            <div className="flex items-center justify-center gap-2 text-blue-400 animate-bounce">
-              <ArrowDown className="w-5 h-5" strokeWidth={2.5} />
-              <span className="text-sm font-semibold">Get started</span>
+              <p className="text-xl sm:text-2xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed font-medium">
+                Upload any image to generate a complete LEGO mosaic with assembly instructions,
+                shopping lists, and direct Pick-a-Brick import
+              </p>
+
+              <div className="inline-flex items-center gap-3 text-indigo-400 animate-bounce">
+                <div className="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center backdrop-blur-xl border border-indigo-500/20">
+                  <ArrowDown className="w-4 h-4" strokeWidth={3} />
+                </div>
+                <span className="text-sm font-bold uppercase tracking-wider">Start creating</span>
+              </div>
             </div>
           </div>
         )}
