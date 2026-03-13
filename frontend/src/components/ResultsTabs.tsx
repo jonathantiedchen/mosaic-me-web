@@ -39,61 +39,61 @@ export function ResultsTabs() {
   };
 
   return (
-    <div className="card overflow-hidden">
-      <div className="border-b border-white/10 bg-gradient-to-r from-white/5 to-transparent">
+    <div className="card card-hover overflow-hidden">
+      <div className="border-b border-white/5 backdrop-blur-xl bg-gradient-to-r from-white/5 to-transparent">
         <nav className="flex">
           <button
             onClick={() => setActiveTab('preview')}
             className={`
-              flex-1 px-6 py-4 text-sm font-semibold transition-all duration-300
-              flex items-center justify-center gap-2.5 relative
+              flex-1 px-6 py-5 text-sm font-bold transition-all duration-300
+              flex items-center justify-center gap-3 relative uppercase tracking-wider
               ${
                 activeTab === 'preview'
                   ? 'text-white'
-                  : 'text-gray-400 hover:text-gray-200'
+                  : 'text-gray-500 hover:text-gray-300'
               }
             `}
           >
-            <ImageIcon className="w-4 h-4" strokeWidth={2.5} />
+            <ImageIcon className="w-5 h-5" strokeWidth={2.5} />
             <span>Preview</span>
             {activeTab === 'preview' && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-t-full"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg shadow-indigo-500/50"></div>
             )}
           </button>
           <button
             onClick={() => setActiveTab('instructions')}
             className={`
-              flex-1 px-6 py-4 text-sm font-semibold transition-all duration-300
-              flex items-center justify-center gap-2.5 relative
+              flex-1 px-6 py-5 text-sm font-bold transition-all duration-300
+              flex items-center justify-center gap-3 relative uppercase tracking-wider
               ${
                 activeTab === 'instructions'
                   ? 'text-white'
-                  : 'text-gray-400 hover:text-gray-200'
+                  : 'text-gray-500 hover:text-gray-300'
               }
             `}
           >
-            <BookOpen className="w-4 h-4" strokeWidth={2.5} />
+            <BookOpen className="w-5 h-5" strokeWidth={2.5} />
             <span>Instructions</span>
             {activeTab === 'instructions' && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-t-full"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg shadow-indigo-500/50"></div>
             )}
           </button>
           <button
             onClick={() => setActiveTab('shopping')}
             className={`
-              flex-1 px-6 py-4 text-sm font-semibold transition-all duration-300
-              flex items-center justify-center gap-2.5 relative
+              flex-1 px-6 py-5 text-sm font-bold transition-all duration-300
+              flex items-center justify-center gap-3 relative uppercase tracking-wider
               ${
                 activeTab === 'shopping'
                   ? 'text-white'
-                  : 'text-gray-400 hover:text-gray-200'
+                  : 'text-gray-500 hover:text-gray-300'
               }
             `}
           >
-            <ShoppingCart className="w-4 h-4" strokeWidth={2.5} />
+            <ShoppingCart className="w-5 h-5" strokeWidth={2.5} />
             <span>Shopping</span>
             {activeTab === 'shopping' && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-t-full"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg shadow-indigo-500/50"></div>
             )}
           </button>
         </nav>
@@ -105,73 +105,77 @@ export function ResultsTabs() {
             {!isEditing ? (
               <>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <button
                       onClick={handleZoomOut}
                       disabled={zoom <= 0.5}
-                      className="btn-secondary p-3 disabled:opacity-20 disabled:cursor-not-allowed"
+                      className="btn-secondary p-3.5 disabled:opacity-10 disabled:cursor-not-allowed"
                       aria-label="Zoom out"
                     >
-                      <ZoomOut className="w-4 h-4" strokeWidth={2.5} />
+                      <ZoomOut className="w-5 h-5" strokeWidth={2.5} />
                     </button>
-                    <span className="text-sm font-bold text-white min-w-[70px] text-center px-4 py-2.5 card">
+                    <span className="text-sm font-black text-white min-w-[80px] text-center px-5 py-3 card backdrop-blur-xl">
                       {Math.round(zoom * 100)}%
                     </span>
                     <button
                       onClick={handleZoomIn}
                       disabled={zoom >= 3}
-                      className="btn-secondary p-3 disabled:opacity-20 disabled:cursor-not-allowed"
+                      className="btn-secondary p-3.5 disabled:opacity-10 disabled:cursor-not-allowed"
                       aria-label="Zoom in"
                     >
-                      <ZoomIn className="w-4 h-4" strokeWidth={2.5} />
+                      <ZoomIn className="w-5 h-5" strokeWidth={2.5} />
                     </button>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <button
                       onClick={handleEditMosaic}
-                      className="btn-secondary flex items-center gap-2 px-5 py-2.5 text-sm"
+                      className="btn-secondary flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold"
                     >
-                      <Edit className="w-4 h-4" strokeWidth={2.5} />
+                      <Edit className="w-5 h-5" strokeWidth={2.5} />
                       <span>Edit</span>
                     </button>
                     <button
                       onClick={() => handleExport('mosaic-png', `mosaic-${mosaicData.sessionId}.png`)}
                       disabled={isExporting}
-                      className="btn-primary flex items-center gap-2 px-5 py-2.5 text-sm disabled:opacity-30"
+                      className="btn-primary flex items-center gap-2.5 px-6 py-3.5 text-sm disabled:opacity-20"
                     >
                       {isExporting ? (
-                        <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} />
+                        <Loader2 className="w-5 h-5 animate-spin" strokeWidth={2.5} />
                       ) : (
-                        <Download className="w-4 h-4" strokeWidth={2.5} />
+                        <Download className="w-5 h-5" strokeWidth={2.5} />
                       )}
                       <span>Download</span>
                     </button>
                   </div>
                 </div>
-                <div className="overflow-auto rounded-2xl border border-white/10 bg-gradient-to-br from-black/40 to-black/20 p-4 max-h-[500px]">
+                <div className="relative overflow-auto rounded-3xl border border-white/10 bg-gradient-to-br from-black/60 via-indigo-950/20 to-black/60 p-6 max-h-[600px] backdrop-blur-xl">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.1),transparent_50%)] pointer-events-none"></div>
                   <img
                     src={mosaicData.previewUrl}
                     alt="Mosaic preview"
                     style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}
-                    className="max-w-none rounded-lg shadow-2xl"
+                    className="relative max-w-none rounded-2xl shadow-2xl shadow-indigo-900/30"
                   />
                 </div>
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="card p-4 group hover:scale-105 transition-transform duration-300">
-                    <p className="text-gray-400 text-xs font-semibold mb-2 uppercase tracking-wider">Size</p>
-                    <p className="text-white font-bold text-lg bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="relative card card-hover p-5 group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
+                    <p className="relative text-gray-500 text-xs font-bold mb-3 uppercase tracking-widest">Size</p>
+                    <p className="relative text-white font-black text-2xl">
                       {mosaicData.metadata.baseplateSize}×{mosaicData.metadata.baseplateSize}
                     </p>
                   </div>
-                  <div className="card p-4 group hover:scale-105 transition-transform duration-300">
-                    <p className="text-gray-400 text-xs font-semibold mb-2 uppercase tracking-wider">Pieces</p>
-                    <p className="text-white font-bold text-lg bg-gradient-to-r from-purple-400 to-amber-400 bg-clip-text text-transparent">
+                  <div className="relative card card-hover p-5 group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
+                    <p className="relative text-gray-500 text-xs font-bold mb-3 uppercase tracking-widest">Pieces</p>
+                    <p className="relative text-white font-black text-2xl">
                       {mosaicData.metadata.totalPieces}
                     </p>
                   </div>
-                  <div className="card p-4 group hover:scale-105 transition-transform duration-300">
-                    <p className="text-gray-400 text-xs font-semibold mb-2 uppercase tracking-wider">Colors</p>
-                    <p className="text-white font-bold text-lg bg-gradient-to-r from-amber-400 to-blue-400 bg-clip-text text-transparent">
+                  <div className="relative card card-hover p-5 group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
+                    <p className="relative text-gray-500 text-xs font-bold mb-3 uppercase tracking-widest">Colors</p>
+                    <p className="relative text-white font-black text-2xl">
                       {mosaicData.metadata.uniqueColors}
                     </p>
                   </div>
@@ -197,12 +201,12 @@ export function ResultsTabs() {
               <button
                 onClick={() => handleExport('instructions-png', `instructions-${mosaicData.sessionId}.png`)}
                 disabled={isExporting}
-                className="btn-primary flex items-center gap-2 px-5 py-2.5 text-sm disabled:opacity-30"
+                className="btn-primary flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold disabled:opacity-20"
               >
                 {isExporting ? (
-                  <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} />
+                  <Loader2 className="w-5 h-5 animate-spin" strokeWidth={2.5} />
                 ) : (
-                  <Download className="w-4 h-4" strokeWidth={2.5} />
+                  <Download className="w-5 h-5" strokeWidth={2.5} />
                 )}
                 <span>Download</span>
               </button>
@@ -214,35 +218,35 @@ export function ResultsTabs() {
         )}
 
         {activeTab === 'shopping' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between gap-4">
-              <div className="card px-5 py-3">
-                <p className="text-sm font-semibold text-gray-200">
-                  Total: <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent font-bold">{mosaicData.metadata.totalPieces}</span> pieces
+          <div className="space-y-8">
+            <div className="flex items-center justify-between gap-6">
+              <div className="card card-hover px-6 py-4 backdrop-blur-xl">
+                <p className="text-sm font-bold text-white">
+                  Total: <span className="text-2xl font-black bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">{mosaicData.metadata.totalPieces}</span> pieces
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <button
                   onClick={() => handleExport('pickabrick-csv', `pickabrick-${mosaicData.sessionId}.csv`)}
                   disabled={isExporting}
-                  className="btn-primary flex items-center gap-2 px-5 py-2.5 text-sm disabled:opacity-30"
+                  className="btn-primary flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold disabled:opacity-20"
                 >
                   {isExporting ? (
-                    <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} />
+                    <Loader2 className="w-5 h-5 animate-spin" strokeWidth={2.5} />
                   ) : (
-                    <Download className="w-4 h-4" strokeWidth={2.5} />
+                    <Download className="w-5 h-5" strokeWidth={2.5} />
                   )}
                   <span>Pick-a-Brick</span>
                 </button>
                 <button
                   onClick={() => handleExport('shopping-csv', `shopping-list-${mosaicData.sessionId}.csv`)}
                   disabled={isExporting}
-                  className="btn-secondary flex items-center gap-2 px-5 py-2.5 text-sm disabled:opacity-30"
+                  className="btn-secondary flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold disabled:opacity-20"
                 >
                   {isExporting ? (
-                    <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} />
+                    <Loader2 className="w-5 h-5 animate-spin" strokeWidth={2.5} />
                   ) : (
-                    <Download className="w-4 h-4" strokeWidth={2.5} />
+                    <Download className="w-5 h-5" strokeWidth={2.5} />
                   )}
                   <span>CSV</span>
                 </button>
@@ -250,14 +254,17 @@ export function ResultsTabs() {
             </div>
 
             {/* Pick-a-Brick Instructions */}
-            <div className="card p-5 bg-gradient-to-br from-amber-500/5 to-transparent border-amber-500/20">
-              <h4 className="font-bold text-gray-100 mb-4 text-base flex items-center gap-2">
-                <div className="w-1 h-5 bg-gradient-to-b from-amber-500 to-amber-600 rounded-full"></div>
-                How to order from LEGO Pick-a-Brick
-              </h4>
-              <ol className="text-sm text-gray-300 space-y-3 list-decimal list-inside">
+            <div className="relative card card-hover p-8 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent pointer-events-none"></div>
+              <div className="relative flex items-center gap-3 mb-6">
+                <div className="w-1.5 h-8 bg-gradient-to-b from-amber-500 to-orange-600 rounded-full shadow-lg shadow-amber-500/50"></div>
+                <h4 className="font-black text-white text-lg tracking-tight">
+                  How to order from LEGO Pick-a-Brick
+                </h4>
+              </div>
+              <ol className="relative text-sm text-gray-300 space-y-4 list-decimal list-inside font-medium">
                 <li>Download the Pick-a-Brick CSV file using the button above</li>
-                <li>Visit <a href="https://www.lego.com/pick-and-build/pick-a-brick" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300 underline font-semibold transition-colors">LEGO Pick-a-Brick</a></li>
+                <li>Visit <a href="https://www.lego.com/pick-and-build/pick-a-brick" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300 underline font-bold transition-colors">LEGO Pick-a-Brick</a></li>
                 <li>Click "Upload List" and select the CSV file</li>
                 <li>All pieces will be added to your cart automatically</li>
               </ol>

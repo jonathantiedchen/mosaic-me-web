@@ -89,11 +89,14 @@ export function HomePage() {
 
         {/* Results */}
         {hasResults && (
-          <div className="space-y-8 animate-in slide-in-from-bottom duration-500">
+          <div className="space-y-10 animate-in slide-in-from-bottom duration-500">
             <div className="text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/20">
-                <Sparkles className="w-4 h-4 text-emerald-400" />
-                <span className="text-sm font-semibold text-emerald-300">Your mosaic is ready!</span>
+              <div className="inline-flex items-center gap-3 px-6 py-3.5 rounded-full glass-intense border border-white/20 backdrop-blur-xl shadow-2xl">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-emerald-500 rounded-full blur-lg opacity-50 animate-pulse"></div>
+                  <Sparkles className="relative w-5 h-5 text-emerald-400" strokeWidth={2.5} />
+                </div>
+                <span className="text-base font-black text-white uppercase tracking-wider">Your mosaic is ready!</span>
               </div>
             </div>
             <ResultsTabs />
