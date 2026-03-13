@@ -1,6 +1,6 @@
 import { useMosaic } from '../hooks/useMosaic';
 import { ImageUpload } from './ImageUpload';
-import { Loader2, Grid3x3, Circle, Square, Sparkles, RotateCcw } from 'lucide-react';
+import { Loader2, Circle, Square, RotateCcw, Sparkles } from 'lucide-react';
 
 const BASEPLATE_SIZES = [32, 48, 64, 96, 128] as const;
 
@@ -25,31 +25,27 @@ export function ConfigPanel() {
   };
 
   return (
-    <div className="glass-card p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 lg:space-y-8 lg:sticky lg:top-8">
+    <div className="card card-hover p-8 sm:p-10 space-y-10">
       <div>
-        <div className="flex items-center gap-2 mb-3 sm:mb-4 lg:mb-5">
-          <Grid3x3 className="w-4 h-4 sm:w-5 sm:h-5 text-purple-300" />
-          <h2 className="text-lg sm:text-xl font-bold text-white">
-            Upload Image
-          </h2>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-1.5 h-8 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full shadow-lg shadow-indigo-500/50"></div>
+          <h3 className="text-xl font-black text-white tracking-tight">Upload Image</h3>
         </div>
         <ImageUpload />
       </div>
 
       <div>
-        <div className="flex items-center gap-2 mb-3 sm:mb-4 lg:mb-5">
-          <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-purple-300" />
-          <h3 className="text-base sm:text-lg font-semibold text-white">
-            Mosaic Settings
-          </h3>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-1.5 h-8 bg-gradient-to-b from-purple-500 to-pink-600 rounded-full shadow-lg shadow-purple-500/50"></div>
+          <h3 className="text-xl font-black text-white tracking-tight">Configure Mosaic</h3>
         </div>
 
-        <div className="space-y-4 sm:space-y-5 lg:space-y-6">
+        <div className="space-y-8">
           <div>
-            <label className="block text-xs sm:text-sm font-semibold text-purple-200 mb-2 sm:mb-3">
+            <label className="block text-sm font-bold text-white mb-4 uppercase tracking-wider">
               Baseplate Size
             </label>
-            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            <div className="grid grid-cols-5 gap-2.5">
               {BASEPLATE_SIZES.map((size) => (
                 <button
                   key={size}
@@ -58,48 +54,52 @@ export function ConfigPanel() {
                   }
                   disabled={isLoading}
                   className={`
-                    px-3 py-3.5 sm:px-2 sm:py-3 rounded-xl text-sm font-bold transition-all duration-200
-                    hover:scale-105 active:scale-95 touch-manipulation
+                    relative px-3 py-4 rounded-2xl text-sm font-black transition-all duration-300
                     ${
                       config.baseplateSize === size
-                        ? 'bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-glow'
-                        : 'bg-white/10 text-purple-100 hover:bg-white/20 border border-white/20'
+                        ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white scale-110 z-10'
+                        : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10 hover:border-white/20'
                     }
-                    disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
+                    disabled:opacity-20 disabled:cursor-not-allowed
                   `}
+                  style={config.baseplateSize === size ? {
+                    boxShadow: '0 0 0 1px rgba(99, 102, 241, 0.5) inset, 0 12px 32px -8px rgba(99, 102, 241, 0.6), 0 0 60px -15px rgba(139, 92, 246, 0.8)'
+                  } : {}}
                 >
                   {size}
                 </button>
               ))}
             </div>
-            <p className="text-xs text-purple-300 mt-2 sm:mt-3 flex items-center gap-1">
-              <Grid3x3 className="w-3 h-3" />
+            <p className="text-xs text-gray-500 mt-4 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-lg shadow-indigo-400/50"></span>
               Size in studs (1×1 LEGO pieces)
             </p>
           </div>
 
           <div>
-            <label className="block text-xs sm:text-sm font-semibold text-purple-200 mb-2 sm:mb-3">
+            <label className="block text-sm font-bold text-white mb-4 uppercase tracking-wider">
               Piece Type
             </label>
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <button
                 onClick={() =>
                   setConfig({ ...config, pieceType: 'square' })
                 }
                 disabled={isLoading}
                 className={`
-                  px-4 py-3.5 sm:py-4 rounded-xl text-sm font-semibold transition-all duration-200
-                  hover:scale-105 active:scale-95 flex items-center justify-center gap-2 touch-manipulation
+                  relative px-6 py-5 rounded-2xl text-base font-black flex items-center justify-center gap-3 transition-all duration-300
                   ${
                     config.pieceType === 'square'
-                      ? 'bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-glow'
-                      : 'bg-white/10 text-purple-100 hover:bg-white/20 border border-white/20'
+                      ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white scale-105'
+                      : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10 hover:border-white/20'
                   }
-                  disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
+                  disabled:opacity-20 disabled:cursor-not-allowed
                 `}
+                style={config.pieceType === 'square' ? {
+                  boxShadow: '0 0 0 1px rgba(99, 102, 241, 0.5) inset, 0 12px 32px -8px rgba(99, 102, 241, 0.6), 0 0 60px -15px rgba(139, 92, 246, 0.8)'
+                } : {}}
               >
-                <Square className="w-4 h-4" />
+                <Square className="w-6 h-6" strokeWidth={2.5} />
                 Square
               </button>
               <button
@@ -108,17 +108,19 @@ export function ConfigPanel() {
                 }
                 disabled={isLoading}
                 className={`
-                  px-4 py-3.5 sm:py-4 rounded-xl text-sm font-semibold transition-all duration-200
-                  hover:scale-105 active:scale-95 flex items-center justify-center gap-2 touch-manipulation
+                  relative px-6 py-5 rounded-2xl text-base font-black flex items-center justify-center gap-3 transition-all duration-300
                   ${
                     config.pieceType === 'round'
-                      ? 'bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-glow'
-                      : 'bg-white/10 text-purple-100 hover:bg-white/20 border border-white/20'
+                      ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white scale-105'
+                      : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10 hover:border-white/20'
                   }
-                  disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
+                  disabled:opacity-20 disabled:cursor-not-allowed
                 `}
+                style={config.pieceType === 'round' ? {
+                  boxShadow: '0 0 0 1px rgba(99, 102, 241, 0.5) inset, 0 12px 32px -8px rgba(99, 102, 241, 0.6), 0 0 60px -15px rgba(139, 92, 246, 0.8)'
+                } : {}}
               >
-                <Circle className="w-4 h-4" />
+                <Circle className="w-6 h-6" strokeWidth={2.5} />
                 Round
               </button>
             </div>
@@ -126,44 +128,30 @@ export function ConfigPanel() {
         </div>
       </div>
 
-      <div className="flex gap-2 sm:gap-3 pt-2 sm:pt-4">
+      <div className="flex gap-4 pt-4">
         <button
           onClick={handleGenerate}
           disabled={!uploadedFile || isLoading}
-          className="
-            flex-1 bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 text-white
-            px-4 py-3.5 sm:px-6 sm:py-4 rounded-xl font-bold shadow-lg hover:shadow-glow
-            hover:scale-105 active:scale-95 touch-manipulation
-            disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
-            transition-all duration-200 flex items-center justify-center gap-2
-            text-sm sm:text-base
-          "
+          className="btn-primary flex-1 px-8 py-5 flex items-center justify-center gap-3 text-lg disabled:opacity-20 disabled:cursor-not-allowed"
         >
           {isLoading ? (
             <>
-              <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
-              <span className="hidden xs:inline">Generating...</span>
-              <span className="xs:hidden">...</span>
+              <Loader2 className="w-6 h-6 animate-spin" strokeWidth={2.5} />
+              <span>Generating...</span>
             </>
           ) : (
             <>
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden xs:inline">Generate Mosaic</span>
-              <span className="xs:hidden">Generate</span>
+              <Sparkles className="w-6 h-6" strokeWidth={2.5} />
+              <span>Generate Mosaic</span>
             </>
           )}
         </button>
         <button
           onClick={handleReset}
           disabled={isLoading}
-          className="
-            px-4 py-3.5 sm:px-6 sm:py-4 rounded-xl font-semibold glass-button
-            text-white hover:scale-105 active:scale-95 disabled:opacity-50 touch-manipulation
-            disabled:cursor-not-allowed disabled:hover:scale-100 transition-all duration-200
-            flex items-center gap-2
-          "
+          className="btn-secondary px-6 py-5 flex items-center gap-2 disabled:opacity-20 disabled:cursor-not-allowed"
         >
-          <RotateCcw className="w-4 h-4" />
+          <RotateCcw className="w-6 h-6" strokeWidth={2.5} />
         </button>
       </div>
     </div>
