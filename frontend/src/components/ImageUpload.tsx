@@ -120,21 +120,21 @@ export function ImageUpload() {
             <p className="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">
               Or try an example
             </p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="flex gap-2">
               {SAMPLE_IMAGES.map((sample, index) => (
                 <button
                   key={index}
                   onClick={() => handleSampleClick(sample.raw, sample.name)}
-                  className="group relative overflow-hidden rounded-xl border border-white/10 hover:border-blue-500/30 bg-white/5 hover:bg-white/10 p-2 transition-all duration-300 hover:scale-105"
+                  className="group relative overflow-hidden rounded-lg border border-white/10 hover:border-blue-500/30 bg-white/5 hover:bg-white/10 p-1.5 transition-all duration-300 hover:scale-105 flex-1"
                 >
-                  <div className="aspect-square rounded-lg overflow-hidden mb-2 bg-black/20">
+                  <div className="aspect-square rounded overflow-hidden mb-1.5 bg-black/20">
                     <img
                       src={sample.raw}
                       alt={sample.name}
                       className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300"
                     />
                   </div>
-                  <p className="text-xs text-gray-400 group-hover:text-gray-200 text-center font-medium transition-colors">
+                  <p className="text-[10px] text-gray-400 group-hover:text-gray-200 text-center font-medium transition-colors">
                     {sample.name}
                   </p>
                 </button>
