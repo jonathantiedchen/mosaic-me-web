@@ -87,7 +87,7 @@ export function ConfigPanel() {
                 }
                 disabled={isLoading}
                 className={`
-                  relative px-6 py-4.5 rounded-xl text-base font-black flex items-center justify-center gap-3 transition-all duration-300
+                  relative px-8 py-6 rounded-2xl text-lg font-black flex items-center justify-center gap-3 transition-all duration-300
                   ${
                     config.pieceType === 'square'
                       ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white scale-105'
@@ -99,7 +99,7 @@ export function ConfigPanel() {
                   boxShadow: '0 0 0 1px rgba(99, 102, 241, 0.5) inset, 0 12px 32px -8px rgba(99, 102, 241, 0.6), 0 0 60px -15px rgba(139, 92, 246, 0.8)'
                 } : {}}
               >
-                <Square className="w-6 h-6" strokeWidth={2.5} />
+                <Square className="w-7 h-7" strokeWidth={2.5} />
                 Square
               </button>
               <button
@@ -108,7 +108,7 @@ export function ConfigPanel() {
                 }
                 disabled={isLoading}
                 className={`
-                  relative px-6 py-4.5 rounded-xl text-base font-black flex items-center justify-center gap-3 transition-all duration-300
+                  relative px-8 py-6 rounded-2xl text-lg font-black flex items-center justify-center gap-3 transition-all duration-300
                   ${
                     config.pieceType === 'round'
                       ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white scale-105'
@@ -120,7 +120,7 @@ export function ConfigPanel() {
                   boxShadow: '0 0 0 1px rgba(99, 102, 241, 0.5) inset, 0 12px 32px -8px rgba(99, 102, 241, 0.6), 0 0 60px -15px rgba(139, 92, 246, 0.8)'
                 } : {}}
               >
-                <Circle className="w-6 h-6" strokeWidth={2.5} />
+                <Circle className="w-7 h-7" strokeWidth={2.5} />
                 Round
               </button>
             </div>
@@ -132,16 +132,16 @@ export function ConfigPanel() {
         <button
           onClick={handleGenerate}
           disabled={!uploadedFile || isLoading}
-          className="btn-primary flex-1 px-7 py-4.5 flex items-center justify-center gap-3 text-lg disabled:opacity-20 disabled:cursor-not-allowed"
+          className="btn-primary flex-1 px-10 py-6 flex items-center justify-center gap-3 text-xl disabled:opacity-20 disabled:cursor-not-allowed"
         >
           {isLoading ? (
             <>
-              <Loader2 className="w-6 h-6 animate-spin" strokeWidth={2.5} />
+              <Loader2 className="w-7 h-7 animate-spin" strokeWidth={2.5} />
               <span>Generating...</span>
             </>
           ) : (
             <>
-              <Sparkles className="w-6 h-6" strokeWidth={2.5} />
+              <Sparkles className="w-7 h-7" strokeWidth={2.5} />
               <span>Generate Mosaic</span>
             </>
           )}
@@ -149,9 +149,9 @@ export function ConfigPanel() {
         <button
           onClick={handleReset}
           disabled={isLoading}
-          className="btn-secondary px-6 py-4.5 flex items-center gap-2 disabled:opacity-20 disabled:cursor-not-allowed"
+          className="btn-secondary px-7 py-6 flex items-center gap-2 disabled:opacity-20 disabled:cursor-not-allowed"
         >
-          <RotateCcw className="w-6 h-6" strokeWidth={2.5} />
+          <RotateCcw className="w-7 h-7" strokeWidth={2.5} />
         </button>
       </div>
     </div>
