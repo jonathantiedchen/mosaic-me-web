@@ -10,9 +10,9 @@ const ACCEPTED_FORMATS = {
   'image/webp': ['.webp'],
 };
 
-const SAMPLE_IMAGES = [
-  { raw: '/samples/raw_1.jpg', mosaic: '/samples/mosaic_1.png', name: 'Sample 1' },
-  { raw: '/samples/raw_2.jpeg', mosaic: '/samples/mosaic_2.png', name: 'Sample 2' },
+const SAMPLE_EXAMPLES = [
+  { raw: '/samples/raw_1.jpg', mosaic: '/samples/mosaic_1.png', name: 'Example 1' },
+  { raw: '/samples/raw_2.jpeg', mosaic: '/samples/mosaic_2.png', name: 'Example 2' },
 ];
 
 export function ImageUpload() {
@@ -40,16 +40,6 @@ export function ImageUpload() {
     clearMosaic();
   };
 
-  const handleSampleClick = async (samplePath: string, sampleName: string) => {
-    try {
-      const response = await fetch(samplePath);
-      const blob = await response.blob();
-      const file = new File([blob], sampleName, { type: blob.type });
-      setUploadedFile(file);
-    } catch (error) {
-      console.error('Failed to load sample image:', error);
-    }
-  };
 
   const hasErrors = fileRejections.length > 0;
   const errorMessage = hasErrors
@@ -67,7 +57,7 @@ export function ImageUpload() {
           <div
             {...getRootProps()}
             className={`
-              relative overflow-hidden border-2 border-dashed rounded-3xl p-12 sm:p-16 text-center cursor-pointer
+              relative overflow-hidden border-2 border-dashed rounded-3xl p-10 sm:p-12 text-center cursor-pointer
               transition-all duration-500 group
               ${
                 isDragActive
@@ -88,16 +78,16 @@ export function ImageUpload() {
               <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600"></div>
             </div>
 
-            <div className="relative flex flex-col items-center gap-6">
+            <div className="relative flex flex-col items-center gap-5">
               <div className="relative">
-                <div className={`absolute inset-0 rounded-3xl blur-2xl transition-all duration-500 ${
+                <div className={`absolute inset-0 rounded-2xl blur-xl transition-all duration-500 ${
                   isDragActive
                     ? 'bg-indigo-500/40 scale-125'
                     : hasErrors
                     ? 'bg-red-500/40'
                     : 'bg-indigo-500/20 group-hover:scale-110 group-hover:bg-indigo-500/30'
                 }`}></div>
-                <div className={`relative p-6 rounded-3xl transition-all duration-500 ${
+                <div className={`relative p-5 rounded-2xl transition-all duration-500 ${
                   isDragActive
                     ? 'bg-indigo-500/20 scale-110'
                     : hasErrors
@@ -105,7 +95,7 @@ export function ImageUpload() {
                     : 'bg-gradient-to-br from-indigo-500/10 to-purple-600/10 group-hover:scale-110 backdrop-blur-xl'
                 }`}>
                   <Upload
-                    className={`w-12 h-12 transition-all duration-300 ${
+                    className={`w-10 h-10 transition-all duration-300 ${
                       hasErrors ? 'text-red-400' : isDragActive ? 'text-indigo-300' : 'text-indigo-400 group-hover:text-indigo-300'
                     }`}
                     strokeWidth={2}
@@ -113,7 +103,7 @@ export function ImageUpload() {
                 </div>
               </div>
               <div>
-                <p className="text-lg font-bold text-white mb-2 tracking-tight">
+                <p className="text-base font-bold text-white mb-1.5 tracking-tight">
                   {isDragActive
                     ? 'Drop it right here'
                     : 'Drop an image or click to browse'}
@@ -123,8 +113,8 @@ export function ImageUpload() {
                 </p>
               </div>
               {hasErrors && (
-                <div className="mt-2 px-5 py-3 bg-red-500/10 border border-red-500/30 rounded-2xl backdrop-blur-xl">
-                  <p className="text-sm text-red-300 font-bold">{errorMessage}</p>
+                <div className="mt-2 px-4 py-2.5 bg-red-500/10 border border-red-500/30 rounded-xl backdrop-blur-xl">
+                  <p className="text-xs text-red-300 font-bold">{errorMessage}</p>
                 </div>
               )}
             </div>
@@ -132,56 +122,63 @@ export function ImageUpload() {
 
           <div className="pt-6 border-t border-white/5">
             <p className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">
-              Or try an example
+              Examples
             </p>
             <div className="flex gap-3">
-              {SAMPLE_IMAGES.map((sample, index) => (
-                <button
+              {SAMPLE_EXAMPLES.map((example, index) => (
+                <div
                   key={index}
-                  onClick={() => handleSampleClick(sample.raw, sample.name)}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 hover:border-indigo-500/40 bg-white/5 hover:bg-white/10 p-2 transition-all duration-300 hover:scale-110 w-24 backdrop-blur-xl"
+                  className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-2 backdrop-blur-xl"
                   style={{
                     boxShadow: '0 4px 16px -4px rgba(0, 0, 0, 0.3)'
                   }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/0 to-purple-500/0 group-hover:from-indigo-500/10 group-hover:to-purple-500/10 transition-all duration-300 rounded-2xl"></div>
-                  <div className="relative aspect-square rounded-xl overflow-hidden mb-2 bg-black/20">
-                    <img
-                      src={sample.raw}
-                      alt={sample.name}
-                      className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300"
-                    />
+                  <div className="flex gap-1.5">
+                    <div className="relative w-12 aspect-square rounded-xl overflow-hidden bg-black/20">
+                      <img
+                        src={example.raw}
+                        alt={`${example.name} - Original`}
+                        className="w-full h-full object-cover opacity-90"
+                      />
+                    </div>
+                    <div className="relative w-12 aspect-square rounded-xl overflow-hidden bg-black/20">
+                      <img
+                        src={example.mosaic}
+                        alt={`${example.name} - Mosaic`}
+                        className="w-full h-full object-cover opacity-90"
+                      />
+                    </div>
                   </div>
-                  <p className="relative text-[9px] text-gray-500 group-hover:text-gray-300 text-center font-bold transition-colors uppercase tracking-wider">
-                    {sample.name}
+                  <p className="relative text-[9px] text-gray-500 text-center font-bold mt-2 uppercase tracking-wider">
+                    {example.name}
                   </p>
-                </button>
+                </div>
               ))}
             </div>
           </div>
         </>
       ) : (
-        <div className="card card-hover p-5 flex items-center gap-5">
+        <div className="card card-hover p-4 flex items-center gap-4">
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl blur-xl opacity-40"></div>
-            <div className="relative p-4 bg-gradient-to-br from-indigo-500/20 to-purple-600/20 rounded-2xl backdrop-blur-xl flex-shrink-0">
-              <ImageIcon className="w-7 h-7 text-indigo-300" strokeWidth={2} />
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl blur-lg opacity-40"></div>
+            <div className="relative p-3 bg-gradient-to-br from-indigo-500/20 to-purple-600/20 rounded-xl backdrop-blur-xl flex-shrink-0">
+              <ImageIcon className="w-6 h-6 text-indigo-300" strokeWidth={2} />
             </div>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-base font-bold text-white truncate">
+            <p className="text-sm font-bold text-white truncate">
               {uploadedFile.name}
             </p>
-            <p className="text-sm text-gray-400 mt-1 font-medium">
+            <p className="text-xs text-gray-400 mt-0.5 font-medium">
               {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
             </p>
           </div>
           <button
             onClick={handleClear}
-            className="flex-shrink-0 p-3 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-2xl transition-all duration-300 hover:scale-110 backdrop-blur-xl border border-white/10 hover:border-red-500/30"
+            className="flex-shrink-0 p-2.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-xl border border-white/10 hover:border-red-500/30"
             aria-label="Remove image"
           >
-            <X className="w-6 h-6" strokeWidth={2.5} />
+            <X className="w-5 h-5" strokeWidth={2.5} />
           </button>
         </div>
       )}
