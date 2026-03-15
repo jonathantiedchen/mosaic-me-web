@@ -124,24 +124,24 @@ export function ImageUpload() {
             <p className="text-xs font-bold text-gray-500 mb-4 uppercase tracking-widest">
               Examples
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-5">
               {SAMPLE_EXAMPLES.map((example, index) => (
                 <div
                   key={index}
-                  className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl"
+                  className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl"
                   style={{
                     boxShadow: '0 4px 16px -4px rgba(0, 0, 0, 0.3)'
                   }}
                 >
-                  <div className="flex gap-2.5">
-                    <div className="relative w-20 aspect-square rounded-xl overflow-hidden bg-black/20">
+                  <div className="flex gap-3">
+                    <div className="relative w-32 aspect-square rounded-xl overflow-hidden bg-black/20">
                       <img
                         src={example.raw}
                         alt={`${example.name} - Original`}
                         className="w-full h-full object-cover opacity-90"
                       />
                     </div>
-                    <div className="relative w-20 aspect-square rounded-xl overflow-hidden bg-black/20">
+                    <div className="relative w-32 aspect-square rounded-xl overflow-hidden bg-black/20">
                       <img
                         src={example.mosaic}
                         alt={`${example.name} - Mosaic`}
@@ -149,7 +149,7 @@ export function ImageUpload() {
                       />
                     </div>
                   </div>
-                  <p className="relative text-[10px] text-gray-500 text-center font-bold mt-2.5 uppercase tracking-wider">
+                  <p className="relative text-xs text-gray-500 text-center font-bold mt-3 uppercase tracking-wider">
                     {example.name}
                   </p>
                 </div>
