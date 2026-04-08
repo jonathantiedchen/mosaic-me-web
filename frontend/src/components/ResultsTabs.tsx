@@ -228,7 +228,7 @@ export function ResultsTabs() {
                 </div>
                 <div className="card card-hover px-6 py-4 backdrop-blur-xl">
                   <p className="text-sm font-bold text-white">
-                    Estimated: <span className="text-2xl font-black bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">${(mosaicData.metadata.totalPieces * 0.12).toFixed(2)}</span>
+                    Estimated: <span className="text-2xl font-black bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">${(mosaicData.metadata.totalPieces * 0.06).toFixed(2)}</span>
                   </p>
                 </div>
               </div>
@@ -304,7 +304,7 @@ export function ResultsTabs() {
                 <li>All pieces will be added to your cart automatically</li>
               </ol>
               <p className="relative text-xs text-gray-400 mt-6 italic">
-                Note: Price estimate is based on approximately $0.12 per 1×1 plate. Actual prices may vary by region and availability.
+                Note: Price estimate is based on approximately $0.06 per 1×1 plate. Actual prices may vary by region and availability.
               </p>
             </div>
 
