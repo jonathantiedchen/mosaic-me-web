@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, ZoomIn, ZoomOut, Image as ImageIcon, BookOpen, ShoppingCart, Loader2, Edit } from 'lucide-react';
+import { Download, ZoomIn, ZoomOut, Image as ImageIcon, BookOpen, ShoppingCart, Loader2, Edit, AlertTriangle } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 import { useExport } from '../hooks/useExport';
 import { MosaicEditor } from './MosaicEditor';
@@ -220,10 +220,17 @@ export function ResultsTabs() {
         {activeTab === 'shopping' && (
           <div className="space-y-8">
             <div className="flex items-center justify-between gap-6">
-              <div className="card card-hover px-6 py-4 backdrop-blur-xl">
-                <p className="text-sm font-bold text-white">
-                  Total: <span className="text-2xl font-black bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">{mosaicData.metadata.totalPieces}</span> pieces
-                </p>
+              <div className="flex gap-4">
+                <div className="card card-hover px-6 py-4 backdrop-blur-xl">
+                  <p className="text-sm font-bold text-white">
+                    Total: <span className="text-2xl font-black bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">{mosaicData.metadata.totalPieces}</span> pieces
+                  </p>
+                </div>
+                <div className="card card-hover px-6 py-4 backdrop-blur-xl">
+                  <p className="text-sm font-bold text-white">
+                    Estimated: <span className="text-2xl font-black bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">${(mosaicData.metadata.totalPieces * 0.12).toFixed(2)}</span>
+                  </p>
+                </div>
               </div>
               <div className="flex gap-3">
                 <button
@@ -253,6 +260,34 @@ export function ResultsTabs() {
               </div>
             </div>
 
+            {/* Warning for pieces exceeding 999 */}
+            {mosaicData.shoppingList.some(item => item.quantity > 999) && (
+              <div className="relative card p-6 overflow-hidden border-2 border-amber-500/50">
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-orange-500/10 to-transparent pointer-events-none"></div>
+                <div className="relative flex items-start gap-4">
+                  <AlertTriangle className="w-6 h-6 text-amber-400 flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                  <div>
+                    <h4 className="font-black text-white text-lg mb-2">
+                      Quantity Limit Warning
+                    </h4>
+                    <p className="text-sm text-gray-300 leading-relaxed">
+                      Some pieces exceed the Pick-a-Brick maximum of 999 per color. When uploading to LEGO's website, you'll need to split these orders or manually adjust quantities. The affected colors are:
+                    </p>
+                    <ul className="mt-3 space-y-1">
+                      {mosaicData.shoppingList
+                        .filter(item => item.quantity > 999)
+                        .map(item => (
+                          <li key={item.colorId} className="text-sm text-amber-200 font-medium flex items-center gap-2">
+                            <div className="w-4 h-4 rounded border border-white/30" style={{ backgroundColor: item.hex }} />
+                            {item.colorName}: <span className="font-bold">{item.quantity}</span> pieces (exceeds by {item.quantity - 999})
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Pick-a-Brick Instructions */}
             <div className="relative card card-hover p-8 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent pointer-events-none"></div>
@@ -268,6 +303,9 @@ export function ResultsTabs() {
                 <li>Click "Upload List" and select the CSV file</li>
                 <li>All pieces will be added to your cart automatically</li>
               </ol>
+              <p className="relative text-xs text-gray-400 mt-6 italic">
+                Note: Price estimate is based on approximately $0.12 per 1×1 plate. Actual prices may vary by region and availability.
+              </p>
             </div>
 
             <ShoppingListView items={mosaicData.shoppingList} />
