@@ -202,7 +202,7 @@ class ExportService:
         This format can be uploaded directly to LEGO's Pick-a-Brick service
         to automatically add all required pieces to your cart.
 
-        Format: elementId    quantity
+        Format: elementId,quantity
 
         Args:
             shopping_list: List of colors with quantities and legoIds
@@ -211,7 +211,7 @@ class ExportService:
             CSV file bytes in Pick-a-Brick format
         """
         buffer = io.StringIO()
-        writer = csv.writer(buffer, delimiter='\t')
+        writer = csv.writer(buffer)
 
         # Write header
         writer.writerow(['elementId', 'quantity'])
