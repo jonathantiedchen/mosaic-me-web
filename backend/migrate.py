@@ -17,7 +17,9 @@ def run_migrations():
 
     migrations = [
         'migrations/001_initial_schema.sql',
-        'migrations/002_admin_auth_analytics.sql'
+        'migrations/002_admin_auth_analytics.sql',
+        'migrations/003_fix_visitor_count.sql',
+        'migrations/004_user_feedback.sql'
     ]
 
     try:
