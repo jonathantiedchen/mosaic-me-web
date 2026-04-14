@@ -1,5 +1,6 @@
 import { ConfigPanel } from '../components/ConfigPanel';
 import { ResultsTabs } from '../components/ResultsTabs';
+import { FeedbackWidget } from '../components/FeedbackWidget';
 import { AlertCircle, ArrowDown, Sparkles } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 
@@ -117,6 +118,11 @@ export function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Feedback widget - shows when mosaic is generated */}
+      {mosaicData?.sessionId && (
+        <FeedbackWidget sessionId={mosaicData.sessionId} />
+      )}
     </div>
   );
 }

@@ -2,15 +2,19 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { analyticsService, type AnalyticsMetrics, type AnalyticsSummary } from '../services/analytics';
+import { feedbackService, type FeedbackStats, type RecentFeedbackItem } from '../services/feedback';
 import { MetricsCard } from '../components/dashboard/MetricsCard';
 import { AnalyticsChart } from '../components/dashboard/AnalyticsChart';
-import { BarChart3, Download, Users, Image, LogOut, Sparkles, RefreshCw } from 'lucide-react';
+import { FeedbackList } from '../components/dashboard/FeedbackList';
+import { BarChart3, Download, Users, Image, LogOut, Sparkles, RefreshCw, ThumbsUp, ThumbsDown, TrendingUp, MessageSquare } from 'lucide-react';
 
 export function DashboardPage() {
   const { admin, logout } = useAuth();
   const navigate = useNavigate();
   const [metrics, setMetrics] = useState<AnalyticsMetrics | null>(null);
   const [summary, setSummary] = useState<AnalyticsSummary[]>([]);
+  const [feedbackStats, setFeedbackStats] = useState<FeedbackStats | null>(null);
+  const [recentFeedback, setRecentFeedback] = useState<RecentFeedbackItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [days, setDays] = useState(30);
@@ -30,12 +34,16 @@ export function DashboardPage() {
         await analyticsService.refreshSummaryView();
       }
 
-      const [metricsData, summaryData] = await Promise.all([
+      const [metricsData, summaryData, feedbackData, recentFeedbackData] = await Promise.all([
         analyticsService.getMetrics(days),
-        analyticsService.getSummary()
+        analyticsService.getSummary(),
+        feedbackService.getStats(days),
+        feedbackService.getRecent(20)
       ]);
       setMetrics(metricsData);
       setSummary(summaryData);
+      setFeedbackStats(feedbackData);
+      setRecentFeedback(recentFeedbackData);
     } catch (err) {
       console.error('Failed to load analytics:', err);
       setError('Failed to load analytics data');
@@ -215,9 +223,44 @@ export function DashboardPage() {
                 </div>
               </div>
 
+              {/* Feedback metrics */}
+              {feedbackStats && feedbackStats.total > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                  <MetricsCard
+                    title="User Satisfaction"
+                    value={`${feedbackStats.satisfaction_rate}%`}
+                    icon={<TrendingUp className="w-6 h-6" />}
+                    description={`${feedbackStats.total} total responses`}
+                  />
+                  <MetricsCard
+                    title="Positive Feedback"
+                    value={feedbackStats.thumbs_up}
+                    icon={<ThumbsUp className="w-6 h-6" />}
+                    description={`In the last ${days} days`}
+                  />
+                  <MetricsCard
+                    title="Negative Feedback"
+                    value={feedbackStats.thumbs_down}
+                    icon={<ThumbsDown className="w-6 h-6" />}
+                    description={`In the last ${days} days`}
+                  />
+                </div>
+              )}
+
               {/* Chart */}
               {summary.length > 0 && (
                 <AnalyticsChart data={summary} />
+              )}
+
+              {/* Recent Feedback */}
+              {recentFeedback.length > 0 && (
+                <div className="mt-8">
+                  <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-purple-400" />
+                    Recent Feedback
+                  </h2>
+                  <FeedbackList feedback={recentFeedback} />
+                </div>
               )}
             </>
           ) : null}

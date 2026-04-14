@@ -10,6 +10,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     CheckConstraint,
+    UniqueConstraint,
     JSON,
 )
 from sqlalchemy.dialects.postgresql import UUID
@@ -121,4 +122,43 @@ class AnalyticsEvent(Base):
             "export_type": self.export_type,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "metadata": self.event_metadata,
+        }
+
+
+class UserFeedback(Base):
+    """User feedback model for thumbs up/down ratings and comments."""
+
+    __tablename__ = "user_feedback"
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    session_id = Column(UUID(as_uuid=True), nullable=False, index=True)
+    visitor_hash = Column(String(64), nullable=False, index=True)
+    feedback_type = Column(String(10), nullable=False, index=True)
+    comment = Column(String(200), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=datetime.utcnow, nullable=False, index=True)
+
+    __table_args__ = (
+        CheckConstraint(
+            "feedback_type IN ('thumbs_up', 'thumbs_down')",
+            name="chk_feedback_type"
+        ),
+        CheckConstraint(
+            "char_length(comment) <= 200",
+            name="chk_comment_length"
+        ),
+        UniqueConstraint('session_id', 'visitor_hash', name='uq_feedback_session_visitor'),
+    )
+
+    def __repr__(self) -> str:
+        return f"<UserFeedback(id={self.id}, feedback_type={self.feedback_type}, session_id={self.session_id})>"
+
+    def to_dict(self) -> dict:
+        """Convert model to dictionary for API responses."""
+        return {
+            "id": self.id,
+            "session_id": str(self.session_id) if self.session_id else None,
+            "visitor_hash": self.visitor_hash,
+            "feedback_type": self.feedback_type,
+            "comment": self.comment,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
         }

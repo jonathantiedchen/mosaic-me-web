@@ -6,7 +6,7 @@ import logging
 import asyncio
 
 from .config import config
-from .api import upload, export, palettes, auth, analytics
+from .api import upload, export, palettes, auth, analytics, feedback
 from .db.database import init_db, close_db, SessionLocal
 from .middleware.analytics import AnalyticsMiddleware
 from .services.analytics import analytics_service
@@ -65,6 +65,7 @@ app.include_router(export.router, prefix=config.API_V1_PREFIX, tags=["export"])
 app.include_router(palettes.router, prefix=config.API_V1_PREFIX, tags=["palettes"])
 app.include_router(auth.router, prefix=config.API_V1_PREFIX, tags=["auth"])
 app.include_router(analytics.router, prefix=config.API_V1_PREFIX, tags=["analytics"])
+app.include_router(feedback.router, prefix=config.API_V1_PREFIX, tags=["feedback"])
 
 
 # Background task for periodic cleanup
