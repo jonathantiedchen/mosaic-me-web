@@ -115,8 +115,10 @@ async def upload_image(
         preview_url = f"data:image/png;base64,{preview_base64}"
         mosaic_data['previewUrl'] = preview_url
 
-        # Save mosaic data
-        save_mosaic_data(mosaic_data)
+        # Save mosaic data WITHOUT the large preview to reduce memory usage
+        mosaic_data_to_save = mosaic_data.copy()
+        mosaic_data_to_save['previewUrl'] = ''  # Don't store the base64 image
+        save_mosaic_data(mosaic_data_to_save)
 
         # Track analytics event
         if config.ANALYTICS_ENABLED:

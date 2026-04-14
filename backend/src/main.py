@@ -3,12 +3,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 import logging
+import asyncio
 
 from .config import config
 from .api import upload, export, palettes, auth, analytics
 from .db.database import init_db, close_db, SessionLocal
 from .middleware.analytics import AnalyticsMiddleware
 from .services.analytics import analytics_service
+from .api.storage import cleanup_expired_sessions
 
 # Configure logging
 logging.basicConfig(
@@ -65,6 +67,19 @@ app.include_router(auth.router, prefix=config.API_V1_PREFIX, tags=["auth"])
 app.include_router(analytics.router, prefix=config.API_V1_PREFIX, tags=["analytics"])
 
 
+# Background task for periodic cleanup
+async def periodic_cleanup():
+    """Periodically cleanup expired sessions to prevent memory buildup."""
+    while True:
+        try:
+            await asyncio.sleep(3600)  # Run every hour
+            removed = cleanup_expired_sessions()
+            if removed > 0:
+                logger.info(f"Cleaned up {removed} expired mosaic sessions from memory")
+        except Exception as e:
+            logger.error(f"Error in periodic cleanup: {e}")
+
+
 # Startup event
 @app.on_event("startup")
 async def startup_event():
@@ -72,6 +87,10 @@ async def startup_event():
     logger.info(f"Starting {config.APP_NAME} v{config.VERSION}")
     logger.info(f"API available at: {config.API_V1_PREFIX}")
     logger.info(f"API documentation available at: /docs")
+
+    # Start background cleanup task
+    asyncio.create_task(periodic_cleanup())
+    logger.info("Started periodic session cleanup task (runs hourly)")
 
     # Initialize database connection
     try:

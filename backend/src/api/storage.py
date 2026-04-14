@@ -7,8 +7,9 @@ import threading
 _sessions: Dict[str, Dict] = {}
 _sessions_lock = threading.Lock()
 
-# TTL for sessions (24 hours)
-SESSION_TTL = timedelta(hours=24)
+# TTL for sessions (1 hour - enough time for users to download exports)
+# Reduced from 24 hours to prevent memory buildup
+SESSION_TTL = timedelta(hours=1)
 
 
 def save_mosaic_data(mosaic_data: Dict) -> None:
