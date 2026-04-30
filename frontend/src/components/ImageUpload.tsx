@@ -121,10 +121,10 @@ export function ImageUpload() {
           </div>
 
           <div className="pt-6 border-t border-white/5">
-            <p className="text-sm font-bold text-gray-500 mb-5 uppercase tracking-widest">
+            <p className="text-sm font-bold text-gray-500 mb-5 uppercase tracking-widest text-center">
               Examples
             </p>
-            <div className="flex gap-6">
+            <div className="flex flex-wrap gap-6 justify-center">
               {SAMPLE_EXAMPLES.map((example, index) => (
                 <div
                   key={index}

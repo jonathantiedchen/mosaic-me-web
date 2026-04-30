@@ -1,7 +1,7 @@
 import { ConfigPanel } from '../components/ConfigPanel';
 import { ResultsTabs } from '../components/ResultsTabs';
 import { FeedbackWidget } from '../components/FeedbackWidget';
-import { AlertCircle, ArrowDown, Sparkles } from 'lucide-react';
+import { AlertCircle, ArrowDown, Sparkles, Github } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 
 export function HomePage() {
@@ -10,29 +10,6 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen relative">
-      <header className="border-b border-white/5 backdrop-blur-xl bg-white/[0.02] sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl blur-lg opacity-50"></div>
-                <div className="relative p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl">
-                  <Sparkles className="w-5 h-5 text-white" strokeWidth={2.5} />
-                </div>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-white">
-                  Mosaic Me
-                </h1>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  LEGO mosaic generator
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <main className="max-w-5xl mx-auto px-6 py-14 sm:py-22">
         {error && (
           <div className="mb-8 card border-red-500/30 p-6 flex items-start gap-4 animate-in slide-in-from-top duration-300">
@@ -48,7 +25,7 @@ export function HomePage() {
 
         {/* Hero when no upload */}
         {!uploadedFile && !hasResults && (
-          <div className="mb-18 text-center relative">
+          <div className="mb-24 sm:mb-28 text-center relative">
             {/* Floating orbs */}
             <div className="absolute top-0 left-1/4 w-60 h-60 bg-indigo-500/20 rounded-full blur-3xl animate-float-slow"></div>
             <div className="absolute top-16 right-1/4 w-60 h-60 bg-purple-500/20 rounded-full blur-3xl animate-float-slow" style={{ animationDelay: '2s' }}></div>
@@ -57,6 +34,18 @@ export function HomePage() {
               <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full glass-intense border border-white/20 mb-7 backdrop-blur-xl">
                 <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse shadow-lg shadow-indigo-400/50"></div>
                 <span className="text-sm font-bold text-white">Free • No signup • Instant results</span>
+              </div>
+
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl blur-lg opacity-50"></div>
+                  <div className="relative p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl">
+                    <Sparkles className="w-5 h-5 text-white" strokeWidth={2.5} />
+                  </div>
+                </div>
+                <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+                  Mosaic Me
+                </h1>
               </div>
 
               <h2 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black mb-7 tracking-tighter leading-[0.9]">
@@ -91,7 +80,7 @@ export function HomePage() {
         {/* Results */}
         {hasResults && (
           <div className="space-y-9 animate-in slide-in-from-bottom duration-500">
-            <div className="text-center">
+            <div className="flex items-center justify-center gap-4 flex-wrap">
               <div className="inline-flex items-center gap-3 px-6 py-3.5 rounded-full glass-intense border border-white/20 backdrop-blur-xl shadow-2xl">
                 <div className="relative">
                   <div className="absolute inset-0 bg-emerald-500 rounded-full blur-lg opacity-50 animate-pulse"></div>
@@ -99,6 +88,9 @@ export function HomePage() {
                 </div>
                 <span className="text-base font-black text-white uppercase tracking-wider">Your mosaic is ready!</span>
               </div>
+              {mosaicData?.sessionId && (
+                <FeedbackWidget sessionId={mosaicData.sessionId} />
+              )}
             </div>
             <ResultsTabs />
           </div>
@@ -112,17 +104,24 @@ export function HomePage() {
               <span className="font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Mosaic Me</span>
               {' '}• Made with care
             </p>
-            <p className="text-xs text-gray-500">
-              Not affiliated with LEGO Group
-            </p>
+            <div className="flex items-center gap-5">
+              <a
+                href="https://github.com/jonathantiedchen/mosaic-me-web"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+                aria-label="View source on GitHub"
+              >
+                <Github className="w-4 h-4" strokeWidth={2} />
+                <span>GitHub</span>
+              </a>
+              <p className="text-xs text-gray-500">
+                Not affiliated with LEGO Group
+              </p>
+            </div>
           </div>
         </div>
       </footer>
-
-      {/* Feedback widget - shows when mosaic is generated */}
-      {mosaicData?.sessionId && (
-        <FeedbackWidget sessionId={mosaicData.sessionId} />
-      )}
     </div>
   );
 }

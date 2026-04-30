@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { useMosaic } from '../hooks/useMosaic';
 import { ImageUpload } from './ImageUpload';
-import { Loader2, Circle, Square, RotateCcw, Sparkles } from 'lucide-react';
+import { Loader2, Circle, Square, RotateCcw, Sparkles, ChevronDown, ChevronUp, Settings } from 'lucide-react';
 
 const BASEPLATE_SIZES = [32, 48, 64, 96, 128] as const;
 
@@ -12,7 +13,11 @@ export function ConfigPanel() {
     generateMosaic,
     isLoading,
     clearMosaic,
+    mosaicData,
   } = useMosaic();
+
+  const hasResults = !!mosaicData;
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleGenerate = () => {
     if (uploadedFile) {
@@ -22,10 +27,62 @@ export function ConfigPanel() {
 
   const handleReset = () => {
     clearMosaic();
+    setIsExpanded(false);
   };
+
+  if (hasResults && !isExpanded) {
+    return (
+      <div className="card p-4 sm:p-5 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="p-2.5 bg-gradient-to-br from-indigo-500/20 to-purple-600/20 rounded-xl backdrop-blur-xl flex-shrink-0">
+            <Settings className="w-5 h-5 text-indigo-300" strokeWidth={2} />
+          </div>
+          <div className="min-w-0 flex-1 text-sm font-medium text-gray-300 truncate">
+            <span className="text-white font-bold">{config.baseplateSize}</span>
+            <span className="text-gray-500"> studs · </span>
+            <span className="text-white font-bold capitalize">{config.pieceType}</span>
+            {uploadedFile && (
+              <>
+                <span className="text-gray-500"> · </span>
+                <span className="truncate">{uploadedFile.name}</span>
+              </>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            onClick={() => setIsExpanded(true)}
+            className="px-4 py-2 text-sm font-bold text-indigo-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors flex items-center gap-2"
+          >
+            <ChevronDown className="w-4 h-4" strokeWidth={2.5} />
+            Edit
+          </button>
+          <button
+            onClick={handleReset}
+            disabled={isLoading}
+            className="p-2.5 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors disabled:opacity-40"
+            title="Start over"
+          >
+            <RotateCcw className="w-4 h-4" strokeWidth={2.5} />
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="card card-hover p-7 sm:p-9 space-y-9">
+      {hasResults && (
+        <div className="flex justify-end -mb-4">
+          <button
+            onClick={() => setIsExpanded(false)}
+            className="px-4 py-2 text-sm font-bold text-indigo-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors flex items-center gap-2"
+          >
+            <ChevronUp className="w-4 h-4" strokeWidth={2.5} />
+            Collapse
+          </button>
+        </div>
+      )}
       <div>
         <div className="flex items-center gap-3 mb-6">
           <div className="w-1.5 h-8 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full shadow-lg shadow-indigo-500/50"></div>

@@ -70,33 +70,27 @@ export function FeedbackWidget({ sessionId }: FeedbackWidgetProps) {
 
   return (
     <>
-      {/* Fixed position feedback buttons - bottom right */}
-      <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-2">
-        {!isOpen && !isSubmitted && (
-          <>
-            <button
-              onClick={() => handleFeedbackClick('thumbs_up')}
-              className="group flex items-center gap-2 px-4 py-3 glass-card hover:bg-white/10 text-white rounded-full transition-all hover:scale-105 shadow-lg"
-              title="I like this!"
-            >
-              <ThumbsUp className="w-5 h-5 text-green-400 group-hover:text-green-300" />
-              <span className="text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap">
-                Like it!
-              </span>
-            </button>
-            <button
-              onClick={() => handleFeedbackClick('thumbs_down')}
-              className="group flex items-center gap-2 px-4 py-3 glass-card hover:bg-white/10 text-white rounded-full transition-all hover:scale-105 shadow-lg"
-              title="Could be better"
-            >
-              <ThumbsDown className="w-5 h-5 text-red-400 group-hover:text-red-300" />
-              <span className="text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap">
-                Not great
-              </span>
-            </button>
-          </>
-        )}
-      </div>
+      {/* Inline feedback buttons */}
+      {!isOpen && !isSubmitted && (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => handleFeedbackClick('thumbs_up')}
+            className="p-2.5 glass-card hover:bg-white/10 text-white rounded-full transition-all hover:scale-105 shadow-lg"
+            title="I like this!"
+            aria-label="Thumbs up"
+          >
+            <ThumbsUp className="w-5 h-5 text-green-400 hover:text-green-300" />
+          </button>
+          <button
+            onClick={() => handleFeedbackClick('thumbs_down')}
+            className="p-2.5 glass-card hover:bg-white/10 text-white rounded-full transition-all hover:scale-105 shadow-lg"
+            title="Could be better"
+            aria-label="Thumbs down"
+          >
+            <ThumbsDown className="w-5 h-5 text-red-400 hover:text-red-300" />
+          </button>
+        </div>
+      )}
 
       {/* Feedback form modal */}
       {isOpen && (
