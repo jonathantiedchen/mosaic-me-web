@@ -80,7 +80,7 @@ export function HomePage() {
         {/* Results */}
         {hasResults && (
           <div className="space-y-9 animate-in slide-in-from-bottom duration-500">
-            <div className="flex items-center justify-center gap-4 flex-wrap">
+            <div className="text-center">
               <div className="inline-flex items-center gap-3 px-6 py-3.5 rounded-full glass-intense border border-white/20 backdrop-blur-xl shadow-2xl">
                 <div className="relative">
                   <div className="absolute inset-0 bg-emerald-500 rounded-full blur-lg opacity-50 animate-pulse"></div>
@@ -88,11 +88,16 @@ export function HomePage() {
                 </div>
                 <span className="text-base font-black text-white uppercase tracking-wider">Your mosaic is ready!</span>
               </div>
-              {mosaicData?.sessionId && (
-                <FeedbackWidget sessionId={mosaicData.sessionId} />
-              )}
             </div>
             <ResultsTabs />
+            {mosaicData?.sessionId && (
+              <div className="flex flex-col items-center gap-3 pt-2">
+                <p className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+                  How did we do?
+                </p>
+                <FeedbackWidget sessionId={mosaicData.sessionId} />
+              </div>
+            )}
           </div>
         )}
       </main>
