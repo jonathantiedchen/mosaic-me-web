@@ -20,7 +20,7 @@
 
 @layer components {
   .btn-generate {
-    @apply w-full bg-accent text-bg font-sans font-medium text-sm rounded-sm
+    @apply w-full bg-accent text-bg font-sans font-medium text-sm
            flex items-center justify-center gap-2
            transition-colors duration-200;
     padding: 13px 20px;
@@ -74,7 +74,7 @@
   }
 
   .chip-label {
-    font-family: 'DM Sans', sans-serif;
+    @apply font-sans;
     font-weight: 500;
     font-size: 9px;
     letter-spacing: 0.14em;
@@ -84,10 +84,9 @@
   }
 
   .chip-value {
-    font-family: 'DM Sans', sans-serif;
+    @apply font-sans text-text-subtle;
     font-weight: 500;
     font-size: 12px;
-    color: #c5bfb8;
   }
 
   .upload-zone {
@@ -118,7 +117,7 @@
   }
 
   .tab-btn:hover {
-    color: #c5bfb8;
+    @apply text-text-subtle;
   }
 
   .tab-btn.active {

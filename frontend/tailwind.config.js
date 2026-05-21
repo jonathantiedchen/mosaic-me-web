@@ -23,6 +23,7 @@ export default {
         'text-muted': '#5a5450',
         accent: '#c4a882',
         'accent-hover': '#d4b892',
+        'text-subtle': '#c5bfb8',
         error: '#c0392b',
       },
       fontFamily: {
