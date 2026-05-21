@@ -172,8 +172,8 @@ export function ResultsTabs() {
                 <button
                   onClick={() => handleExport('shopping-csv', `shopping-list-${mosaicData.sessionId}.csv`)}
                   disabled={isExporting}
-                  className="flex items-center gap-2 font-medium"
-                  style={{ color: '#c4a882', background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px' }}
+                  className="flex items-center gap-2 font-medium text-accent text-sm"
+                  style={{ background: 'none', border: 'none', cursor: 'pointer' }}
                 >
                   <Download className="w-4 h-4" strokeWidth={1.5} />
                   CSV
