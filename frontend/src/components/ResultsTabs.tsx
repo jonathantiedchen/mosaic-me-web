@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, ZoomIn, ZoomOut, Image as ImageIcon, BookOpen, ShoppingCart, Loader2, Edit, AlertTriangle } from 'lucide-react';
+import { Download, ZoomIn, ZoomOut, Edit, AlertTriangle } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 import { useExport } from '../hooks/useExport';
 import { MosaicEditor } from './MosaicEditor';
@@ -39,150 +39,78 @@ export function ResultsTabs() {
   };
 
   return (
-    <div className="card card-hover overflow-hidden">
-      <div className="border-b border-white/5 backdrop-blur-xl bg-gradient-to-r from-white/5 to-transparent">
+    <div className="panel overflow-hidden">
+      <div style={{ borderBottom: '1px solid #2e2a26' }}>
         <nav className="flex">
-          <button
-            onClick={() => setActiveTab('preview')}
-            className={`
-              flex-1 px-6 py-5 text-sm font-bold transition-all duration-300
-              flex items-center justify-center gap-3 relative uppercase tracking-wider
-              ${
-                activeTab === 'preview'
-                  ? 'text-white'
-                  : 'text-gray-500 hover:text-gray-300'
-              }
-            `}
-          >
-            <ImageIcon className="w-5 h-5" strokeWidth={2.5} />
-            <span>Preview</span>
-            {activeTab === 'preview' && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg shadow-indigo-500/50"></div>
-            )}
-          </button>
-          <button
-            onClick={() => setActiveTab('instructions')}
-            className={`
-              flex-1 px-6 py-5 text-sm font-bold transition-all duration-300
-              flex items-center justify-center gap-3 relative uppercase tracking-wider
-              ${
-                activeTab === 'instructions'
-                  ? 'text-white'
-                  : 'text-gray-500 hover:text-gray-300'
-              }
-            `}
-          >
-            <BookOpen className="w-5 h-5" strokeWidth={2.5} />
-            <span>Instructions</span>
-            {activeTab === 'instructions' && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg shadow-indigo-500/50"></div>
-            )}
-          </button>
-          <button
-            onClick={() => setActiveTab('shopping')}
-            className={`
-              flex-1 px-6 py-5 text-sm font-bold transition-all duration-300
-              flex items-center justify-center gap-3 relative uppercase tracking-wider
-              ${
-                activeTab === 'shopping'
-                  ? 'text-white'
-                  : 'text-gray-500 hover:text-gray-300'
-              }
-            `}
-          >
-            <ShoppingCart className="w-5 h-5" strokeWidth={2.5} />
-            <span>Shopping</span>
-            {activeTab === 'shopping' && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg shadow-indigo-500/50"></div>
-            )}
-          </button>
+          {(['preview', 'instructions', 'shopping'] as TabType[]).map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`tab-btn${activeTab === tab ? ' active' : ''}`}
+              style={{ flex: 1 }}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
         </nav>
       </div>
 
-      <div className="p-4 sm:p-6 lg:p-8">
+      <div className="p-5 sm:p-6">
         {activeTab === 'preview' && (
           <div className="space-y-4 sm:space-y-6">
             {!isEditing ? (
               <>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={handleZoomOut}
-                      disabled={zoom <= 0.5}
-                      className="btn-secondary p-3.5 disabled:opacity-10 disabled:cursor-not-allowed"
-                      aria-label="Zoom out"
-                    >
-                      <ZoomOut className="w-5 h-5" strokeWidth={2.5} />
+                  <div className="flex items-center gap-2">
+                    <button onClick={handleZoomOut} disabled={zoom <= 0.5} className="btn-ghost" aria-label="Zoom out">
+                      <ZoomOut className="w-4 h-4" strokeWidth={1.5} />
                     </button>
-                    <span className="text-sm font-black text-white min-w-[80px] text-center px-5 py-3 card backdrop-blur-xl">
+                    <span className="font-sans text-text-subtle" style={{ fontSize: '12px', fontWeight: 500, minWidth: '44px', textAlign: 'center' }}>
                       {Math.round(zoom * 100)}%
                     </span>
-                    <button
-                      onClick={handleZoomIn}
-                      disabled={zoom >= 3}
-                      className="btn-secondary p-3.5 disabled:opacity-10 disabled:cursor-not-allowed"
-                      aria-label="Zoom in"
-                    >
-                      <ZoomIn className="w-5 h-5" strokeWidth={2.5} />
+                    <button onClick={handleZoomIn} disabled={zoom >= 3} className="btn-ghost" aria-label="Zoom in">
+                      <ZoomIn className="w-4 h-4" strokeWidth={1.5} />
                     </button>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={handleEditMosaic}
-                      className="btn-secondary flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold"
-                    >
-                      <Edit className="w-5 h-5" strokeWidth={2.5} />
-                      <span>Edit</span>
+                  <div className="flex items-center gap-2">
+                    <button onClick={handleEditMosaic} className="btn-ghost flex items-center gap-2">
+                      <Edit className="w-4 h-4" strokeWidth={1.5} />
+                      Edit
                     </button>
                     <button
                       onClick={() => handleExport('mosaic-png', `mosaic-${mosaicData.sessionId}.png`)}
                       disabled={isExporting}
-                      className="btn-primary flex items-center gap-2.5 px-6 py-3.5 text-sm disabled:opacity-20"
+                      className="btn-generate"
+                      style={{ width: 'auto', padding: '9px 16px' }}
                     >
-                      {isExporting ? (
-                        <Loader2 className="w-5 h-5 animate-spin" strokeWidth={2.5} />
-                      ) : (
-                        <Download className="w-5 h-5" strokeWidth={2.5} />
-                      )}
-                      <span>Download</span>
+                      <Download className="w-4 h-4" strokeWidth={1.5} />
+                      {isExporting ? 'Downloading…' : 'Download'}
                     </button>
                   </div>
                 </div>
-                <div className="relative overflow-auto rounded-3xl border border-white/10 bg-gradient-to-br from-black/60 via-indigo-950/20 to-black/60 p-6 max-h-[600px] backdrop-blur-xl">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.1),transparent_50%)] pointer-events-none"></div>
+                <div style={{ border: '1px solid #2e2a26', borderRadius: '2px', padding: '16px', maxHeight: '600px', overflowY: 'auto', overflowX: 'auto' }}>
                   <img
                     src={mosaicData.previewUrl}
                     alt="Mosaic preview"
                     style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}
-                    className="relative max-w-none rounded-2xl shadow-2xl shadow-indigo-900/30"
+                    className="max-w-none"
                   />
                 </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="relative card card-hover p-5 group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
-                    <p className="relative text-gray-500 text-xs font-bold mb-3 uppercase tracking-widest">Size</p>
-                    <p className="relative text-white font-black text-2xl">
-                      {mosaicData.metadata.baseplateSize}×{mosaicData.metadata.baseplateSize}
-                    </p>
-                  </div>
-                  <div className="relative card card-hover p-5 group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
-                    <p className="relative text-gray-500 text-xs font-bold mb-3 uppercase tracking-widest">Pieces</p>
-                    <p className="relative text-white font-black text-2xl">
-                      {mosaicData.metadata.totalPieces}
-                    </p>
-                  </div>
-                  <div className="relative card card-hover p-5 group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
-                    <p className="relative text-gray-500 text-xs font-bold mb-3 uppercase tracking-widest">Colors</p>
-                    <p className="relative text-white font-black text-2xl">
-                      {mosaicData.metadata.uniqueColors}
-                    </p>
-                  </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { label: 'Size', value: `${mosaicData.metadata.baseplateSize}×${mosaicData.metadata.baseplateSize}` },
+                    { label: 'Pieces', value: mosaicData.metadata.totalPieces },
+                    { label: 'Colors', value: mosaicData.metadata.uniqueColors },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="panel p-4">
+                      <p className="chip-label mb-2">{label}</p>
+                      <p className="font-sans text-text-primary" style={{ fontSize: '22px', fontWeight: 600, letterSpacing: '-0.03em' }}>{value}</p>
+                    </div>
+                  ))}
                 </div>
               </>
             ) : (
-              <div className="bg-white/5 border border-white/20 rounded-xl overflow-hidden" style={{ height: '600px', maxHeight: '80vh' }}>
+              <div className="panel overflow-hidden" style={{ height: '600px', maxHeight: '80vh' }}>
                 <MosaicEditor
                   grid={mosaicData.grid}
                   shoppingList={mosaicData.shoppingList}
@@ -201,17 +129,14 @@ export function ResultsTabs() {
               <button
                 onClick={() => handleExport('instructions-png', `instructions-${mosaicData.sessionId}.png`)}
                 disabled={isExporting}
-                className="btn-primary flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold disabled:opacity-20"
+                className="btn-generate"
+                style={{ width: 'auto', padding: '9px 16px' }}
               >
-                {isExporting ? (
-                  <Loader2 className="w-5 h-5 animate-spin" strokeWidth={2.5} />
-                ) : (
-                  <Download className="w-5 h-5" strokeWidth={2.5} />
-                )}
-                <span>Download</span>
+                <Download className="w-4 h-4" strokeWidth={1.5} />
+                {isExporting ? 'Downloading…' : 'Download'}
               </button>
             </div>
-            <div className="bg-white/5 border border-white/20 rounded-xl p-3 sm:p-4 lg:p-6">
+            <div style={{ border: '1px solid #2e2a26', borderRadius: '2px', padding: '16px' }}>
               <InstructionsView grid={mosaicData.grid} shoppingList={mosaicData.shoppingList} />
             </div>
           </div>
@@ -219,55 +144,49 @@ export function ResultsTabs() {
 
         {activeTab === 'shopping' && (
           <div className="space-y-8">
-            <div className="flex items-center justify-between gap-6">
-              <div className="flex gap-4">
-                <div className="card card-hover px-6 py-4 backdrop-blur-xl">
-                  <p className="text-sm font-bold text-white">
-                    Total: <span className="text-2xl font-black bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">{mosaicData.metadata.totalPieces}</span> pieces
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex gap-3">
+                <div className="panel px-4 py-3">
+                  <p className="chip-label mb-1">Total pieces</p>
+                  <p className="font-sans text-text-primary" style={{ fontSize: '18px', fontWeight: 600, letterSpacing: '-0.02em' }}>
+                    {mosaicData.metadata.totalPieces}
                   </p>
                 </div>
-                <div className="card card-hover px-6 py-4 backdrop-blur-xl">
-                  <p className="text-sm font-bold text-white">
-                    Estimated: <span className="text-2xl font-black bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">${(mosaicData.metadata.totalPieces * 0.06).toFixed(2)}</span>
+                <div className="panel px-4 py-3">
+                  <p className="chip-label mb-1">Est. cost</p>
+                  <p className="font-sans text-text-primary" style={{ fontSize: '18px', fontWeight: 600, letterSpacing: '-0.02em' }}>
+                    ${(mosaicData.metadata.totalPieces * 0.06).toFixed(2)}
                   </p>
                 </div>
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 <button
                   onClick={() => handleExport('pickabrick-csv', `pickabrick-${mosaicData.sessionId}.csv`)}
                   disabled={isExporting}
-                  className="btn-primary flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold disabled:opacity-20"
+                  className="btn-generate"
+                  style={{ width: 'auto', padding: '9px 16px' }}
                 >
-                  {isExporting ? (
-                    <Loader2 className="w-5 h-5 animate-spin" strokeWidth={2.5} />
-                  ) : (
-                    <Download className="w-5 h-5" strokeWidth={2.5} />
-                  )}
-                  <span>Pick-a-Brick</span>
+                  <Download className="w-4 h-4" strokeWidth={1.5} />
+                  Pick-a-Brick
                 </button>
                 <button
                   onClick={() => handleExport('shopping-csv', `shopping-list-${mosaicData.sessionId}.csv`)}
                   disabled={isExporting}
-                  className="btn-secondary flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold disabled:opacity-20"
+                  className="btn-ghost flex items-center gap-2"
                 >
-                  {isExporting ? (
-                    <Loader2 className="w-5 h-5 animate-spin" strokeWidth={2.5} />
-                  ) : (
-                    <Download className="w-5 h-5" strokeWidth={2.5} />
-                  )}
-                  <span>CSV</span>
+                  <Download className="w-4 h-4" strokeWidth={1.5} />
+                  CSV
                 </button>
               </div>
             </div>
 
             {/* Warning for pieces exceeding 999 */}
             {mosaicData.shoppingList.some(item => item.quantity > 999) && (
-              <div className="relative card p-6 overflow-hidden border-2 border-amber-500/50">
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-orange-500/10 to-transparent pointer-events-none"></div>
-                <div className="relative flex items-start gap-4">
-                  <AlertTriangle className="w-6 h-6 text-amber-400 flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+              <div className="panel p-5" style={{ borderColor: '#c4a882' }}>
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-accent" strokeWidth={1.5} />
                   <div>
-                    <h4 className="font-black text-white text-lg mb-2">
+                    <h4 className="font-sans text-text-primary" style={{ fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>
                       Quantity Limit Warning
                     </h4>
                     <p className="text-sm text-gray-300 leading-relaxed">
@@ -288,23 +207,18 @@ export function ResultsTabs() {
               </div>
             )}
 
-            {/* Pick-a-Brick Instructions */}
-            <div className="relative card card-hover p-8 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent pointer-events-none"></div>
-              <div className="relative flex items-center gap-3 mb-6">
-                <div className="w-1.5 h-8 bg-gradient-to-b from-amber-500 to-orange-600 rounded-full shadow-lg shadow-amber-500/50"></div>
-                <h4 className="font-black text-white text-lg tracking-tight">
-                  How to order from LEGO Pick-a-Brick
-                </h4>
-              </div>
-              <ol className="relative text-sm text-gray-300 space-y-4 list-decimal list-inside font-medium">
+            <div className="panel p-5">
+              <h4 className="font-sans text-text-primary" style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px' }}>
+                How to order from LEGO Pick-a-Brick
+              </h4>
+              <ol className="font-sans text-text-secondary" style={{ fontSize: '13px', fontWeight: 300, lineHeight: 1.8, paddingLeft: '16px' }}>
                 <li>Download the Pick-a-Brick CSV file using the button above</li>
                 <li>Visit <a href="https://www.lego.com/pick-and-build/pick-a-brick" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300 underline font-bold transition-colors">LEGO Pick-a-Brick</a></li>
                 <li>Click "Upload List" and select the CSV file</li>
                 <li>All pieces will be added to your cart automatically</li>
               </ol>
-              <p className="relative text-xs text-gray-400 mt-6 italic">
-                Note: Price estimate is based on approximately $0.06 per 1×1 plate. Actual prices may vary by region and availability.
+              <p className="font-sans text-text-muted" style={{ fontSize: '11px', fontWeight: 300, marginTop: '12px' }}>
+                Price estimate based on ~$0.06 per 1×1 plate. Actual prices vary by region.
               </p>
             </div>
 
@@ -332,51 +246,30 @@ function InstructionsView({
     <div className="space-y-4 sm:space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <div>
-          <h4 className="font-bold text-white mb-3 sm:mb-4 flex items-center gap-2 text-sm sm:text-base">
-            <div className="w-1 h-5 sm:h-6 bg-gradient-to-b from-purple-500 to-blue-500 rounded-full"></div>
-            Color Legend
-          </h4>
-          <div className="space-y-1.5 sm:space-y-2 max-h-[300px] sm:max-h-[400px] lg:max-h-[500px] overflow-y-auto pr-1 sm:pr-2">
+          <h4 className="chip-label mb-3">Color Legend</h4>
+          <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
             {shoppingList.map((item, index) => (
-              <div key={item.colorId} className="flex items-center gap-2 sm:gap-3 p-2 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors">
-                <span className="text-xs sm:text-sm font-bold text-purple-300 w-6 sm:w-8 flex-shrink-0">
+              <div key={item.colorId} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 0', borderBottom: '1px solid #2e2a26' }}>
+                <span className="font-sans text-text-muted" style={{ fontSize: '11px', fontWeight: 500, width: '20px', flexShrink: 0 }}>
                   {index + 1}
                 </span>
-                <div
-                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg border-2 border-white/30 shadow-lg flex-shrink-0"
-                  style={{ backgroundColor: item.hex }}
-                />
-                <span className="text-xs sm:text-sm text-white font-medium truncate">{item.colorName}</span>
+                <div style={{ width: '20px', height: '20px', borderRadius: '2px', border: '1px solid #2e2a26', flexShrink: 0, backgroundColor: item.hex }} />
+                <span className="font-sans text-text-subtle" style={{ fontSize: '12px', fontWeight: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.colorName}</span>
               </div>
             ))}
           </div>
         </div>
         <div>
-          <h4 className="font-bold text-white mb-3 sm:mb-4 flex items-center gap-2 text-sm sm:text-base">
-            <div className="w-1 h-5 sm:h-6 bg-gradient-to-b from-purple-500 to-blue-500 rounded-full"></div>
-            How to Build
-          </h4>
-          <div className="text-xs sm:text-sm text-purple-100 space-y-2 sm:space-y-3 bg-white/5 rounded-lg p-3 sm:p-4 border border-white/10">
-            <p className="flex items-start gap-2">
-              <span className="font-bold text-purple-300 flex-shrink-0">1.</span>
-              <span>Each number in the grid corresponds to a color in the legend</span>
-            </p>
-            <p className="flex items-start gap-2">
-              <span className="font-bold text-purple-300 flex-shrink-0">2.</span>
-              <span>Place LEGO pieces according to the grid pattern</span>
-            </p>
-            <p className="flex items-start gap-2">
-              <span className="font-bold text-purple-300 flex-shrink-0">3.</span>
-              <span>Start from the top-left corner and work across and down</span>
-            </p>
-            <p className="flex items-start gap-2">
-              <span className="font-bold text-purple-300 flex-shrink-0">4.</span>
-              <span>Use the shopping list to order required pieces</span>
-            </p>
-          </div>
+          <h4 className="chip-label mb-3">How to Build</h4>
+          <ol className="font-sans text-text-secondary" style={{ fontSize: '12px', fontWeight: 300, lineHeight: 1.8, paddingLeft: '16px' }}>
+            <li>Each number in the grid corresponds to a color in the legend</li>
+            <li>Place LEGO pieces according to the grid pattern</li>
+            <li>Start from the top-left corner, work across and down</li>
+            <li>Use the shopping list to order required pieces</li>
+          </ol>
         </div>
       </div>
-      <div className="overflow-auto bg-white/5 rounded-lg p-2 sm:p-3 lg:p-4 border border-white/10">
+      <div style={{ border: '1px solid #2e2a26', borderRadius: '2px', padding: '12px', overflowX: 'auto', overflowY: 'auto' }}>
         <div
           className="grid gap-px bg-white/20 inline-block p-px rounded"
           style={{
@@ -410,52 +303,36 @@ function ShoppingListView({ items }: { items: ShoppingListItem[] }) {
   return (
     <>
       {/* Mobile card view (below sm breakpoint) */}
-      <div className="sm:hidden space-y-2">
+      <div className="sm:hidden space-y-1">
         {items.map((item) => (
-          <div key={item.colorId} className="bg-white/5 border border-white/10 rounded-lg p-3 hover:bg-white/10 transition-colors">
-            <div className="flex items-center gap-3">
-              <div
-                className="w-12 h-12 rounded-lg border-2 border-white/30 shadow-lg flex-shrink-0"
-                style={{ backgroundColor: item.hex }}
-              />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-white font-medium truncate">{item.colorName}</p>
-                <p className="text-xs text-purple-300 mt-0.5">Quantity: <span className="font-bold text-white">{item.quantity}</span></p>
-              </div>
-            </div>
+          <div key={item.colorId} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 0', borderBottom: '1px solid #2e2a26' }}>
+            <div style={{ width: '20px', height: '20px', borderRadius: '2px', border: '1px solid #2e2a26', flexShrink: 0, backgroundColor: item.hex }} />
+            <p className="font-sans text-text-subtle" style={{ flex: 1, fontSize: '13px', fontWeight: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.colorName}</p>
+            <p className="font-sans text-text-primary" style={{ fontSize: '13px', fontWeight: 500, flexShrink: 0 }}>{item.quantity}</p>
           </div>
         ))}
       </div>
 
       {/* Desktop table view (sm breakpoint and above) */}
       <div className="hidden sm:block overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-white/5 border-b border-white/20">
-            <tr>
-              <th className="px-4 py-3 lg:px-6 lg:py-4 text-left text-xs font-bold text-purple-300 uppercase tracking-wider">
-                Color
-              </th>
-              <th className="px-4 py-3 lg:px-6 lg:py-4 text-left text-xs font-bold text-purple-300 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-4 py-3 lg:px-6 lg:py-4 text-right text-xs font-bold text-purple-300 uppercase tracking-wider">
-                Quantity
-              </th>
+        <table className="w-full" style={{ borderCollapse: 'collapse' }}>
+          <thead>
+            <tr style={{ borderBottom: '1px solid #2e2a26' }}>
+              <th style={{ padding: '8px 12px', textAlign: 'left' }} className="chip-label">Color</th>
+              <th style={{ padding: '8px 12px', textAlign: 'left' }} className="chip-label">Name</th>
+              <th style={{ padding: '8px 12px', textAlign: 'right' }} className="chip-label">Qty</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/10">
+          <tbody>
             {items.map((item) => (
-              <tr key={item.colorId} className="hover:bg-white/5 transition-colors">
-                <td className="px-4 py-3 lg:px-6 lg:py-4">
-                  <div
-                    className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg border-2 border-white/30 shadow-lg"
-                    style={{ backgroundColor: item.hex }}
-                  />
+              <tr key={item.colorId} style={{ borderBottom: '1px solid #2e2a26' }}>
+                <td style={{ padding: '8px 12px' }}>
+                  <div style={{ width: '20px', height: '20px', borderRadius: '2px', border: '1px solid #2e2a26', backgroundColor: item.hex }} />
                 </td>
-                <td className="px-4 py-3 lg:px-6 lg:py-4 text-sm text-white font-medium">
+                <td className="font-sans text-text-subtle" style={{ padding: '8px 12px', fontSize: '13px', fontWeight: 300 }}>
                   {item.colorName}
                 </td>
-                <td className="px-4 py-3 lg:px-6 lg:py-4 text-sm text-white text-right font-bold">
+                <td className="font-sans text-text-primary" style={{ padding: '8px 12px', fontSize: '13px', fontWeight: 500, textAlign: 'right' }}>
                   {item.quantity}
                 </td>
               </tr>
