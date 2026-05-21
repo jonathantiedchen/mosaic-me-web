@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMosaic } from '../hooks/useMosaic';
 import { ImageUpload } from './ImageUpload';
-import { Loader2, Circle, Square, RotateCcw, Sparkles, ChevronDown, ChevronUp, Settings } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 
 const BASEPLATE_SIZES = [32, 48, 64, 96, 128] as const;
 
@@ -17,200 +17,128 @@ export function ConfigPanel() {
   } = useMosaic();
 
   const hasResults = !!mosaicData;
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [expandedChip, setExpandedChip] = useState<'size' | 'palette' | 'type' | null>(null);
 
   const handleGenerate = () => {
-    if (uploadedFile) {
-      generateMosaic(uploadedFile);
-    }
+    if (uploadedFile) generateMosaic(uploadedFile);
   };
 
   const handleReset = () => {
     clearMosaic();
-    setIsExpanded(false);
+    setExpandedChip(null);
   };
 
-  if (hasResults && !isExpanded) {
-    return (
-      <div className="card p-4 sm:p-5 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className="p-2.5 bg-gradient-to-br from-indigo-500/20 to-purple-600/20 rounded-xl backdrop-blur-xl flex-shrink-0">
-            <Settings className="w-5 h-5 text-indigo-300" strokeWidth={2} />
-          </div>
-          <div className="min-w-0 flex-1 text-sm font-medium text-gray-300 truncate">
-            <span className="text-white font-bold">{config.baseplateSize}</span>
-            <span className="text-gray-500"> studs · </span>
-            <span className="text-white font-bold capitalize">{config.pieceType}</span>
-            {uploadedFile && (
-              <>
-                <span className="text-gray-500"> · </span>
-                <span className="truncate">{uploadedFile.name}</span>
-              </>
-            )}
-          </div>
-        </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <button
-            onClick={() => setIsExpanded(true)}
-            className="px-4 py-2 text-sm font-bold text-indigo-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors flex items-center gap-2"
-          >
-            <ChevronDown className="w-4 h-4" strokeWidth={2.5} />
-            Edit
-          </button>
-          <button
-            onClick={handleReset}
-            disabled={isLoading}
-            className="p-2.5 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors disabled:opacity-40"
-            title="Start over"
-          >
-            <RotateCcw className="w-4 h-4" strokeWidth={2.5} />
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const toggleChip = (chip: 'size' | 'palette' | 'type') => {
+    setExpandedChip(prev => (prev === chip ? null : chip));
+  };
+
+  const pieceTypeLabel = config.pieceType === 'square' ? 'Square' : 'Round';
+  const sizeLabel = `${config.baseplateSize} × ${config.baseplateSize}`;
 
   return (
-    <div className="card card-hover p-7 sm:p-9 space-y-9">
-      {hasResults && (
-        <div className="flex justify-end -mb-4">
-          <button
-            onClick={() => setIsExpanded(false)}
-            className="px-4 py-2 text-sm font-bold text-indigo-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors flex items-center gap-2"
-          >
-            <ChevronUp className="w-4 h-4" strokeWidth={2.5} />
-            Collapse
-          </button>
+    <div className="space-y-3">
+      <ImageUpload />
+
+      {/* Chips row */}
+      <div className="flex gap-2">
+        <button className="setting-chip text-left" onClick={() => toggleChip('size')}>
+          <div className="chip-label">Size</div>
+          <div className="chip-value">{sizeLabel}</div>
+        </button>
+        <button className="setting-chip text-left" onClick={() => toggleChip('palette')}>
+          <div className="chip-label">Palette</div>
+          <div className="chip-value">Standard</div>
+        </button>
+        <button className="setting-chip text-left" onClick={() => toggleChip('type')}>
+          <div className="chip-label">Piece</div>
+          <div className="chip-value">{pieceTypeLabel}</div>
+        </button>
+      </div>
+
+      {/* Size expander */}
+      {expandedChip === 'size' && (
+        <div className="panel p-4 space-y-3">
+          <p className="chip-label">Baseplate size (studs)</p>
+          <div className="flex gap-2 flex-wrap">
+            {BASEPLATE_SIZES.map(size => (
+              <button
+                key={size}
+                onClick={() => { setConfig({ ...config, baseplateSize: size }); setExpandedChip(null); }}
+                disabled={isLoading}
+                style={{
+                  border: `1px solid ${config.baseplateSize === size ? '#c4a882' : '#2e2a26'}`,
+                  background: config.baseplateSize === size ? '#2a241e' : '#1c1917',
+                  color: config.baseplateSize === size ? '#c4a882' : '#7a716c',
+                  borderRadius: '2px',
+                  padding: '8px 14px',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  transition: 'border-color 0.15s, color 0.15s',
+                }}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
         </div>
       )}
-      <div>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-1.5 h-8 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full shadow-lg shadow-indigo-500/50"></div>
-          <h3 className="text-xl font-black text-white tracking-tight">Upload Image</h3>
-        </div>
-        <ImageUpload />
-      </div>
 
-      <div>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-1.5 h-8 bg-gradient-to-b from-purple-500 to-pink-600 rounded-full shadow-lg shadow-purple-500/50"></div>
-          <h3 className="text-xl font-black text-white tracking-tight">Configure Mosaic</h3>
-        </div>
-
-        <div className="space-y-7">
-          <div>
-            <label className="block text-sm font-bold text-white mb-4 uppercase tracking-wider">
-              Baseplate Size
-            </label>
-            <div className="grid grid-cols-5 gap-2.5">
-              {BASEPLATE_SIZES.map((size) => (
-                <button
-                  key={size}
-                  onClick={() =>
-                    setConfig({ ...config, baseplateSize: size })
-                  }
-                  disabled={isLoading}
-                  className={`
-                    relative px-3 py-3.5 rounded-xl text-sm font-black transition-all duration-300
-                    ${
-                      config.baseplateSize === size
-                        ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white scale-110 z-10'
-                        : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10 hover:border-white/20'
-                    }
-                    disabled:opacity-20 disabled:cursor-not-allowed
-                  `}
-                  style={config.baseplateSize === size ? {
-                    boxShadow: '0 0 0 1px rgba(99, 102, 241, 0.5) inset, 0 12px 32px -8px rgba(99, 102, 241, 0.6), 0 0 60px -15px rgba(139, 92, 246, 0.8)'
-                  } : {}}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-gray-500 mt-3.5 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-lg shadow-indigo-400/50"></span>
-              Size in studs (1×1 LEGO pieces)
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold text-white mb-4 uppercase tracking-wider">
-              Piece Type
-            </label>
-            <div className="grid grid-cols-2 gap-4">
+      {/* Piece type expander */}
+      {expandedChip === 'type' && (
+        <div className="panel p-4 space-y-3">
+          <p className="chip-label">Piece type</p>
+          <div className="flex gap-2">
+            {(['square', 'round'] as const).map(type => (
               <button
-                onClick={() =>
-                  setConfig({ ...config, pieceType: 'square' })
-                }
+                key={type}
+                onClick={() => { setConfig({ ...config, pieceType: type }); setExpandedChip(null); }}
                 disabled={isLoading}
-                className={`
-                  relative px-8 py-6 rounded-2xl text-lg font-black flex items-center justify-center gap-3 transition-all duration-300
-                  ${
-                    config.pieceType === 'square'
-                      ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white scale-105'
-                      : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10 hover:border-white/20'
-                  }
-                  disabled:opacity-20 disabled:cursor-not-allowed
-                `}
-                style={config.pieceType === 'square' ? {
-                  boxShadow: '0 0 0 1px rgba(99, 102, 241, 0.5) inset, 0 12px 32px -8px rgba(99, 102, 241, 0.6), 0 0 60px -15px rgba(139, 92, 246, 0.8)'
-                } : {}}
+                style={{
+                  border: `1px solid ${config.pieceType === type ? '#c4a882' : '#2e2a26'}`,
+                  background: config.pieceType === type ? '#2a241e' : '#1c1917',
+                  color: config.pieceType === type ? '#c4a882' : '#7a716c',
+                  borderRadius: '2px',
+                  padding: '8px 20px',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  textTransform: 'capitalize',
+                  transition: 'border-color 0.15s, color 0.15s',
+                }}
               >
-                <Square className="w-7 h-7" strokeWidth={2.5} />
-                Square
+                {type}
               </button>
-              <button
-                onClick={() =>
-                  setConfig({ ...config, pieceType: 'round' })
-                }
-                disabled={isLoading}
-                className={`
-                  relative px-8 py-6 rounded-2xl text-lg font-black flex items-center justify-center gap-3 transition-all duration-300
-                  ${
-                    config.pieceType === 'round'
-                      ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white scale-105'
-                      : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10 hover:border-white/20'
-                  }
-                  disabled:opacity-20 disabled:cursor-not-allowed
-                `}
-                style={config.pieceType === 'round' ? {
-                  boxShadow: '0 0 0 1px rgba(99, 102, 241, 0.5) inset, 0 12px 32px -8px rgba(99, 102, 241, 0.6), 0 0 60px -15px rgba(139, 92, 246, 0.8)'
-                } : {}}
-              >
-                <Circle className="w-7 h-7" strokeWidth={2.5} />
-                Round
-              </button>
-            </div>
+            ))}
           </div>
         </div>
-      </div>
+      )}
 
-      <div className="flex gap-4 pt-4">
+      {/* Actions */}
+      <div className="flex gap-2 pt-1">
         <button
           onClick={handleGenerate}
           disabled={!uploadedFile || isLoading}
-          className="btn-primary flex-1 px-10 py-6 flex items-center justify-center gap-3 text-xl disabled:opacity-20 disabled:cursor-not-allowed"
+          className="btn-generate flex-1"
         >
-          {isLoading ? (
-            <>
-              <Loader2 className="w-7 h-7 animate-spin" strokeWidth={2.5} />
-              <span>Generating...</span>
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-7 h-7" strokeWidth={2.5} />
-              <span>Generate Mosaic</span>
-            </>
-          )}
+          {isLoading ? 'Generating…' : 'Generate mosaic →'}
         </button>
-        <button
-          onClick={handleReset}
-          disabled={isLoading}
-          className="btn-secondary px-7 py-6 flex items-center gap-2 disabled:opacity-20 disabled:cursor-not-allowed"
-        >
-          <RotateCcw className="w-7 h-7" strokeWidth={2.5} />
-        </button>
+        {(uploadedFile || hasResults) && (
+          <button
+            onClick={handleReset}
+            disabled={isLoading}
+            className="btn-ghost flex items-center gap-1.5"
+          >
+            <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.5} />
+          </button>
+        )}
       </div>
+
+      {uploadedFile && (
+        <p className="text-text-muted text-center" style={{ fontSize: '10px', fontWeight: 300 }}>
+          Not affiliated with the LEGO Group
+        </p>
+      )}
     </div>
   );
 }
