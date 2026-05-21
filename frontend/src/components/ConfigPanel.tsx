@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useMosaic } from '../hooks/useMosaic';
 import { ImageUpload } from './ImageUpload';
 import { RotateCcw } from 'lucide-react';
 
 const BASEPLATE_SIZES = [32, 48, 64, 96, 128] as const;
+
+function optionButtonStyle(_isSelected: boolean): React.CSSProperties {
+  return { borderRadius: 2, padding: '6px 10px' };
+}
 
 export function ConfigPanel() {
   const {
@@ -65,17 +69,8 @@ export function ConfigPanel() {
                 key={size}
                 onClick={() => { setConfig({ ...config, baseplateSize: size }); setExpandedChip(null); }}
                 disabled={isLoading}
-                style={{
-                  border: `1px solid ${config.baseplateSize === size ? '#c4a882' : '#2e2a26'}`,
-                  background: config.baseplateSize === size ? '#2a241e' : '#1c1917',
-                  color: config.baseplateSize === size ? '#c4a882' : '#7a716c',
-                  borderRadius: '2px',
-                  padding: '8px 14px',
-                  fontSize: '13px',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  transition: 'border-color 0.15s, color 0.15s',
-                }}
+                className={`font-sans text-sm border${config.baseplateSize === size ? ' border-accent text-accent bg-bg' : ' border-border text-text-secondary bg-surface'}`}
+                style={optionButtonStyle(config.baseplateSize === size)}
               >
                 {size}
               </button>
@@ -94,18 +89,8 @@ export function ConfigPanel() {
                 key={type}
                 onClick={() => { setConfig({ ...config, pieceType: type }); setExpandedChip(null); }}
                 disabled={isLoading}
-                style={{
-                  border: `1px solid ${config.pieceType === type ? '#c4a882' : '#2e2a26'}`,
-                  background: config.pieceType === type ? '#2a241e' : '#1c1917',
-                  color: config.pieceType === type ? '#c4a882' : '#7a716c',
-                  borderRadius: '2px',
-                  padding: '8px 20px',
-                  fontSize: '13px',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  textTransform: 'capitalize',
-                  transition: 'border-color 0.15s, color 0.15s',
-                }}
+                className={`font-sans text-sm border capitalize${config.pieceType === type ? ' border-accent text-accent bg-bg' : ' border-border text-text-secondary bg-surface'}`}
+                style={optionButtonStyle(config.pieceType === type)}
               >
                 {type}
               </button>
@@ -135,7 +120,7 @@ export function ConfigPanel() {
       </div>
 
       {uploadedFile && (
-        <p className="text-text-muted text-center" style={{ fontSize: '10px', fontWeight: 300 }}>
+        <p className="text-text-muted text-center" style={{ fontSize: '10px' }}>
           Not affiliated with the LEGO Group
         </p>
       )}

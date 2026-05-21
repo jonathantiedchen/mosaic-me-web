@@ -57,7 +57,7 @@ export function ImageUpload() {
           <p className="text-sm font-medium text-text-primary truncate">
             {uploadedFile.name}
           </p>
-          <p className="text-text-muted" style={{ fontSize: '11px', fontWeight: 300, marginTop: '2px' }}>
+          <p className="text-text-muted" style={{ fontSize: '11px', marginTop: '2px' }}>
             {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
           </p>
         </div>
@@ -98,7 +98,7 @@ export function ImageUpload() {
         <p className="font-sans" style={{ fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: '#d5cfc8' }}>
           {isDragActive ? 'Drop it here' : 'Drop a photo, or click to browse'}
         </p>
-        <p className="font-sans text-text-muted" style={{ fontSize: '11px', fontWeight: 300 }}>
+        <p className="font-sans text-text-muted" style={{ fontSize: '11px' }}>
           JPG, PNG, WEBP — up to 10 MB
         </p>
         {hasErrors && (
@@ -107,8 +107,8 @@ export function ImageUpload() {
       </div>
 
       {/* Examples */}
-      <div style={{ borderTop: '1px solid #2e2a26', paddingTop: '20px' }}>
-        <p className="chip-label" style={{ textAlign: 'center', marginBottom: '14px' }}>
+      <div className="border-t border-border" style={{ paddingTop: '20px' }}>
+        <p className="chip-label text-center" style={{ marginBottom: '14px' }}>
           Examples
         </p>
         <div className="flex flex-wrap gap-4 justify-center">
@@ -126,7 +126,7 @@ export function ImageUpload() {
                   style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '2px' }}
                 />
               </div>
-              <p className="chip-label" style={{ textAlign: 'center', marginTop: '10px', marginBottom: 0 }}>
+              <p className="chip-label text-center" style={{ marginTop: '10px', marginBottom: 0 }}>
                 {example.name}
               </p>
             </div>

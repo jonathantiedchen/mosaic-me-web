@@ -40,7 +40,7 @@ export function ResultsTabs() {
 
   return (
     <div className="panel overflow-hidden">
-      <div style={{ borderBottom: '1px solid #2e2a26' }}>
+      <div className="border-b border-border">
         <nav className="flex">
           {(['preview', 'instructions', 'shopping'] as TabType[]).map(tab => (
             <button
@@ -65,7 +65,7 @@ export function ResultsTabs() {
                     <button onClick={handleZoomOut} disabled={zoom <= 0.5} className="btn-ghost" aria-label="Zoom out">
                       <ZoomOut className="w-4 h-4" strokeWidth={1.5} />
                     </button>
-                    <span className="font-sans text-text-subtle" style={{ fontSize: '12px', fontWeight: 500, minWidth: '44px', textAlign: 'center' }}>
+                    <span className="font-sans text-text-subtle font-medium" style={{ fontSize: '12px', minWidth: '44px', textAlign: 'center' }}>
                       {Math.round(zoom * 100)}%
                     </span>
                     <button onClick={handleZoomIn} disabled={zoom >= 3} className="btn-ghost" aria-label="Zoom in">
@@ -88,7 +88,7 @@ export function ResultsTabs() {
                     </button>
                   </div>
                 </div>
-                <div style={{ border: '1px solid #2e2a26', borderRadius: '2px', padding: '16px', maxHeight: '600px', overflowY: 'auto', overflowX: 'auto' }}>
+                <div className="border border-border" style={{ borderRadius: '2px', padding: '16px', maxHeight: '600px', overflowY: 'auto', overflowX: 'auto' }}>
                   <img
                     src={mosaicData.previewUrl}
                     alt="Mosaic preview"
@@ -104,7 +104,7 @@ export function ResultsTabs() {
                   ].map(({ label, value }) => (
                     <div key={label} className="panel p-4">
                       <p className="chip-label mb-2">{label}</p>
-                      <p className="font-sans text-text-primary" style={{ fontSize: '22px', fontWeight: 600, letterSpacing: '-0.03em' }}>{value}</p>
+                      <p className="font-sans text-text-primary font-semibold" style={{ fontSize: '22px', letterSpacing: '-0.03em' }}>{value}</p>
                     </div>
                   ))}
                 </div>
@@ -136,7 +136,7 @@ export function ResultsTabs() {
                 {isExporting ? 'Downloading…' : 'Download'}
               </button>
             </div>
-            <div style={{ border: '1px solid #2e2a26', borderRadius: '2px', padding: '16px' }}>
+            <div className="border border-border" style={{ borderRadius: '2px', padding: '16px' }}>
               <InstructionsView grid={mosaicData.grid} shoppingList={mosaicData.shoppingList} />
             </div>
           </div>
@@ -148,13 +148,13 @@ export function ResultsTabs() {
               <div className="flex gap-3">
                 <div className="panel px-4 py-3">
                   <p className="chip-label mb-1">Total pieces</p>
-                  <p className="font-sans text-text-primary" style={{ fontSize: '18px', fontWeight: 600, letterSpacing: '-0.02em' }}>
+                  <p className="font-sans text-text-primary font-semibold" style={{ fontSize: '18px', letterSpacing: '-0.02em' }}>
                     {mosaicData.metadata.totalPieces}
                   </p>
                 </div>
                 <div className="panel px-4 py-3">
                   <p className="chip-label mb-1">Est. cost</p>
-                  <p className="font-sans text-text-primary" style={{ fontSize: '18px', fontWeight: 600, letterSpacing: '-0.02em' }}>
+                  <p className="font-sans text-text-primary font-semibold" style={{ fontSize: '18px', letterSpacing: '-0.02em' }}>
                     ${(mosaicData.metadata.totalPieces * 0.06).toFixed(2)}
                   </p>
                 </div>
@@ -172,8 +172,8 @@ export function ResultsTabs() {
                 <button
                   onClick={() => handleExport('shopping-csv', `shopping-list-${mosaicData.sessionId}.csv`)}
                   disabled={isExporting}
-                  className="flex items-center gap-2"
-                  style={{ color: '#c4a882', background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 500 }}
+                  className="flex items-center gap-2 font-medium"
+                  style={{ color: '#c4a882', background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px' }}
                 >
                   <Download className="w-4 h-4" strokeWidth={1.5} />
                   CSV
@@ -183,11 +183,11 @@ export function ResultsTabs() {
 
             {/* Warning for pieces exceeding 999 */}
             {mosaicData.shoppingList.some(item => item.quantity > 999) && (
-              <div className="panel p-5" style={{ borderColor: '#c4a882' }}>
+              <div className="panel p-5 border-accent">
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-accent" strokeWidth={1.5} />
                   <div>
-                    <h4 className="font-sans text-text-primary" style={{ fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>
+                    <h4 className="font-sans text-text-primary font-semibold" style={{ fontSize: '13px', marginBottom: '6px' }}>
                       Quantity Limit Warning
                     </h4>
                     <p className="text-sm text-text-secondary leading-relaxed">
@@ -209,16 +209,16 @@ export function ResultsTabs() {
             )}
 
             <div className="panel p-5">
-              <h4 className="font-sans text-text-primary" style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px' }}>
+              <h4 className="font-sans text-text-primary font-semibold" style={{ fontSize: '13px', marginBottom: '12px' }}>
                 How to order from LEGO Pick-a-Brick
               </h4>
-              <ol className="font-sans text-text-secondary" style={{ fontSize: '13px', fontWeight: 300, lineHeight: 1.8, paddingLeft: '16px' }}>
+              <ol className="font-sans text-text-secondary" style={{ fontSize: '13px', lineHeight: 1.8, paddingLeft: '16px' }}>
                 <li>Download the Pick-a-Brick CSV file using the button above</li>
                 <li>Visit <a href="https://www.lego.com/pick-and-build/pick-a-brick" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-hover underline font-bold transition-colors">LEGO Pick-a-Brick</a></li>
                 <li>Click "Upload List" and select the CSV file</li>
                 <li>All pieces will be added to your cart automatically</li>
               </ol>
-              <p className="font-sans text-text-muted" style={{ fontSize: '11px', fontWeight: 300, marginTop: '12px' }}>
+              <p className="font-sans text-text-muted" style={{ fontSize: '11px', marginTop: '12px' }}>
                 Price estimate based on ~$0.06 per 1×1 plate. Actual prices vary by region.
               </p>
             </div>
@@ -235,7 +235,7 @@ function InstructionsView({
   grid,
   shoppingList,
 }: {
-  grid: any[][];
+  grid: MosaicGridCell[][];
   shoppingList: ShoppingListItem[];
 }) {
   const colorMap = new Map<string, number>();
@@ -250,19 +250,19 @@ function InstructionsView({
           <h4 className="chip-label mb-3">Color Legend</h4>
           <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
             {shoppingList.map((item, index) => (
-              <div key={item.colorId} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 0', borderBottom: '1px solid #2e2a26' }}>
-                <span className="font-sans text-text-muted" style={{ fontSize: '11px', fontWeight: 500, width: '20px', flexShrink: 0 }}>
+              <div key={item.colorId} className="border-b border-border" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 0' }}>
+                <span className="font-sans text-text-muted font-medium" style={{ fontSize: '11px', width: '20px', flexShrink: 0 }}>
                   {index + 1}
                 </span>
-                <div style={{ width: '20px', height: '20px', borderRadius: '2px', border: '1px solid #2e2a26', flexShrink: 0, backgroundColor: item.hex }} />
-                <span className="font-sans text-text-subtle" style={{ fontSize: '12px', fontWeight: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.colorName}</span>
+                <div className="border border-border" style={{ width: '20px', height: '20px', borderRadius: '2px', flexShrink: 0, backgroundColor: item.hex }} />
+                <span className="font-sans text-text-subtle" style={{ fontSize: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.colorName}</span>
               </div>
             ))}
           </div>
         </div>
         <div>
           <h4 className="chip-label mb-3">How to Build</h4>
-          <ol className="font-sans text-text-secondary" style={{ fontSize: '12px', fontWeight: 300, lineHeight: 1.8, paddingLeft: '16px' }}>
+          <ol className="font-sans text-text-secondary" style={{ fontSize: '12px', lineHeight: 1.8, paddingLeft: '16px' }}>
             <li>Each number in the grid corresponds to a color in the legend</li>
             <li>Place LEGO pieces according to the grid pattern</li>
             <li>Start from the top-left corner, work across and down</li>
@@ -270,7 +270,7 @@ function InstructionsView({
           </ol>
         </div>
       </div>
-      <div style={{ border: '1px solid #2e2a26', borderRadius: '2px', padding: '12px', overflowX: 'auto', overflowY: 'auto' }}>
+      <div className="border border-border" style={{ borderRadius: '2px', padding: '12px', overflowX: 'auto', overflowY: 'auto' }}>
         <div
           className="grid gap-px bg-white/20 inline-block p-px rounded"
           style={{
@@ -306,10 +306,10 @@ function ShoppingListView({ items }: { items: ShoppingListItem[] }) {
       {/* Mobile card view (below sm breakpoint) */}
       <div className="sm:hidden space-y-1">
         {items.map((item) => (
-          <div key={item.colorId} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 0', borderBottom: '1px solid #2e2a26' }}>
-            <div style={{ width: '20px', height: '20px', borderRadius: '2px', border: '1px solid #2e2a26', flexShrink: 0, backgroundColor: item.hex }} />
-            <p className="font-sans text-text-subtle" style={{ flex: 1, fontSize: '13px', fontWeight: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.colorName}</p>
-            <p className="font-sans text-text-primary" style={{ fontSize: '13px', fontWeight: 500, flexShrink: 0 }}>{item.quantity}</p>
+          <div key={item.colorId} className="border-b border-border" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 0' }}>
+            <div className="border border-border" style={{ width: '20px', height: '20px', borderRadius: '2px', flexShrink: 0, backgroundColor: item.hex }} />
+            <p className="font-sans text-text-subtle" style={{ flex: 1, fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.colorName}</p>
+            <p className="font-sans text-text-primary font-medium" style={{ fontSize: '13px', flexShrink: 0 }}>{item.quantity}</p>
           </div>
         ))}
       </div>
@@ -318,7 +318,7 @@ function ShoppingListView({ items }: { items: ShoppingListItem[] }) {
       <div className="hidden sm:block overflow-x-auto">
         <table className="w-full" style={{ borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid #2e2a26' }}>
+            <tr className="border-b border-border">
               <th style={{ padding: '8px 12px', textAlign: 'left' }} className="chip-label">Color</th>
               <th style={{ padding: '8px 12px', textAlign: 'left' }} className="chip-label">Name</th>
               <th style={{ padding: '8px 12px', textAlign: 'right' }} className="chip-label">Qty</th>
@@ -326,14 +326,14 @@ function ShoppingListView({ items }: { items: ShoppingListItem[] }) {
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr key={item.colorId} style={{ borderBottom: '1px solid #2e2a26' }}>
+              <tr key={item.colorId} className="border-b border-border">
                 <td style={{ padding: '8px 12px' }}>
-                  <div style={{ width: '20px', height: '20px', borderRadius: '2px', border: '1px solid #2e2a26', backgroundColor: item.hex }} />
+                  <div className="border border-border" style={{ width: '20px', height: '20px', borderRadius: '2px', backgroundColor: item.hex }} />
                 </td>
-                <td className="font-sans text-text-subtle" style={{ padding: '8px 12px', fontSize: '13px', fontWeight: 300 }}>
+                <td className="font-sans text-text-subtle" style={{ padding: '8px 12px', fontSize: '13px' }}>
                   {item.colorName}
                 </td>
-                <td className="font-sans text-text-primary" style={{ padding: '8px 12px', fontSize: '13px', fontWeight: 500, textAlign: 'right' }}>
+                <td className="font-sans text-text-primary font-medium" style={{ padding: '8px 12px', fontSize: '13px', textAlign: 'right' }}>
                   {item.quantity}
                 </td>
               </tr>
