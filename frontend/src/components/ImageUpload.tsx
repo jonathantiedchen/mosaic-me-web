@@ -95,7 +95,7 @@ export function ImageUpload() {
             <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
           </svg>
         </div>
-        <p className="font-sans text-text-subtle" style={{ fontSize: '13px', fontWeight: 500, marginBottom: '4px' }}>
+        <p className="font-sans" style={{ fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: '#d5cfc8' }}>
           {isDragActive ? 'Drop it here' : 'Drop a photo, or click to browse'}
         </p>
         <p className="font-sans text-text-muted" style={{ fontSize: '11px', fontWeight: 300 }}>

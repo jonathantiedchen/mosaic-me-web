@@ -40,7 +40,7 @@ export function ConfigPanel() {
       <ImageUpload />
 
       {/* Chips row */}
-      <div className="flex gap-2">
+      <div className="flex gap-[10px]">
         <button className="setting-chip text-left" onClick={() => toggleChip('size')}>
           <div className="chip-label">Size</div>
           <div className="chip-value">{sizeLabel}</div>

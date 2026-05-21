@@ -134,7 +134,7 @@ export function FeedbackWidget({ sessionId }: FeedbackWidgetProps) {
                       width: '100%',
                       border: '1px solid #2e2a26',
                       borderRadius: '2px',
-                      background: '#1c1917',
+                      background: '#242018',
                       color: '#f5f0e8',
                       fontSize: '13px',
                       fontWeight: 300,

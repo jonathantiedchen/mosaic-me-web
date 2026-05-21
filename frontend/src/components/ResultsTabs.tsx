@@ -172,7 +172,8 @@ export function ResultsTabs() {
                 <button
                   onClick={() => handleExport('shopping-csv', `shopping-list-${mosaicData.sessionId}.csv`)}
                   disabled={isExporting}
-                  className="btn-ghost flex items-center gap-2"
+                  className="flex items-center gap-2"
+                  style={{ color: '#c4a882', background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 500 }}
                 >
                   <Download className="w-4 h-4" strokeWidth={1.5} />
                   CSV
@@ -189,14 +190,14 @@ export function ResultsTabs() {
                     <h4 className="font-sans text-text-primary" style={{ fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>
                       Quantity Limit Warning
                     </h4>
-                    <p className="text-sm text-gray-300 leading-relaxed">
+                    <p className="text-sm text-text-secondary leading-relaxed">
                       Some pieces exceed the Pick-a-Brick maximum of 999 per color. When uploading to LEGO's website, you'll need to split these orders or manually adjust quantities. The affected colors are:
                     </p>
                     <ul className="mt-3 space-y-1">
                       {mosaicData.shoppingList
                         .filter(item => item.quantity > 999)
                         .map(item => (
-                          <li key={item.colorId} className="text-sm text-amber-200 font-medium flex items-center gap-2">
+                          <li key={item.colorId} className="text-sm text-accent font-medium flex items-center gap-2">
                             <div className="w-4 h-4 rounded border border-white/30" style={{ backgroundColor: item.hex }} />
                             {item.colorName}: <span className="font-bold">{item.quantity}</span> pieces (exceeds by {item.quantity - 999})
                           </li>
@@ -213,7 +214,7 @@ export function ResultsTabs() {
               </h4>
               <ol className="font-sans text-text-secondary" style={{ fontSize: '13px', fontWeight: 300, lineHeight: 1.8, paddingLeft: '16px' }}>
                 <li>Download the Pick-a-Brick CSV file using the button above</li>
-                <li>Visit <a href="https://www.lego.com/pick-and-build/pick-a-brick" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300 underline font-bold transition-colors">LEGO Pick-a-Brick</a></li>
+                <li>Visit <a href="https://www.lego.com/pick-and-build/pick-a-brick" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-hover underline font-bold transition-colors">LEGO Pick-a-Brick</a></li>
                 <li>Click "Upload List" and select the CSV file</li>
                 <li>All pieces will be added to your cart automatically</li>
               </ol>
@@ -280,7 +281,7 @@ function InstructionsView({
             row.map((cell, colIndex) => (
               <div
                 key={`${rowIndex}-${colIndex}`}
-                className="flex items-center justify-center text-xs font-bold shadow-sm"
+                className="flex items-center justify-center text-xs font-bold"
                 style={{
                   backgroundColor: cell.hex,
                   color: getBrightness(cell.rgb) > 128 ? '#000' : '#fff',
