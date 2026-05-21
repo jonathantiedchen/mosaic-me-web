@@ -25,6 +25,8 @@ export default {
         'accent-hover': '#d4b892',
         'text-subtle': '#c5bfb8',
         error: '#c0392b',
+        'error-light': '#e57373',
+        'error-muted': '#a06060',
       },
       fontFamily: {
         sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
