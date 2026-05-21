@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ThumbsUp, ThumbsDown, MessageSquare, X, Check } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, X, Check } from 'lucide-react';
 
 interface FeedbackWidgetProps {
   sessionId: string;
@@ -21,28 +21,22 @@ export function FeedbackWidget({ sessionId }: FeedbackWidgetProps) {
 
   const handleSubmit = async () => {
     if (!selectedType) return;
-
     setIsSubmitting(true);
     setError('');
-
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL || '/api/v1'}/feedback/submit`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           session_id: sessionId,
           feedback_type: selectedType,
           comment: comment.trim() || null,
         }),
       });
-
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.detail || 'Failed to submit feedback');
       }
-
       setIsSubmitted(true);
       setTimeout(() => {
         setIsOpen(false);
@@ -65,104 +59,110 @@ export function FeedbackWidget({ sessionId }: FeedbackWidgetProps) {
     setIsSubmitted(false);
   };
 
-  // Don't render if no session
   if (!sessionId) return null;
+
+  const thumbStyle = (active: boolean): React.CSSProperties => ({
+    border: `1px solid ${active ? '#c4a882' : '#2e2a26'}`,
+    background: '#242018',
+    borderRadius: '2px',
+    padding: '8px',
+    cursor: 'pointer',
+    color: active ? '#c4a882' : '#5a5450',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'border-color 0.15s, color 0.15s',
+  });
 
   return (
     <>
-      {/* Inline feedback buttons */}
       {!isOpen && !isSubmitted && (
-        <div className="flex items-center gap-2">
+        <div style={{ display: 'flex', gap: '8px' }}>
           <button
             onClick={() => handleFeedbackClick('thumbs_up')}
-            className="p-2.5 glass-card hover:bg-white/10 text-white rounded-full transition-all hover:scale-105 shadow-lg"
-            title="I like this!"
+            style={thumbStyle(selectedType === 'thumbs_up')}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#c4a882'; }}
+            onMouseLeave={e => { if (selectedType !== 'thumbs_up') (e.currentTarget as HTMLButtonElement).style.borderColor = '#2e2a26'; }}
             aria-label="Thumbs up"
           >
-            <ThumbsUp className="w-5 h-5 text-green-400 hover:text-green-300" />
+            <ThumbsUp className="w-4 h-4" strokeWidth={1.5} />
           </button>
           <button
             onClick={() => handleFeedbackClick('thumbs_down')}
-            className="p-2.5 glass-card hover:bg-white/10 text-white rounded-full transition-all hover:scale-105 shadow-lg"
-            title="Could be better"
+            style={thumbStyle(selectedType === 'thumbs_down')}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#c4a882'; }}
+            onMouseLeave={e => { if (selectedType !== 'thumbs_down') (e.currentTarget as HTMLButtonElement).style.borderColor = '#2e2a26'; }}
             aria-label="Thumbs down"
           >
-            <ThumbsDown className="w-5 h-5 text-red-400 hover:text-red-300" />
+            <ThumbsDown className="w-4 h-4" strokeWidth={1.5} />
           </button>
         </div>
       )}
 
-      {/* Feedback form modal */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="glass-card border-purple-500/30 rounded-2xl p-6 max-w-md w-full shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                {selectedType === 'thumbs_up' ? (
-                  <ThumbsUp className="w-6 h-6 text-green-400" />
-                ) : (
-                  <ThumbsDown className="w-6 h-6 text-red-400" />
-                )}
-                <h3 className="text-lg font-bold text-white">
-                  {selectedType === 'thumbs_up' ? 'Glad you like it!' : 'Help us improve'}
-                </h3>
-              </div>
-              <button
-                onClick={handleClose}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-purple-300" />
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', background: 'rgba(0,0,0,0.6)' }}>
+          <div className="panel" style={{ maxWidth: '400px', width: '100%', padding: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <p className="font-sans text-text-primary" style={{ fontSize: '14px', fontWeight: 500 }}>
+                {selectedType === 'thumbs_up' ? 'Glad you like it!' : 'Help us improve'}
+              </p>
+              <button onClick={handleClose} className="text-text-muted" style={{ padding: '2px' }}>
+                <X className="w-4 h-4" strokeWidth={1.5} />
               </button>
             </div>
 
             {isSubmitted ? (
-              <div className="flex flex-col items-center gap-3 py-6">
-                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
-                  <Check className="w-8 h-8 text-green-400" />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '24px 0' }}>
+                <div style={{ border: '1px solid #2e2a26', borderRadius: '2px', padding: '12px' }}>
+                  <Check className="w-5 h-5 text-accent" strokeWidth={1.5} />
                 </div>
-                <p className="text-lg font-medium text-white">Thanks for your feedback!</p>
+                <p className="font-sans text-text-subtle" style={{ fontSize: '13px', fontWeight: 300 }}>Thanks for your feedback!</p>
               </div>
             ) : (
               <>
-                <div className="mb-4">
-                  <label className="flex items-center gap-2 text-sm text-purple-300 mb-2">
-                    <MessageSquare className="w-4 h-4" />
-                    <span>Tell us more (optional)</span>
-                  </label>
+                <div style={{ marginBottom: '16px' }}>
+                  <p className="chip-label" style={{ marginBottom: '8px' }}>
+                    Tell us more (optional)
+                  </p>
                   <textarea
                     value={comment}
-                    onChange={(e) => setComment(e.target.value.slice(0, 200))}
-                    placeholder="What did you think? Any suggestions?"
-                    className="w-full px-4 py-3 glass-card border-purple-500/30 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                    onChange={e => setComment(e.target.value.slice(0, 200))}
+                    placeholder="What did you think?"
                     rows={3}
                     maxLength={200}
+                    style={{
+                      width: '100%',
+                      border: '1px solid #2e2a26',
+                      borderRadius: '2px',
+                      background: '#1c1917',
+                      color: '#f5f0e8',
+                      fontSize: '13px',
+                      fontWeight: 300,
+                      padding: '10px 12px',
+                      resize: 'none',
+                      outline: 'none',
+                      fontFamily: '"DM Sans", sans-serif',
+                    }}
                   />
-                  <div className="flex items-center justify-between mt-2">
-                    <p className="text-xs text-purple-300/70">
-                      {comment.length}/200 characters
-                    </p>
-                  </div>
+                  <p className="font-sans text-text-muted" style={{ fontSize: '10px', fontWeight: 300, marginTop: '4px' }}>
+                    {comment.length}/200
+                  </p>
                 </div>
 
                 {error && (
-                  <div className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm">
-                    {error}
-                  </div>
+                  <p className="text-error-light" style={{ fontSize: '12px', marginBottom: '12px' }}>{error}</p>
                 )}
 
-                <div className="flex gap-3">
-                  <button
-                    onClick={handleClose}
-                    className="flex-1 px-4 py-2 glass-card hover:bg-white/10 text-purple-300 rounded-lg transition-colors"
-                  >
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={handleClose} className="btn-ghost flex-1">
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn-generate flex-1"
                   >
-                    {isSubmitting ? 'Sending...' : 'Submit'}
+                    {isSubmitting ? 'Sending…' : 'Submit'}
                   </button>
                 </div>
               </>
