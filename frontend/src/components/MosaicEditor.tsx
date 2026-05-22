@@ -18,7 +18,7 @@ interface MosaicEditorProps {
 
 export function MosaicEditor({ grid, shoppingList, pieceType, onSave, onCancel }: MosaicEditorProps) {
   const editor = useMosaicEditor();
-  const [zoom, setZoom] = useState(0.75);
+  const [zoom, setZoom] = useState(1);
   const [availableColors, setAvailableColors] = useState<LegoColor[]>([]);
 
   // Fetch all available LEGO colors for the palette type
