@@ -216,7 +216,16 @@ export function MosaicEditor({ grid, shoppingList, pieceType, onSave, onCancel }
           )}
         </div>
 
-        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Color palette - horizontal strip above grid */}
+          <div className="border-b border-border bg-surface">
+            <ColorPalette
+              colors={availableColors}
+              selectedColor={editor.selectedColor}
+              onColorSelect={handleColorSelect}
+            />
+          </div>
+
           {/* Grid area */}
           <div className="flex-1 overflow-auto p-2 sm:p-4 lg:p-6">
             <div className="flex items-start justify-center min-h-full">
@@ -232,15 +241,6 @@ export function MosaicEditor({ grid, shoppingList, pieceType, onSave, onCancel }
                 onMouseLeave={editor.stopPainting}
               />
             </div>
-          </div>
-
-          {/* Color palette - horizontal on mobile, vertical sidebar on desktop */}
-          <div className="lg:w-56 border-t lg:border-t-0 lg:border-l border-border bg-surface flex flex-col max-h-[200px] lg:max-h-none">
-            <ColorPalette
-              colors={availableColors}
-              selectedColor={editor.selectedColor}
-              onColorSelect={handleColorSelect}
-            />
           </div>
         </div>
 
