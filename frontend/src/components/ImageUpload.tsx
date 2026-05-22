@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { X, Image as ImageIcon } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -17,6 +17,10 @@ const SAMPLE_EXAMPLES = [
 
 export function ImageUpload() {
   const { uploadedFile, setUploadedFile, clearMosaic } = useMosaic();
+  const previewUrl = useMemo(
+    () => (uploadedFile ? URL.createObjectURL(uploadedFile) : null),
+    [uploadedFile]
+  );
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -50,9 +54,14 @@ export function ImageUpload() {
   if (uploadedFile) {
     return (
       <div className="panel flex items-center gap-4 px-4 py-3">
-        <div className="bg-border flex-shrink-0" style={{ padding: '8px', borderRadius: '2px' }}>
-          <ImageIcon className="w-5 h-5 text-text-secondary" strokeWidth={1.5} />
-        </div>
+        {previewUrl && (
+          <img
+            src={previewUrl}
+            alt="Preview"
+            className="flex-shrink-0"
+            style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '2px' }}
+          />
+        )}
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-text-primary truncate">
             {uploadedFile.name}
