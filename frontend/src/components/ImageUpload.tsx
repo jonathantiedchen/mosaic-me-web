@@ -59,7 +59,7 @@ export function ImageUpload() {
             src={previewUrl}
             alt="Preview"
             className="flex-shrink-0"
-            style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '2px' }}
+            style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '2px' }}
           />
         )}
         <div className="flex-1 min-w-0">
