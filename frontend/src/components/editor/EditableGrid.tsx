@@ -104,13 +104,13 @@ export function EditableGrid({
 
   return (
     <div
-      className="inline-block p-2 bg-white/5 rounded-lg"
+      className="inline-block"
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseLeave}
       style={{ userSelect: 'none' }}
     >
       <div
-        className="grid gap-px bg-white/20 rounded overflow-hidden"
+        className="grid gap-px bg-white/20 overflow-hidden"
         style={{
           gridTemplateColumns: `repeat(${grid[0].length}, ${cellSize}px)`,
         }}
@@ -135,19 +135,6 @@ export function EditableGrid({
               />
             );
           })
-        )}
-      </div>
-
-      {/* Instructions */}
-      <div className="mt-4 text-xs text-text-secondary max-w-md">
-        {currentTool === 'brush' ? (
-          <p>
-            <strong>Brush Tool:</strong> Click and drag to select pixels, then click a color from the palette to apply.
-          </p>
-        ) : (
-          <p>
-            <strong>Fill Tool:</strong> Click to select all connected pixels of the same color, then pick a color to apply.
-          </p>
         )}
       </div>
     </div>

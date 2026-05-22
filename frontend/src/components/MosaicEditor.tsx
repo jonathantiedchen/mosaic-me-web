@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ZoomIn, ZoomOut } from 'lucide-react';
 import { useMosaicEditor } from '../hooks/useMosaicEditor';
 import { EditorToolbar } from './editor/EditorToolbar';
@@ -18,22 +18,7 @@ interface MosaicEditorProps {
 
 export function MosaicEditor({ grid, shoppingList, pieceType, onSave, onCancel }: MosaicEditorProps) {
   const editor = useMosaicEditor();
-
-  // Calculate initial zoom to fit the grid in the available area
-  const initialZoom = useMemo(() => {
-    const rows = grid.length;
-    const cols = grid[0]?.length ?? 0;
-    if (!rows || !cols) return 0.5;
-    // Estimate available area: container height minus chrome (toolbar ~120px, tools ~60px, zoom ~50px, colors ~52px, note ~50px, padding)
-    const availableHeight = window.innerHeight * 0.9 - 380;
-    const availableWidth = Math.min(window.innerWidth, 672) - 48; // max-w-2xl minus padding
-    const cellBase = 20;
-    const zoomH = availableHeight / (rows * cellBase);
-    const zoomW = availableWidth / (cols * cellBase);
-    return Math.max(0.25, Math.min(zoomH, zoomW, 1));
-  }, [grid]);
-
-  const [zoom, setZoom] = useState(initialZoom);
+  const [zoom, setZoom] = useState(0.5);
   const [availableColors, setAvailableColors] = useState<LegoColor[]>([]);
 
   // Fetch all available LEGO colors for the palette type
@@ -242,7 +227,7 @@ export function MosaicEditor({ grid, shoppingList, pieceType, onSave, onCancel }
           </div>
 
           {/* Grid area */}
-          <div className="flex-1 overflow-auto p-2 sm:p-4 lg:p-6">
+          <div className="flex-1 overflow-auto p-2">
             <div className="flex items-start justify-center min-h-full">
               <EditableGrid
                 grid={editor.editedGrid}
@@ -259,10 +244,6 @@ export function MosaicEditor({ grid, shoppingList, pieceType, onSave, onCancel }
           </div>
         </div>
 
-        {/* Note about preview */}
-        <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-yellow-500/10 border-t border-yellow-500/20 text-[10px] xs:text-xs text-yellow-200">
-          Note: Changes apply to the instructions grid. The preview image shows the original generated mosaic.
-        </div>
       </div>
     </div>
   );
