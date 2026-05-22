@@ -110,7 +110,7 @@ export function ResultsTabs() {
                 </div>
               </>
             ) : (
-              <div className="panel overflow-hidden" style={{ height: 'calc(100vh - 120px)' }}>
+              <div className="panel overflow-hidden" style={{ height: '1200px' }}>
                 <MosaicEditor
                   grid={mosaicData.grid}
                   shoppingList={mosaicData.shoppingList}
