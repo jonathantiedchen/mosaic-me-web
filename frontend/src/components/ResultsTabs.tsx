@@ -39,7 +39,18 @@ export function ResultsTabs() {
   };
 
   return (
-    <div className="panel overflow-hidden">
+    <div
+      className="panel overflow-hidden"
+      style={isEditing ? {
+        width: '100vw',
+        position: 'relative',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        borderLeft: 'none',
+        borderRight: 'none',
+        borderRadius: 0,
+      } : undefined}
+    >
       <div className="border-b border-border">
         <nav className="flex">
           {(['preview', 'instructions', 'shopping'] as TabType[]).map(tab => (
@@ -110,7 +121,7 @@ export function ResultsTabs() {
                 </div>
               </>
             ) : (
-              <div className="panel overflow-hidden" style={{ height: '800px', maxHeight: '90vh' }}>
+              <div className="panel overflow-hidden" style={{ height: '85vh', border: 'none', borderRadius: 0 }}>
                 <MosaicEditor
                   grid={mosaicData.grid}
                   shoppingList={mosaicData.shoppingList}
