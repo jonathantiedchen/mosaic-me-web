@@ -162,7 +162,7 @@ export function MosaicEditor({ grid, shoppingList, pieceType, onSave, onCancel }
 
   if (!editor.editedGrid || availableColors.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-purple-300">
+      <div className="flex items-center justify-center h-64 text-text-secondary">
         Loading editor...
       </div>
     );
@@ -187,30 +187,30 @@ export function MosaicEditor({ grid, shoppingList, pieceType, onSave, onCancel }
       {/* Main editing area */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Zoom controls */}
-        <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 border-b border-white/10 flex flex-col xs:flex-row items-stretch xs:items-center gap-2 xs:gap-3">
+        <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 border-b border-border flex flex-col xs:flex-row items-stretch xs:items-center gap-2 xs:gap-3">
           <div className="flex items-center gap-2 xs:gap-3 justify-center xs:justify-start">
             <button
               onClick={handleZoomOut}
               disabled={zoom <= 0.5}
-              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all touch-manipulation"
+              className="p-2 rounded-sm bg-surface hover:border-accent border border-border disabled:opacity-30 disabled:cursor-not-allowed transition-all touch-manipulation"
               aria-label="Zoom out"
             >
-              <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-200" />
+              <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-subtle" />
             </button>
-            <span className="text-[10px] xs:text-xs font-bold text-white min-w-[50px] xs:min-w-[60px] text-center px-2 xs:px-3 py-1.5 bg-white/10 rounded-lg border border-white/20">
+            <span className="text-[10px] xs:text-xs font-bold text-text-primary min-w-[50px] xs:min-w-[60px] text-center px-2 xs:px-3 py-1.5 bg-surface rounded-sm border border-border">
               {Math.round(zoom * 100)}%
             </span>
             <button
               onClick={handleZoomIn}
               disabled={zoom >= 3}
-              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all touch-manipulation"
+              className="p-2 rounded-sm bg-surface hover:border-accent border border-border disabled:opacity-30 disabled:cursor-not-allowed transition-all touch-manipulation"
               aria-label="Zoom in"
             >
-              <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-200" />
+              <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-subtle" />
             </button>
           </div>
           {editor.selectedCells.size > 0 && (
-            <div className="text-[10px] xs:text-xs sm:text-sm text-purple-300 text-center xs:text-left xs:ml-2">
+            <div className="text-[10px] xs:text-xs sm:text-sm text-text-secondary text-center xs:text-left xs:ml-2">
               {editor.selectedCells.size} pixel{editor.selectedCells.size !== 1 ? 's' : ''} selected - tap a color to apply
             </div>
           )}
@@ -235,7 +235,7 @@ export function MosaicEditor({ grid, shoppingList, pieceType, onSave, onCancel }
           </div>
 
           {/* Color palette - horizontal on mobile, vertical sidebar on desktop */}
-          <div className="lg:w-56 border-t lg:border-t-0 lg:border-l border-white/10 bg-white/5 flex flex-col max-h-[200px] lg:max-h-none">
+          <div className="lg:w-56 border-t lg:border-t-0 lg:border-l border-border bg-surface flex flex-col max-h-[200px] lg:max-h-none">
             <ColorPalette
               colors={availableColors}
               selectedColor={editor.selectedColor}

@@ -23,9 +23,9 @@ export function FeedbackList({ feedback }: FeedbackListProps) {
 
   if (feedback.length === 0) {
     return (
-      <div className="glass-card p-8 text-center">
-        <MessageSquare className="w-12 h-12 text-purple-300/50 mx-auto mb-3" />
-        <p className="text-purple-300/70">No feedback yet</p>
+      <div className="panel p-8 text-center">
+        <MessageSquare className="w-12 h-12 text-text-muted/50 mx-auto mb-3" />
+        <p className="text-text-secondary">No feedback yet</p>
       </div>
     );
   }
@@ -33,9 +33,9 @@ export function FeedbackList({ feedback }: FeedbackListProps) {
   return (
     <div className="space-y-3">
       {feedback.map((item) => (
-        <div key={item.id} className="glass-card p-4 hover:bg-white/5 transition-colors">
+        <div key={item.id} className="panel p-4 hover:border-accent/30 transition-colors">
           <div className="flex items-start gap-3">
-            <div className={`p-2 rounded-lg ${
+            <div className={`p-2 rounded-sm ${
               item.feedback_type === 'thumbs_up'
                 ? 'bg-green-500/10'
                 : 'bg-red-500/10'
@@ -55,18 +55,18 @@ export function FeedbackList({ feedback }: FeedbackListProps) {
                 }`}>
                   {item.feedback_type === 'thumbs_up' ? 'Positive' : 'Negative'}
                 </span>
-                <span className="text-xs text-purple-300/50 flex items-center gap-1">
+                <span className="text-xs text-text-muted flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
                   {formatDate(item.created_at)}
                 </span>
               </div>
               {item.comment && (
-                <p className="text-sm text-purple-200 mt-2 leading-relaxed">
+                <p className="text-sm text-text-subtle mt-2 leading-relaxed">
                   "{item.comment}"
                 </p>
               )}
               {!item.comment && (
-                <p className="text-xs text-purple-300/50 italic mt-1">
+                <p className="text-xs text-text-muted italic mt-1">
                   No comment provided
                 </p>
               )}

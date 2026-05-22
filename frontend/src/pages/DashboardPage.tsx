@@ -6,7 +6,7 @@ import { feedbackService, type FeedbackStats, type RecentFeedbackItem } from '..
 import { MetricsCard } from '../components/dashboard/MetricsCard';
 import { AnalyticsChart } from '../components/dashboard/AnalyticsChart';
 import { FeedbackList } from '../components/dashboard/FeedbackList';
-import { BarChart3, Download, Users, Image, LogOut, Sparkles, RefreshCw, ThumbsUp, ThumbsDown, TrendingUp, MessageSquare } from 'lucide-react';
+import { BarChart3, Download, Users, Image, LogOut, RefreshCw, ThumbsUp, ThumbsDown, TrendingUp, MessageSquare } from 'lucide-react';
 
 export function DashboardPage() {
   const { admin, logout } = useAuth();
@@ -78,25 +78,18 @@ export function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
-      </div>
-
-      <div className="relative z-10">
-        {/* Header */}
-        <header className="backdrop-blur-sm bg-white/5 border-b border-white/10">
+    <div className="min-h-screen bg-bg">
+      {/* Header */}
+        <header className="border-b border-border bg-surface">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Sparkles className="w-8 h-8 text-purple-400" />
+                <BarChart3 className="w-8 h-8 text-accent" />
                 <div>
-                  <h1 className="text-2xl font-bold gradient-text">
+                  <h1 className="text-2xl font-bold text-text-primary">
                     Analytics Dashboard
                   </h1>
-                  <p className="text-sm text-purple-200 mt-1">
+                  <p className="text-sm text-text-secondary mt-1">
                     Welcome back, {admin?.email}
                   </p>
                 </div>
@@ -104,13 +97,13 @@ export function DashboardPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => navigate('/')}
-                  className="px-4 py-2 text-sm text-purple-300 hover:text-purple-100 transition-colors"
+                  className="px-4 py-2 text-sm text-text-secondary hover:text-text-subtle transition-colors"
                 >
                   ← Back to App
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-200 rounded-lg transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 border border-error/40 hover:border-error text-error-light rounded-sm transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Logout</span>
@@ -125,11 +118,11 @@ export function DashboardPage() {
           {/* Time period selector */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <label className="text-sm text-purple-200">Time period:</label>
+              <label className="text-sm text-text-secondary">Time period:</label>
               <select
                 value={days}
                 onChange={(e) => setDays(Number(e.target.value))}
-                className="px-3 py-2 glass-card border-purple-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="px-3 py-2 bg-surface border border-border rounded-sm text-text-primary focus:outline-none focus:border-accent"
               >
                 <option value={7}>Last 7 days</option>
                 <option value={30}>Last 30 days</option>
@@ -141,7 +134,7 @@ export function DashboardPage() {
               <button
                 onClick={() => loadAnalytics(true)}
                 disabled={isLoading}
-                className="flex items-center gap-2 px-4 py-2 glass-card hover:bg-white/10 text-purple-200 rounded-lg transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 bg-surface border border-border hover:border-accent text-text-secondary rounded-sm transition-colors disabled:opacity-50"
               >
                 <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
                 <span>Refresh</span>
@@ -149,7 +142,7 @@ export function DashboardPage() {
               <button
                 onClick={handleExportCSV}
                 disabled={isExporting}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent-hover text-bg rounded-sm transition-colors disabled:opacity-50"
               >
                 <Download className="w-4 h-4" />
                 <span>{isExporting ? 'Exporting...' : 'Export CSV'}</span>
@@ -159,7 +152,7 @@ export function DashboardPage() {
 
           {/* Error message */}
           {error && (
-            <div className="mb-6 glass-card border-red-500/50 p-4 text-red-200">
+            <div className="mb-6 border border-error/50 bg-error/10 p-4 text-error-light rounded-sm">
               {error}
             </div>
           )}
@@ -167,7 +160,7 @@ export function DashboardPage() {
           {/* Loading state */}
           {isLoading && !metrics ? (
             <div className="flex items-center justify-center py-12">
-              <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : metrics ? (
             <>
@@ -201,21 +194,21 @@ export function DashboardPage() {
 
               {/* Download breakdown */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="glass-card p-4">
-                  <p className="text-sm text-purple-300 mb-1">Instructions PNG</p>
-                  <p className="text-2xl font-bold text-white">
+                <div className="panel p-4">
+                  <p className="text-sm text-text-secondary mb-1">Instructions PNG</p>
+                  <p className="text-2xl font-bold text-text-primary">
                     {metrics.downloads.instructions_png.toLocaleString()}
                   </p>
                 </div>
-                <div className="glass-card p-4">
-                  <p className="text-sm text-purple-300 mb-1">Shopping CSV</p>
-                  <p className="text-2xl font-bold text-white">
+                <div className="panel p-4">
+                  <p className="text-sm text-text-secondary mb-1">Shopping CSV</p>
+                  <p className="text-2xl font-bold text-text-primary">
                     {metrics.downloads.shopping_csv.toLocaleString()}
                   </p>
                 </div>
-                <div className="glass-card p-4">
-                  <p className="text-sm text-purple-300 mb-1">Conversion Rate</p>
-                  <p className="text-2xl font-bold text-white">
+                <div className="panel p-4">
+                  <p className="text-sm text-text-secondary mb-1">Conversion Rate</p>
+                  <p className="text-2xl font-bold text-text-primary">
                     {metrics.mosaics_created > 0
                       ? ((metrics.downloads.total / metrics.mosaics_created) * 100).toFixed(1)
                       : '0'}%
@@ -255,8 +248,8 @@ export function DashboardPage() {
               {/* Recent Feedback */}
               {recentFeedback.length > 0 && (
                 <div className="mt-8">
-                  <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5 text-purple-400" />
+                  <h2 className="text-xl font-bold text-text-primary mb-4 flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-accent" />
                     Recent Feedback
                   </h2>
                   <FeedbackList feedback={recentFeedback} />
@@ -265,7 +258,6 @@ export function DashboardPage() {
             </>
           ) : null}
         </main>
-      </div>
     </div>
   );
 }

@@ -11,7 +11,7 @@ export function ColorPalette({ colors, selectedColor, onColorSelect }: ColorPale
     <div className="flex flex-col h-full">
       <div className="px-2 sm:px-3 py-1.5 sm:py-2 border-b border-white/10 lg:border-b-0">
         <h3 className="text-[10px] xs:text-xs font-semibold text-white">Colors</h3>
-        <p className="text-[10px] xs:text-xs text-purple-300 mt-0.5 hidden sm:block">{colors.length} available</p>
+        <p className="text-[10px] xs:text-xs text-text-secondary mt-0.5 hidden sm:block">{colors.length} available</p>
       </div>
 
       <div className="flex-1 overflow-y-auto lg:overflow-y-auto overflow-x-auto lg:overflow-x-visible p-2 sm:p-3">
@@ -23,7 +23,7 @@ export function ColorPalette({ colors, selectedColor, onColorSelect }: ColorPale
               <button
                 key={color.id}
                 onClick={() => onColorSelect(color)}
-                className={`relative w-full aspect-square rounded-lg transition-all duration-200 hover:scale-110 hover:z-10 hover:shadow-lg hover:ring-2 hover:ring-purple-300 touch-manipulation ${
+                className={`relative w-full aspect-square rounded-sm transition-all duration-200 hover:scale-110 hover:z-10 hover:shadow-lg hover:ring-2 hover:ring-accent touch-manipulation ${
                   isSelected ? 'ring-2 sm:ring-4 ring-white scale-105' : ''
                 }`}
                 style={{ backgroundColor: color.hex }}

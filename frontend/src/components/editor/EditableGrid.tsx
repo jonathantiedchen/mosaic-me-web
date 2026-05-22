@@ -50,7 +50,7 @@ const GridCell = memo(({
       className={`
         relative flex items-center justify-center text-xs font-bold shadow-sm
         transition-all duration-75
-        ${isSelected ? 'ring-2 ring-purple-400' : 'hover:ring-2 hover:ring-purple-300'}
+        ${isSelected ? 'ring-2 ring-accent' : 'hover:ring-2 hover:ring-accent/60'}
       `}
       style={{
         backgroundColor: cell.hex,
@@ -70,7 +70,7 @@ const GridCell = memo(({
     >
       {isSelected && (
         <div
-          className="absolute inset-0 bg-purple-500/40 pointer-events-none"
+          className="absolute inset-0 bg-accent/30 pointer-events-none"
           style={{ mixBlendMode: 'multiply' }}
         />
       )}
@@ -93,7 +93,7 @@ export function EditableGrid({
 }: EditableGridProps) {
   if (!grid || grid.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-purple-300">
+      <div className="flex items-center justify-center h-64 text-text-secondary">
         No grid data available
       </div>
     );
@@ -139,7 +139,7 @@ export function EditableGrid({
       </div>
 
       {/* Instructions */}
-      <div className="mt-4 text-xs text-purple-300 max-w-md">
+      <div className="mt-4 text-xs text-text-secondary max-w-md">
         {currentTool === 'brush' ? (
           <p>
             <strong>Brush Tool:</strong> Click and drag to select pixels, then click a color from the palette to apply.

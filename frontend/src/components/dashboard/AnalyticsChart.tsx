@@ -16,15 +16,15 @@ export function AnalyticsChart({ data }: AnalyticsChartProps) {
   })).reverse(); // Reverse to show chronological order
 
   return (
-    <div className="glass-card p-6">
-      <h3 className="text-lg font-semibold text-white mb-6">Analytics Trend</h3>
+    <div className="panel p-6">
+      <h3 className="text-lg font-semibold text-text-primary mb-6">Analytics Trend</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#2e2a26" />
           <XAxis
             dataKey="date"
-            stroke="rgba(255,255,255,0.6)"
-            tick={{ fill: 'rgba(255,255,255,0.6)' }}
+            stroke="#5a5450"
+            tick={{ fill: '#7a716c' }}
             tickFormatter={(date) => {
               try {
                 return format(new Date(date), 'MMM dd');
@@ -34,15 +34,15 @@ export function AnalyticsChart({ data }: AnalyticsChartProps) {
             }}
           />
           <YAxis
-            stroke="rgba(255,255,255,0.6)"
-            tick={{ fill: 'rgba(255,255,255,0.6)' }}
+            stroke="#5a5450"
+            tick={{ fill: '#7a716c' }}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: 'rgba(17, 24, 39, 0.95)',
-              border: '1px solid rgba(255,255,255,0.2)',
-              borderRadius: '8px',
-              color: '#fff'
+              backgroundColor: '#242018',
+              border: '1px solid #2e2a26',
+              borderRadius: '2px',
+              color: '#f5f0e8'
             }}
             labelFormatter={(label) => {
               try {
@@ -54,25 +54,25 @@ export function AnalyticsChart({ data }: AnalyticsChartProps) {
           />
           <Legend
             wrapperStyle={{
-              color: 'rgba(255,255,255,0.8)'
+              color: '#c5bfb8'
             }}
           />
           <Line
             type="monotone"
             dataKey="visitors"
-            stroke="#8b5cf6"
+            stroke="#c4a882"
             strokeWidth={2}
             name="Visitors"
-            dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
+            dot={{ fill: '#c4a882', strokeWidth: 2, r: 4 }}
             activeDot={{ r: 6 }}
           />
           <Line
             type="monotone"
             dataKey="mosaics"
-            stroke="#3b82f6"
+            stroke="#d4b892"
             strokeWidth={2}
             name="Mosaics"
-            dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+            dot={{ fill: '#d4b892', strokeWidth: 2, r: 4 }}
             activeDot={{ r: 6 }}
           />
           <Line

@@ -27,20 +27,20 @@ export function EditorToolbar({
   onCancel,
 }: EditorToolbarProps) {
   return (
-    <div className="bg-white/5 border-b border-white/10">
+    <div className="bg-surface border-b border-border">
       {/* First Row: Actions and Save/Cancel */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-3 sm:px-4 lg:px-6 py-2 sm:py-3 gap-2 sm:gap-0 border-b border-white/10">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-3 sm:px-4 lg:px-6 py-2 sm:py-3 gap-2 sm:gap-0 border-b border-border">
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <span className="text-[10px] xs:text-xs font-semibold text-purple-300 uppercase tracking-wider mr-1 sm:mr-2 flex-shrink-0">Actions:</span>
+          <span className="text-[10px] xs:text-xs font-semibold text-text-muted uppercase tracking-wider mr-1 sm:mr-2 flex-shrink-0">Actions:</span>
 
           <button
             onClick={onUndo}
             disabled={!canUndo}
             className={`
-              glass-button px-2.5 py-2 sm:px-3 rounded-lg transition-all duration-200 touch-manipulation
+              border px-2.5 py-2 sm:px-3 rounded-sm transition-all duration-200 touch-manipulation
               ${canUndo
-                ? 'text-purple-300 hover:text-white'
-                : 'text-purple-300/30 cursor-not-allowed'
+                ? 'border-border text-text-subtle hover:border-accent hover:text-text-primary'
+                : 'border-border/30 text-text-muted/30 cursor-not-allowed'
               }
             `}
             title="Undo (Ctrl+Z)"
@@ -52,10 +52,10 @@ export function EditorToolbar({
             onClick={onRedo}
             disabled={!canRedo}
             className={`
-              glass-button px-2.5 py-2 sm:px-3 rounded-lg transition-all duration-200 touch-manipulation
+              border px-2.5 py-2 sm:px-3 rounded-sm transition-all duration-200 touch-manipulation
               ${canRedo
-                ? 'text-purple-300 hover:text-white'
-                : 'text-purple-300/30 cursor-not-allowed'
+                ? 'border-border text-text-subtle hover:border-accent hover:text-text-primary'
+                : 'border-border/30 text-text-muted/30 cursor-not-allowed'
               }
             `}
             title="Redo (Ctrl+Y)"
@@ -65,7 +65,7 @@ export function EditorToolbar({
 
           <button
             onClick={onClearSelection}
-            className="glass-button px-2.5 py-2 sm:px-3 rounded-lg text-purple-300 hover:text-white transition-all duration-200 touch-manipulation"
+            className="border border-border px-2.5 py-2 sm:px-3 rounded-sm text-text-subtle hover:border-accent hover:text-text-primary transition-all duration-200 touch-manipulation"
             title="Clear Selection"
           >
             <XIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -73,7 +73,7 @@ export function EditorToolbar({
 
           <button
             onClick={onReset}
-            className="glass-button px-2.5 py-2 sm:px-3 rounded-lg text-purple-300 hover:text-white transition-all duration-200 touch-manipulation"
+            className="border border-border px-2.5 py-2 sm:px-3 rounded-sm text-text-subtle hover:border-accent hover:text-text-primary transition-all duration-200 touch-manipulation"
             title="Reset to Original"
           >
             <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -84,14 +84,14 @@ export function EditorToolbar({
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-5 sm:py-2.5 bg-white/10 text-white rounded-lg sm:rounded-xl hover:bg-white/20 transition-all hover:scale-105 font-semibold border border-white/20 text-xs sm:text-sm touch-manipulation"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-5 sm:py-2.5 bg-surface text-text-subtle rounded-sm hover:text-text-primary transition-all font-semibold border border-border text-xs sm:text-sm touch-manipulation"
           >
             <XIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span className="hidden xs:inline">Cancel</span>
           </button>
           <button
             onClick={onSave}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg sm:rounded-xl hover:shadow-glow transition-all hover:scale-105 font-semibold text-xs sm:text-sm touch-manipulation"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-5 sm:py-2.5 bg-accent hover:bg-accent-hover text-bg rounded-sm transition-colors font-semibold text-xs sm:text-sm touch-manipulation"
           >
             <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span className="hidden xs:inline">Save Changes</span>
@@ -102,15 +102,15 @@ export function EditorToolbar({
 
       {/* Second Row: Tools */}
       <div className="flex items-center px-3 sm:px-4 lg:px-6 py-2 sm:py-3">
-        <span className="text-[10px] xs:text-xs font-semibold text-purple-300 uppercase tracking-wider mr-2 sm:mr-3 flex-shrink-0">Tools:</span>
+        <span className="text-[10px] xs:text-xs font-semibold text-text-muted uppercase tracking-wider mr-2 sm:mr-3 flex-shrink-0">Tools:</span>
 
         <button
           onClick={() => onToolChange('brush')}
           className={`
-            flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 rounded-lg font-medium text-xs sm:text-sm transition-all duration-200 touch-manipulation
+            flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 rounded-sm font-medium text-xs sm:text-sm transition-all duration-200 touch-manipulation border
             ${currentTool === 'brush'
-              ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg'
-              : 'glass-button text-purple-300 hover:text-white'
+              ? 'bg-accent text-bg border-accent'
+              : 'border-border text-text-subtle hover:border-accent hover:text-text-primary'
             }
           `}
           title="Paint Brush Tool"
@@ -122,10 +122,10 @@ export function EditorToolbar({
         <button
           onClick={() => onToolChange('fill')}
           className={`
-            flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 rounded-lg font-medium text-xs sm:text-sm transition-all duration-200 ml-1.5 sm:ml-2 touch-manipulation
+            flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 rounded-sm font-medium text-xs sm:text-sm transition-all duration-200 ml-1.5 sm:ml-2 touch-manipulation border
             ${currentTool === 'fill'
-              ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg'
-              : 'glass-button text-purple-300 hover:text-white'
+              ? 'bg-accent text-bg border-accent'
+              : 'border-border text-text-subtle hover:border-accent hover:text-text-primary'
             }
           `}
           title="Fill Tool (Flood Fill)"
