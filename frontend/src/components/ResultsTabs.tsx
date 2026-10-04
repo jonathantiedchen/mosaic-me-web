@@ -6,14 +6,14 @@ import { MosaicEditor } from './MosaicEditor';
 import { apiService } from '../services/api';
 import type { ShoppingListItem, MosaicGridCell, ExportType } from '../types';
 
-// three.js is large; only load it when the 3D tab is opened
-const Mosaic3DView = lazy(() => import('./Mosaic3DView'));
+// three.js and the room photos are large; only load them when the tab is opened
+const MosaicVisualizer = lazy(() => import('./MosaicVisualizer'));
 
 type TabType = 'preview' | '3d' | 'instructions' | 'shopping';
 
 const TAB_LABELS: Record<TabType, string> = {
   preview: 'Preview',
-  '3d': '3D',
+  '3d': 'In your home',
   instructions: 'Instructions',
   shopping: 'Shopping',
 };
@@ -138,11 +138,11 @@ export function ResultsTabs() {
           <Suspense
             fallback={
               <div className="flex items-center justify-center text-text-secondary text-sm" style={{ height: '320px' }}>
-                Loading 3D view…
+                Loading…
               </div>
             }
           >
-            <Mosaic3DView grid={mosaicData.grid} pieceType={mosaicData.metadata.pieceType} />
+            <MosaicVisualizer grid={mosaicData.grid} pieceType={mosaicData.metadata.pieceType} />
           </Suspense>
         )}
 
