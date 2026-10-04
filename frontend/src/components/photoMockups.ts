@@ -3,7 +3,6 @@ import type { MosaicGridCell } from '../types';
 import { createMosaic, disposeObject } from './mosaicScenes';
 
 const STUD_CM = 0.8;
-const FRAME_BORDER_CM = 2.5;
 
 type Point = [number, number];
 
@@ -17,10 +16,10 @@ export interface PhotoScene {
    * Calibrated from objects of known size; defines the photo's perspective and true scale.
    */
   wall: { cm: [Point, Point, Point, Point]; px: [Point, Point, Point, Point] };
-  /** Where the framed mosaic goes on the wall (cm), given its outer size (cm) */
-  place: (frameCm: number) => { left: number; bottom: number };
-  /** Largest framed size (cm) that fits the scene believably */
-  maxFrameCm: number;
+  /** Where the mosaic goes on the wall (cm), given its side length (cm) */
+  place: (sizeCm: number) => { left: number; bottom: number };
+  /** Largest mosaic (cm) that fits the scene believably */
+  maxSizeCm: number;
   /** Direction light travels in, in wall cm (x right, y up); the mosaic's shadow falls this way */
   light: Point;
   /** Multiplier so the mosaic's whites sit at the photo's exposure and colour temperature */
@@ -43,8 +42,8 @@ export const PHOTO_SCENES: PhotoScene[] = [
     src: '/mockups/living-room.jpg',
     credit: { name: 'Alexandra Gorn', url: 'https://unsplash.com/photos/JIUjvqe2ZHg' },
     wall: frontal(4.9, 1444),
-    place: (frame) => ({ left: 208 - frame / 2, bottom: 90 }), // centred over the sofa, ~22 cm above its back
-    maxFrameCm: 140,
+    place: (size) => ({ left: 208 - size / 2, bottom: 90 }), // centred over the sofa, ~22 cm above its back
+    maxSizeCm: 140,
     light: [1, -0.35],
     tint: '#e6e8ea',
   },
@@ -55,8 +54,8 @@ export const PHOTO_SCENES: PhotoScene[] = [
     src: '/mockups/beige-wall.jpg',
     credit: { name: 'mk. s', url: 'https://unsplash.com/photos/XaFEE8t2pKg' },
     wall: frontal(6.7, 1594),
-    place: (frame) => ({ left: 199 - frame / 2, bottom: Math.max(60, 150 - frame / 2) }),
-    maxFrameCm: 140,
+    place: (size) => ({ left: 199 - size / 2, bottom: Math.max(60, 150 - size / 2) }),
+    maxSizeCm: 140,
     light: [-0.8, -0.45],
     tint: '#f3e6da',
   },
@@ -70,8 +69,8 @@ export const PHOTO_SCENES: PhotoScene[] = [
       cm: [[0, 0], [140, 0], [140, 140], [0, 140]],
       px: [[0, 1495], [1210.4, 1331.6], [1210.4, 172.9], [0, -45]],
     },
-    place: (frame) => ({ left: 70 - frame / 2, bottom: 0 }),
-    maxFrameCm: 115,
+    place: (size) => ({ left: 70 - size / 2, bottom: 0 }),
+    maxSizeCm: 115,
     light: [1, -0.25],
     tint: '#eef0f2',
   },
@@ -83,8 +82,8 @@ export const PHOTO_SCENES: PhotoScene[] = [
     src: '/mockups/shelf.jpg',
     credit: { name: 'Alexander von Schulz', url: 'https://unsplash.com/photos/Gx_eYTapLsE' },
     wall: frontal(30.3, 1577),
-    place: (frame) => ({ left: (1816 / 30.3) - frame, bottom: 0 }),
-    maxFrameCm: 50,
+    place: (size) => ({ left: (1816 / 30.3) - size, bottom: 0 }),
+    maxSizeCm: 50,
     light: [1, -0.2],
     tint: '#eceeef',
     realShadowBelowCm: (1577 - 924) / 30.3,
@@ -120,19 +119,18 @@ function project(h: number[], [x, y]: Point): Point {
   return [(h[0] * x + h[1] * y + h[2]) / w, (h[3] * x + h[4] * y + h[5]) / w];
 }
 
-export function frameSizeCm(gridSize: number): number {
-  return gridSize * STUD_CM + FRAME_BORDER_CM * 2;
+export function mosaicSizeCm(gridSize: number): number {
+  return gridSize * STUD_CM;
 }
 
 export function fitsScene(scene: PhotoScene, gridSize: number): boolean {
-  return frameSizeCm(gridSize) <= scene.maxFrameCm;
+  return mosaicSizeCm(gridSize) <= scene.maxSizeCm;
 }
 
 /**
- * Render the framed mosaic face-on as an image: real studs lit from the photo's light direction,
- * in a black frame whose lip shades the mosaic edge facing away from the light.
+ * Render the mosaic face-on as an image: real studs lit from the photo's light direction.
  */
-function renderFramedTexture(
+function renderMosaicTexture(
   renderer: THREE.WebGLRenderer,
   grid: MosaicGridCell[][],
   pieceType: 'round' | 'square',
@@ -166,43 +164,16 @@ function renderFramedTexture(
   renderer.render(scene, camera);
   disposeObject(scene);
 
-  const border = Math.round((FRAME_BORDER_CM / STUD_CM) * pxPerStud);
   const out = document.createElement('canvas');
-  out.width = out.height = mosaicPx + border * 2;
+  out.width = out.height = mosaicPx;
   const ctx = out.getContext('2d')!;
-
-  // Frame face with a soft bevel: lit edges slightly lighter
-  ctx.fillStyle = '#1a1a1a';
-  ctx.fillRect(0, 0, out.width, out.height);
-  const bevel = Math.max(1, border * 0.12);
-  ctx.fillStyle = 'rgba(255,255,255,0.10)';
-  ctx.fillRect(0, 0, out.width, bevel);
-  ctx.fillRect(0, 0, bevel, out.height);
-  ctx.fillStyle = 'rgba(0,0,0,0.35)';
-  ctx.fillRect(0, out.height - bevel, out.width, bevel);
-  ctx.fillRect(out.width - bevel, 0, bevel, out.height);
-
-  ctx.drawImage(renderer.domElement, border, border, mosaicPx, mosaicPx);
+  ctx.drawImage(renderer.domElement, 0, 0, mosaicPx, mosaicPx);
 
   // Lift the mosaic to the photo's exposure / colour temperature
   ctx.globalCompositeOperation = 'multiply';
   ctx.fillStyle = tint;
-  ctx.fillRect(border, border, mosaicPx, mosaicPx);
+  ctx.fillRect(0, 0, mosaicPx, mosaicPx);
   ctx.globalCompositeOperation = 'source-over';
-
-  // The frame lip shades the mosaic along the edges the light can't reach
-  const lip = pxPerStud * 1.2;
-  const shade = (x0: number, y0: number, x1: number, y1: number, rx: number, ry: number, rw: number, rh: number) => {
-    const g = ctx.createLinearGradient(x0, y0, x1, y1);
-    g.addColorStop(0, 'rgba(0,0,0,0.45)');
-    g.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(rx, ry, rw, rh);
-  };
-  const inner = border;
-  if (lx > 0) shade(inner, 0, inner + lip, 0, inner, inner, lip, mosaicPx); // light from left: left edge shaded
-  else shade(inner + mosaicPx, 0, inner + mosaicPx - lip, 0, inner + mosaicPx - lip, inner, lip, mosaicPx);
-  if (ly < 0) shade(0, inner, 0, inner + lip, inner, inner, mosaicPx, lip); // light from above: top edge shaded
   return out;
 }
 
@@ -216,14 +187,14 @@ export function renderPhotoMockup(
   const W = photo.naturalWidth;
   const H = photo.naturalHeight;
   const toPx = homography(scene.wall.cm, scene.wall.px);
-  const frame = frameSizeCm(grid.length);
-  const { left, bottom } = scene.place(frame);
-  const cornersCm: Point[] = [[left, bottom + frame], [left + frame, bottom + frame], [left + frame, bottom], [left, bottom]];
+  const side = mosaicSizeCm(grid.length);
+  const { left, bottom } = scene.place(side);
+  const cornersCm: Point[] = [[left, bottom + side], [left + side, bottom + side], [left + side, bottom], [left, bottom]];
   const corners = cornersCm.map((p) => project(toPx, p));
 
   // Pixels per stud where the mosaic appears, to render the texture at about display resolution
   const widthPx = Math.hypot(corners[1][0] - corners[0][0], corners[1][1] - corners[0][1]);
-  const pxPerStud = Math.min(32, Math.max(6, Math.ceil((widthPx / frame) * STUD_CM * 1.25)));
+  const pxPerStud = Math.min(32, Math.max(6, Math.ceil((widthPx / side) * STUD_CM * 1.25)));
 
   const out = document.createElement('canvas');
   out.width = W;
@@ -231,11 +202,12 @@ export function renderPhotoMockup(
   const ctx = out.getContext('2d')!;
   ctx.drawImage(photo, 0, 0, W, H);
 
-  // Shadow: the frame's outline pushed along the light direction, blurred; plus a tight contact shadow
+  // Shadow: the mosaic's outline pushed along the light direction, blurred; plus a tight contact shadow.
+  // The mosaic is only ~1 cm deep (baseplate + plates), so the shadow stays close.
   const [lx, ly] = scene.light;
   const shadowPoly = (offsetCm: number): Point[] =>
     cornersCm.map(([x, y]) => project(toPx, [x + lx * offsetCm, y + ly * offsetCm]));
-  const pxPerCm = widthPx / frame;
+  const pxPerCm = widthPx / side;
   const drawShadow = (offsetCm: number, blurCm: number, alpha: number) => {
     const poly = shadowPoly(offsetCm);
     ctx.save();
@@ -257,8 +229,8 @@ export function renderPhotoMockup(
     ctx.fill();
     ctx.restore();
   };
-  drawShadow(2.5, 5, 0.42);
-  drawShadow(0.5, 1, 0.55);
+  drawShadow(1.2, 2.5, 0.38);
+  drawShadow(0.3, 0.6, 0.5);
 
   // Mosaic: render face-on, then warp onto the wall through the homography in WebGL
   const glCanvas = document.createElement('canvas');
@@ -266,7 +238,7 @@ export function renderPhotoMockup(
   try {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    const texCanvas = renderFramedTexture(renderer, grid, pieceType, pxPerStud, scene.light, scene.tint);
+    const texCanvas = renderMosaicTexture(renderer, grid, pieceType, pxPerStud, scene.light, scene.tint);
 
     renderer.shadowMap.enabled = false;
     renderer.setSize(W, H, false);
@@ -282,7 +254,7 @@ export function renderPhotoMockup(
     for (let i = 0; i < pos.count; i++) {
       const u = uv.getX(i);
       const v = uv.getY(i);
-      const [x, y] = project(toPx, [left + u * frame, bottom + v * frame]);
+      const [x, y] = project(toPx, [left + u * side, bottom + v * side]);
       pos.setXYZ(i, x, H - y, 0);
     }
     const quad = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ map: texture, transparent: true, toneMapped: false }));

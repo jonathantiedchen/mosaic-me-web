@@ -12,10 +12,8 @@ const STUD_HEIGHT = 0.2125; // 1.7mm
 const PIECE_GAP = 0.02; // Thin seam so individual pieces read clearly
 const BASEPLATE_HEIGHT = 0.15;
 
-// Picture frame around the mosaic in room scenes
-const FRAME_BORDER = 2.5 * CM;
-const FRAME_BACK = BASEPLATE_HEIGHT + 1; // Distance from the stud-side plate surface to the frame's back face
-const FRAME_FRONT = 1.4; // Frame lip stands just proud of the stud tops
+// Back face of the upright mosaic (the baseplate's underside), measured from the plate surface
+const MOSAIC_BACK = BASEPLATE_HEIGHT;
 
 export type SceneKind = 'studio' | 'shelf' | 'wall';
 
@@ -156,29 +154,12 @@ export function createMosaic(grid: MosaicGridCell[][], pieceType: 'round' | 'squ
   return group;
 }
 
-/** Mosaic stood upright in a black frame: image faces +z, back face at z = -FRAME_BACK. */
-function createFramedMosaic(mosaic: THREE.Group, size: number): { framed: THREE.Group; outerSize: number } {
-  const framed = new THREE.Group();
+/** Mosaic stood upright: image faces +z, back face at z = -MOSAIC_BACK. */
+function createUprightMosaic(mosaic: THREE.Group): THREE.Group {
+  const upright = new THREE.Group();
   mosaic.rotation.x = Math.PI / 2; // Studs now face +z and image row 0 is at the top
-  framed.add(mosaic);
-
-  const outerSize = size + FRAME_BORDER * 2;
-  const depth = FRAME_BACK + FRAME_FRONT;
-  const zCenter = (FRAME_FRONT - FRAME_BACK) / 2;
-  const frameMaterial = new THREE.MeshStandardMaterial({ color: '#161616', roughness: 0.45 });
-  const edge = size / 2 + FRAME_BORDER / 2;
-  const horizontal = new THREE.BoxGeometry(outerSize, FRAME_BORDER, depth);
-  const vertical = new THREE.BoxGeometry(FRAME_BORDER, size, depth);
-  framed.add(mesh(horizontal, frameMaterial, [0, edge, zCenter]));
-  framed.add(mesh(horizontal, frameMaterial, [0, -edge, zCenter]));
-  framed.add(mesh(vertical, frameMaterial, [edge, 0, zCenter]));
-  framed.add(mesh(vertical, frameMaterial, [-edge, 0, zCenter]));
-  framed.add(mesh(
-    new THREE.BoxGeometry(outerSize, outerSize, 0.6),
-    frameMaterial,
-    [0, 0, -FRAME_BACK + 0.3]
-  ));
-  return { framed, outerSize };
+  upright.add(mosaic);
+  return upright;
 }
 
 function createPlant(potColor: string, scale = 1): THREE.Group {
@@ -235,7 +216,7 @@ function createBookStack(): THREE.Group {
 function addRoomLights(root: THREE.Group, center: THREE.Vector3, radius: number) {
   root.add(new THREE.HemisphereLight('#fff6ec', '#6b5f55', 1.25));
 
-  // Soft "window" light from the upper left, casting the frame's shadow onto the wall
+  // Soft "window" light from the upper left, casting the mosaic's shadow onto the wall
   const sun = new THREE.DirectionalLight('#fff1e0', 2.4);
   sun.position.copy(center).add(new THREE.Vector3(-0.9, 1.1, 1.3).multiplyScalar(radius * 2));
   sun.target.position.copy(center);
@@ -289,12 +270,12 @@ function stageStudio(mosaic: THREE.Group, size: number): StagedScene {
 
 function stageShelf(mosaic: THREE.Group, size: number): StagedScene {
   const root = new THREE.Group();
-  const { framed, outerSize } = createFramedMosaic(mosaic, size);
+  const upright = createUprightMosaic(mosaic);
 
-  const shelfWidth = Math.max(120 * CM, outerSize + 75 * CM);
+  const shelfWidth = Math.max(120 * CM, size + 75 * CM);
   const shelfDepth = 24 * CM;
   const shelfThickness = 3.5 * CM;
-  const wallHeight = Math.max(260 * CM, outerSize * 4);
+  const wallHeight = Math.max(260 * CM, size * 4);
 
   root.add(mesh(
     new THREE.PlaneGeometry(shelfWidth * 4, wallHeight * 2),
@@ -311,17 +292,17 @@ function stageShelf(mosaic: THREE.Group, size: number): StagedScene {
     [0, -shelfThickness / 2, shelfDepth / 2]
   ));
 
-  // Frame leans back against the wall with its bottom edge resting on the shelf
+  // Mosaic leans back against the wall with its bottom edge resting on the shelf
   const tilt = THREE.MathUtils.degToRad(7);
   const lean = new THREE.Group();
-  framed.position.set(0, outerSize / 2, FRAME_BACK);
-  lean.add(framed);
+  upright.position.set(0, size / 2, MOSAIC_BACK);
+  lean.add(upright);
   lean.rotation.x = -tilt;
-  const frameX = -shelfWidth / 2 + 10 * CM + outerSize / 2;
-  lean.position.set(frameX, 0, outerSize * Math.sin(tilt) + 0.4);
+  const mosaicX = -shelfWidth / 2 + 10 * CM + size / 2;
+  lean.position.set(mosaicX, 0, size * Math.sin(tilt) + 0.4);
   root.add(lean);
 
-  const decorStart = frameX + outerSize / 2;
+  const decorStart = mosaicX + size / 2;
   const decorSpace = shelfWidth / 2 - decorStart;
   const books = createBookStack();
   books.position.set(decorStart + decorSpace * 0.38, 0, shelfDepth * 0.5);
@@ -330,8 +311,8 @@ function stageShelf(mosaic: THREE.Group, size: number): StagedScene {
   plant.position.set(decorStart + decorSpace * 0.78, 0, shelfDepth * 0.5);
   root.add(plant);
 
-  const center = new THREE.Vector3(0, outerSize * 0.42, shelfDepth / 2);
-  const radius = Math.hypot(shelfWidth, outerSize + 20 * CM) * 0.5;
+  const center = new THREE.Vector3(0, size * 0.42, shelfDepth / 2);
+  const radius = Math.hypot(shelfWidth, size + 20 * CM) * 0.5;
   addRoomLights(root, center, radius);
 
   return {
@@ -350,15 +331,15 @@ function stageShelf(mosaic: THREE.Group, size: number): StagedScene {
 
 function stageWall(mosaic: THREE.Group, size: number): StagedScene {
   const root = new THREE.Group();
-  const { framed, outerSize } = createFramedMosaic(mosaic, size);
+  const upright = createUprightMosaic(mosaic);
 
-  const boardWidth = Math.max(160 * CM, outerSize + 50 * CM);
+  const boardWidth = Math.max(160 * CM, size + 50 * CM);
   const legHeight = 14 * CM;
   const bodyHeight = 62 * CM;
   const boardDepth = 42 * CM;
   const boardTop = legHeight + bodyHeight;
-  const frameBottom = boardTop + 30 * CM;
-  const wallHeight = Math.max(280 * CM, frameBottom + outerSize + 80 * CM);
+  const mosaicBottom = boardTop + 30 * CM;
+  const wallHeight = Math.max(280 * CM, mosaicBottom + size + 80 * CM);
 
   root.add(mesh(
     new THREE.PlaneGeometry(boardWidth * 5, wallHeight),
@@ -421,10 +402,10 @@ function stageWall(mosaic: THREE.Group, size: number): StagedScene {
   plant.position.set(boardWidth / 2 - 20 * CM, boardTop, boardDepth * 0.45);
   root.add(plant);
 
-  framed.position.set(0, frameBottom + outerSize / 2, FRAME_BACK + 0.2);
-  root.add(framed);
+  upright.position.set(0, mosaicBottom + size / 2, MOSAIC_BACK + 1);
+  root.add(upright);
 
-  const top = frameBottom + outerSize + 15 * CM;
+  const top = mosaicBottom + size + 15 * CM;
   const center = new THREE.Vector3(0, top / 2, boardDepth / 2);
   const radius = Math.hypot(boardWidth * 1.1, top) * 0.5;
   addRoomLights(root, center, radius);

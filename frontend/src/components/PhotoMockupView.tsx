@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Camera } from 'lucide-react';
 import type { MosaicGridCell } from '../types';
-import { frameSizeCm, renderPhotoMockup, type PhotoScene } from './photoMockups';
+import { renderPhotoMockup, type PhotoScene } from './photoMockups';
 
 const photoCache = new Map<string, Promise<HTMLImageElement>>();
 
@@ -71,7 +71,6 @@ export default function PhotoMockupView({ scene, grid, pieceType }: PhotoMockupV
   };
 
   const sideCm = (grid.length * 0.8).toFixed(1);
-  const frameCm = frameSizeCm(grid.length).toFixed(1);
 
   return (
     <div className="space-y-3">
@@ -90,7 +89,7 @@ export default function PhotoMockupView({ scene, grid, pieceType }: PhotoMockupV
         )}
       </div>
       <p className="font-sans text-text-muted" style={{ fontSize: '11px' }}>
-        True scale: {sideCm} × {sideCm} cm mosaic in a {frameCm} cm frame · Photo by{' '}
+        True scale: {sideCm} × {sideCm} cm · Photo by{' '}
         <a href={scene.credit.url} target="_blank" rel="noopener noreferrer" className="underline hover:text-text-secondary">
           {scene.credit.name}
         </a>{' '}
