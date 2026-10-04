@@ -19,7 +19,7 @@ export function ResultsTabs() {
   }
 
   const handleExport = (type: 'mosaic-png' | 'instructions-png' | 'shopping-csv' | 'pickabrick-csv', filename: string) => {
-    exportFile(mosaicData.sessionId, type, filename);
+    exportFile(mosaicData, type, filename);
   };
 
   const handleZoomIn = () => setZoom((z) => Math.min(z + 0.25, 3));

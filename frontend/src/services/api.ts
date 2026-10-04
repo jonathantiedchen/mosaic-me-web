@@ -4,6 +4,7 @@ import type {
   ColorPalette,
   ExportType,
   MosaicConfig,
+  MosaicData,
 } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
@@ -80,12 +81,18 @@ class ApiService {
   }
 
   async exportFile(
-    sessionId: string,
+    mosaic: MosaicData,
     exportType: ExportType
   ): Promise<Blob> {
-    const response = await fetch(
-      `${API_BASE_URL}/export/${sessionId}/${exportType}`
-    );
+    const response = await fetch(`${API_BASE_URL}/export/${exportType}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: mosaic.sessionId,
+        pieceType: mosaic.metadata.pieceType,
+        grid: mosaic.grid.map(row => row.map(cell => cell.colorId)),
+      }),
+    });
 
     if (!response.ok) {
       throw new Error('Export failed');

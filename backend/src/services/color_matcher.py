@@ -1,6 +1,6 @@
 """Color matching service using Delta E (CIE76) algorithm."""
 import math
-from typing import Tuple, List, Dict
+from typing import Tuple, List, Dict, Optional
 import json
 from pathlib import Path
 
@@ -70,6 +70,7 @@ class ColorMatcher:
         self.palette_id = palette_data['id']
         self.palette_name = palette_data['name']
         self.colors = palette_data['colors']
+        self.colors_by_id: Dict[str, Dict] = {color['id']: color for color in self.colors}
 
         # Pre-compute LAB values for all palette colors
         self.lab_cache: Dict[str, Tuple[float, float, float]] = {}
@@ -95,6 +96,10 @@ class ColorMatcher:
                 closest_color = color
 
         return closest_color
+
+    def get_color(self, color_id: str) -> Optional[Dict]:
+        """Look up a palette color by its id."""
+        return self.colors_by_id.get(color_id)
 
     def get_palette_info(self) -> Dict:
         """Get palette metadata."""
