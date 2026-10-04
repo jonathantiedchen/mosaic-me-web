@@ -17,6 +17,9 @@ router = APIRouter()
 export_service = ExportService()
 logger = logging.getLogger(__name__)
 
+# BrickLink part numbers for each piece type
+BRICKLINK_PARTS = {'square': '3024', 'round': '4073'}  # Plate 1 x 1, Plate Round 1 x 1
+
 
 class ExportRequest(BaseModel):
     """The current (possibly edited) mosaic, sent by the client."""
@@ -65,7 +68,7 @@ def _build_grid(request: ExportRequest) -> List[List[Dict]]:
 @router.post('/export/{export_type}')
 async def export_file(
     request: Request,
-    export_type: Literal['mosaic-png', 'instructions-png', 'shopping-csv', 'pickabrick-csv'],
+    export_type: Literal['mosaic-png', 'instructions-png', 'shopping-csv', 'pickabrick-csv', 'bricklink-xml'],
     body: ExportRequest,
     db: AsyncSession = Depends(get_db)
 ):
@@ -88,9 +91,19 @@ async def export_file(
         elif export_type == 'shopping-csv':
             file_bytes = export_service.generate_shopping_csv(shopping_list, body.pieceType)
             media_type = "text/csv"
-        else:
+        elif export_type == 'pickabrick-csv':
             file_bytes = export_service.generate_pickabrick_csv(shopping_list)
             media_type = "text/csv"
+        else:
+            color_matcher = color_matchers[body.pieceType]
+            bricklink_list = [
+                {**item, 'bricklinkColorId': color_matcher.get_color(item['colorId']).get('bricklinkColorId')}
+                for item in shopping_list
+            ]
+            file_bytes = export_service.generate_bricklink_xml(
+                bricklink_list, BRICKLINK_PARTS[body.pieceType]
+            )
+            media_type = "application/xml"
     except Exception:
         logger.exception("Failed to generate %s export", export_type)
         raise HTTPException(
@@ -116,7 +129,7 @@ async def export_file(
             # Log error but don't fail the request
             logger.error(f"Error tracking export download analytics: {e}")
 
-    extension = 'png' if media_type == 'image/png' else 'csv'
+    extension = {'image/png': 'png', 'text/csv': 'csv', 'application/xml': 'xml'}[media_type]
     return Response(
         content=file_bytes,
         media_type=media_type,

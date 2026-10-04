@@ -5,6 +5,7 @@ export interface LegoColor {
   hex: string;
   legoId?: string;
   pickABrickAvailable: boolean;
+  bricklinkColorId?: number | null;
 }
 
 export interface ColorPalette {
@@ -67,7 +68,7 @@ export interface UploadResponse {
   mosaic: MosaicData;
 }
 
-export type ExportType = 'mosaic-png' | 'instructions-png' | 'shopping-csv' | 'pickabrick-csv';
+export type ExportType = 'mosaic-png' | 'instructions-png' | 'shopping-csv' | 'pickabrick-csv' | 'bricklink-xml';
 
 // Admin and Authentication Types
 export interface Admin {

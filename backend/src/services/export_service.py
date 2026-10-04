@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw, ImageFont
 import io
 import csv
 from typing import List, Dict
+from xml.sax.saxutils import escape
 from pathlib import Path
 
 
@@ -227,3 +228,38 @@ class ExportService:
         # Convert to bytes
         csv_content = buffer.getvalue()
         return csv_content.encode('utf-8')
+
+    def generate_bricklink_xml(
+        self,
+        shopping_list: List[Dict],
+        part_number: str
+    ) -> bytes:
+        """
+        Generate a BrickLink Wanted List in BrickLink XML format.
+
+        The file can be uploaded on BrickLink (Wanted > Upload) or imported as a
+        Brick Owl wishlist. BrickLink rejects files with an XML declaration, so
+        the document starts directly with the INVENTORY element.
+
+        Args:
+            shopping_list: Colors with quantities and bricklinkColorId; colors
+                without a BrickLink id (not sold in this part) are skipped
+            part_number: BrickLink part number, e.g. "3024" for Plate 1 x 1
+
+        Returns:
+            XML file bytes
+        """
+        lines = ['<INVENTORY>']
+        for item in shopping_list:
+            if item.get('bricklinkColorId') is None:
+                continue
+            lines.append(
+                '  <ITEM>'
+                '<ITEMTYPE>P</ITEMTYPE>'
+                f'<ITEMID>{escape(part_number)}</ITEMID>'
+                f'<COLOR>{int(item["bricklinkColorId"])}</COLOR>'
+                f'<MINQTY>{int(item["quantity"])}</MINQTY>'
+                '</ITEM>'
+            )
+        lines.append('</INVENTORY>')
+        return ('\n'.join(lines) + '\n').encode('utf-8')

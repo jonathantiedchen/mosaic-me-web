@@ -1,9 +1,10 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { Download, ZoomIn, ZoomOut, Edit, AlertTriangle } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 import { useExport } from '../hooks/useExport';
 import { MosaicEditor } from './MosaicEditor';
-import type { ShoppingListItem, MosaicGridCell } from '../types';
+import { apiService } from '../services/api';
+import type { ShoppingListItem, MosaicGridCell, ExportType } from '../types';
 
 // three.js is large; only load it when the 3D tab is opened
 const Mosaic3DView = lazy(() => import('./Mosaic3DView'));
@@ -28,7 +29,7 @@ export function ResultsTabs() {
     return null;
   }
 
-  const handleExport = (type: 'mosaic-png' | 'instructions-png' | 'shopping-csv' | 'pickabrick-csv', filename: string) => {
+  const handleExport = (type: ExportType, filename: string) => {
     exportFile(mosaicData, type, filename);
   };
 
@@ -245,6 +246,13 @@ export function ResultsTabs() {
               </p>
             </div>
 
+            <BrickLinkPanel
+              items={mosaicData.shoppingList}
+              pieceType={mosaicData.metadata.pieceType}
+              isExporting={isExporting}
+              onExport={() => handleExport('bricklink-xml', `bricklink-${mosaicData.sessionId}.xml`)}
+            />
+
             <ShoppingListView items={mosaicData.shoppingList} />
           </div>
         )}
@@ -318,6 +326,87 @@ function InstructionsView({
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function BrickLinkPanel({
+  items,
+  pieceType,
+  isExporting,
+  onExport,
+}: {
+  items: ShoppingListItem[];
+  pieceType: 'round' | 'square';
+  isExporting: boolean;
+  onExport: () => void;
+}) {
+  // Colors not sold in this part on BrickLink are left out of the XML; name them so counts aren't silently short
+  const [unavailableIds, setUnavailableIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    let cancelled = false;
+    apiService
+      .getPaletteColors(pieceType)
+      .then((palette) => {
+        if (cancelled) return;
+        setUnavailableIds(new Set(palette.colors.filter((c) => c.bricklinkColorId == null).map((c) => c.id)));
+      })
+      .catch((err) => console.error('Failed to load palette for BrickLink check:', err));
+    return () => {
+      cancelled = true;
+    };
+  }, [pieceType]);
+
+  const unavailable = items.filter((item) => unavailableIds.has(item.colorId));
+
+  return (
+    <div className="panel p-5">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h4 className="font-sans text-text-primary font-semibold" style={{ fontSize: '13px', marginBottom: '12px' }}>
+            Order from BrickLink or Brick Owl
+          </h4>
+          <ol className="font-sans text-text-secondary" style={{ fontSize: '13px', lineHeight: 1.8, paddingLeft: '16px' }}>
+            <li>Download the BrickLink XML file</li>
+            <li>
+              On <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-hover underline font-bold transition-colors">BrickLink</a>,
+              open Wanted → Upload, choose "BrickLink XML format" and paste the file's contents
+            </li>
+            <li>Use Easy Buy on the new wanted list to find stores that have most of your pieces</li>
+            <li>For Brick Owl: Wishlist → Import → BrickLink XML</li>
+          </ol>
+          <p className="font-sans text-text-muted" style={{ fontSize: '11px', marginTop: '12px' }}>
+            No per-color quantity limit, and often cheaper for large mosaics.
+          </p>
+        </div>
+        <button
+          onClick={onExport}
+          disabled={isExporting}
+          className="btn-generate"
+          style={{ width: 'auto', padding: '9px 16px' }}
+        >
+          <Download className="w-4 h-4" strokeWidth={1.5} />
+          BrickLink XML
+        </button>
+      </div>
+
+      {unavailable.length > 0 && (
+        <div className="flex items-start gap-3" style={{ marginTop: '16px' }}>
+          <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-accent" strokeWidth={1.5} />
+          <div className="text-sm text-text-secondary leading-relaxed">
+            Not sold as {pieceType} 1×1 plates on BrickLink, so left out of the XML — order these elsewhere or swap the color in the editor:
+            <ul className="mt-2 space-y-1">
+              {unavailable.map((item) => (
+                <li key={item.colorId} className="text-accent font-medium flex items-center gap-2">
+                  <div className="w-4 h-4 rounded border border-white/30" style={{ backgroundColor: item.hex }} />
+                  {item.colorName}: {item.quantity} pieces
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
