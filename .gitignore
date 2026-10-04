@@ -51,3 +51,6 @@ coverage/
 .coverage
 *.cover
 htmlcov/
+
+# Local scripts containing credentials
+run_migration_local.py

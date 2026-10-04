@@ -1,11 +1,21 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { Download, ZoomIn, ZoomOut, Edit, AlertTriangle } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 import { useExport } from '../hooks/useExport';
 import { MosaicEditor } from './MosaicEditor';
 import type { ShoppingListItem, MosaicGridCell } from '../types';
 
-type TabType = 'preview' | 'instructions' | 'shopping';
+// three.js is large; only load it when the 3D tab is opened
+const Mosaic3DView = lazy(() => import('./Mosaic3DView'));
+
+type TabType = 'preview' | '3d' | 'instructions' | 'shopping';
+
+const TAB_LABELS: Record<TabType, string> = {
+  preview: 'Preview',
+  '3d': '3D',
+  instructions: 'Instructions',
+  shopping: 'Shopping',
+};
 
 export function ResultsTabs() {
   const { mosaicData, updateMosaicGrid } = useMosaic();
@@ -42,14 +52,14 @@ export function ResultsTabs() {
     <div className="panel overflow-hidden">
       <div className="border-b border-border">
         <nav className="flex">
-          {(['preview', 'instructions', 'shopping'] as TabType[]).map(tab => (
+          {(Object.keys(TAB_LABELS) as TabType[]).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`tab-btn${activeTab === tab ? ' active' : ''}`}
               style={{ flex: 1 }}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {TAB_LABELS[tab]}
             </button>
           ))}
         </nav>
@@ -121,6 +131,18 @@ export function ResultsTabs() {
               </div>
             )}
           </div>
+        )}
+
+        {activeTab === '3d' && (
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center text-text-secondary text-sm" style={{ height: '320px' }}>
+                Loading 3D view…
+              </div>
+            }
+          >
+            <Mosaic3DView grid={mosaicData.grid} pieceType={mosaicData.metadata.pieceType} />
+          </Suspense>
         )}
 
         {activeTab === 'instructions' && (
