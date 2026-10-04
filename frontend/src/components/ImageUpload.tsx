@@ -110,7 +110,7 @@ export function ImageUpload() {
             <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
           </svg>
         </div>
-        <p className="font-sans" style={{ fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: '#e3ddd5' }}>
+        <p className="font-sans" style={{ fontSize: '15px', fontWeight: 500, marginBottom: '6px', color: '#e3ddd5' }}>
           {isDragActive ? 'Drop it here' : 'Drop a photo, or click to browse'}
         </p>
         <p className="font-sans text-text-muted" style={{ fontSize: '12px' }}>
@@ -122,26 +122,20 @@ export function ImageUpload() {
       </div>
 
       {/* Examples: one click loads the photo so people can try the app without their own */}
-      <div>
-        <p className="chip-label" style={{ marginBottom: '10px' }}>
-          No photo handy? Try an example
-        </p>
-        <div className="grid grid-cols-2 gap-3">
-          {SAMPLE_EXAMPLES.map((example) => (
-            <button
-              key={example.name}
-              type="button"
-              onClick={() => loadExample(example.raw, example.name)}
-              className="panel flex items-center gap-3 text-left transition-colors hover:border-accent"
-              style={{ padding: '8px' }}
-            >
-              <img src={example.raw} alt="" style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '2px' }} />
-              <span className="text-text-muted" aria-hidden>→</span>
-              <img src={example.mosaic} alt="" style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '2px', imageRendering: 'pixelated' }} />
-              <span className="sr-only">Use {example.name}</span>
-            </button>
-          ))}
-        </div>
+      <div className="flex items-center justify-center gap-3 flex-wrap">
+        <span className="font-sans text-text-muted" style={{ fontSize: '13px' }}>No photo handy? Try an example</span>
+        {SAMPLE_EXAMPLES.map((example) => (
+          <button
+            key={example.name}
+            type="button"
+            onClick={() => loadExample(example.raw, example.name)}
+            className="border border-border hover:border-accent transition-colors"
+            style={{ padding: '2px', borderRadius: '2px' }}
+            title={`Use ${example.name}`}
+          >
+            <img src={example.raw} alt={`Use ${example.name}`} style={{ width: '36px', height: '36px', objectFit: 'cover', display: 'block' }} />
+          </button>
+        ))}
       </div>
     </div>
   );

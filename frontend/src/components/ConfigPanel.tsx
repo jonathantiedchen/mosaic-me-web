@@ -79,6 +79,10 @@ export function ConfigPanel() {
   const option = (selected: boolean) =>
     `font-sans text-sm border${selected ? ' border-accent text-accent bg-bg' : ' border-border text-text-secondary bg-surface hover:border-accent'}`;
 
+  if (!uploadedFile && !hasResults) {
+    return <ImageUpload />;
+  }
+
   return (
     <div className="space-y-3">
       <Steps current={step} />
