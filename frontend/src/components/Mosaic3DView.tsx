@@ -156,7 +156,7 @@ export default function Mosaic3DView({ grid, pieceType, sceneKind }: Mosaic3DVie
         className="border border-border overflow-hidden"
         style={{ borderRadius: '2px', height: 'min(70vh, 640px)', minHeight: '320px', cursor: 'grab', touchAction: 'none' }}
       />
-      <p className="font-sans text-text-muted" style={{ fontSize: '11px' }}>
+      <p className="font-sans text-text-muted" style={{ fontSize: '12px' }}>
         {sceneKind === 'studio'
           ? 'Drag to rotate · scroll or pinch to zoom · right-drag to pan'
           : `Shown at true scale: ${sideCm} × ${sideCm} cm · drag to look around`}

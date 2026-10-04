@@ -69,28 +69,34 @@
     transition: border-color 0.2s;
   }
 
-  .setting-chip:hover {
+  .setting-chip:hover,
+  .setting-chip[aria-expanded="true"] {
     border-color: #c4a882;
+  }
+
+  .setting-chip:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   .chip-label {
     @apply font-sans;
     font-weight: 500;
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #5a5450;
+    color: #968e87;
     margin-bottom: 2px;
   }
 
   .chip-value {
     @apply font-sans text-text-subtle;
     font-weight: 500;
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .upload-zone {
-    border: 1px solid #2e2a26;
+    border: 1px dashed #5a524b;
     border-radius: 2px;
     background: #242018;
     padding: 28px 20px;
@@ -101,6 +107,7 @@
 
   .upload-zone:hover,
   .upload-zone.drag-active {
+    border-style: solid;
     border-color: #c4a882;
     background: #2a241e;
   }
@@ -111,9 +118,17 @@
 
   .tab-btn {
     @apply font-sans font-medium text-sm transition-colors duration-200 relative;
-    padding: 14px 20px;
-    color: #5a5450;
+    padding: 14px 12px;
+    color: #968e87;
     letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 639px) {
+    .tab-btn {
+      padding: 12px 4px;
+      font-size: 12px;
+    }
   }
 
   .tab-btn:hover {

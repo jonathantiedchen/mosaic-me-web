@@ -1,5 +1,6 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
-import { Download, ZoomIn, ZoomOut, Edit, AlertTriangle } from 'lucide-react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { Download, ZoomIn, ZoomOut, Edit, AlertTriangle, Image as ImageIcon, Sofa, ListOrdered, ShoppingCart, type LucideIcon } from 'lucide-react';
+import { ExportError } from './DownloadsCard';
 import { useMosaic } from '../hooks/useMosaic';
 import { useExport } from '../hooks/useExport';
 import { MosaicEditor } from './MosaicEditor';
@@ -11,18 +12,22 @@ const MosaicVisualizer = lazy(() => import('./MosaicVisualizer'));
 
 type TabType = 'preview' | '3d' | 'instructions' | 'shopping';
 
-const TAB_LABELS: Record<TabType, string> = {
-  preview: 'Preview',
-  '3d': 'In your home',
-  instructions: 'Instructions',
-  shopping: 'Shopping',
+// Short labels keep all four tabs on one line on phones
+const TABS: Record<TabType, { label: string; short: string; icon: LucideIcon }> = {
+  preview: { label: 'Preview', short: 'Preview', icon: ImageIcon },
+  '3d': { label: 'In your home', short: 'Home', icon: Sofa },
+  instructions: { label: 'Instructions', short: 'Build', icon: ListOrdered },
+  shopping: { label: 'Shopping', short: 'Parts', icon: ShoppingCart },
 };
 
 export function ResultsTabs() {
   const { mosaicData, updateMosaicGrid } = useMosaic();
-  const { exportFile, isExporting } = useExport();
+  const { exportFile, isExporting, exportError, clearExportError } = useExport();
   const [activeTab, setActiveTab] = useState<TabType>('preview');
-  const [zoom, setZoom] = useState(0.5);
+  // null = fit the preview to the available width (the default, so it never overflows on phones)
+  const [zoom, setZoom] = useState<number | null>(null);
+  const [naturalWidth, setNaturalWidth] = useState(0);
+  const previewBoxRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
 
   if (!mosaicData) {
@@ -33,8 +38,12 @@ export function ResultsTabs() {
     exportFile(mosaicData, type, filename);
   };
 
-  const handleZoomIn = () => setZoom((z) => Math.min(z + 0.25, 3));
-  const handleZoomOut = () => setZoom((z) => Math.max(z - 0.25, 0.5));
+  const fitZoom = () => {
+    const box = previewBoxRef.current;
+    return box && naturalWidth ? (box.clientWidth - 32) / naturalWidth : 1;
+  };
+  const handleZoomIn = () => setZoom((z) => Math.min((z ?? fitZoom()) + 0.25, 4));
+  const handleZoomOut = () => setZoom((z) => Math.max((z ?? fitZoom()) - 0.25, 0.25));
 
   const handleEditMosaic = () => {
     setIsEditing(true);
@@ -52,36 +61,51 @@ export function ResultsTabs() {
   return (
     <div className="panel overflow-hidden">
       <div className="border-b border-border">
-        <nav className="flex">
-          {(Object.keys(TAB_LABELS) as TabType[]).map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`tab-btn${activeTab === tab ? ' active' : ''}`}
-              style={{ flex: 1 }}
-            >
-              {TAB_LABELS[tab]}
-            </button>
-          ))}
+        <nav className="flex" role="tablist">
+          {(Object.keys(TABS) as TabType[]).map(tab => {
+            const { label, short, icon: Icon } = TABS[tab];
+            return (
+              <button
+                key={tab}
+                role="tab"
+                aria-selected={activeTab === tab}
+                onClick={() => setActiveTab(tab)}
+                className={`tab-btn flex items-center justify-center gap-1.5${activeTab === tab ? ' active' : ''}`}
+                style={{ flex: 1, minWidth: 0 }}
+              >
+                <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} aria-hidden />
+                <span className="sm:hidden">{short}</span>
+                <span className="hidden sm:inline">{label}</span>
+              </button>
+            );
+          })}
         </nav>
       </div>
 
-      <div className="p-5 sm:p-6">
+      <div className="p-4 sm:p-6">
+        {exportError && (
+          <div className="mb-4">
+            <ExportError message={exportError} onDismiss={clearExportError} />
+          </div>
+        )}
         {activeTab === 'preview' && (
           <div className="space-y-4 sm:space-y-6">
             {!isEditing ? (
               <>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
                   <div className="flex items-center gap-2">
-                    <button onClick={handleZoomOut} disabled={zoom <= 0.5} className="btn-ghost" aria-label="Zoom out">
+                    <button onClick={handleZoomOut} disabled={zoom !== null && zoom <= 0.25} className="btn-ghost" aria-label="Zoom out">
                       <ZoomOut className="w-4 h-4" strokeWidth={1.5} />
                     </button>
-                    <span className="font-sans text-text-subtle font-medium" style={{ fontSize: '12px', minWidth: '44px', textAlign: 'center' }}>
-                      {Math.round(zoom * 100)}%
+                    <span className="font-sans text-text-subtle font-medium" style={{ fontSize: '12px', minWidth: '44px', textAlign: 'center' }} aria-live="polite">
+                      {zoom === null ? 'Fit' : `${Math.round(zoom * 100)}%`}
                     </span>
-                    <button onClick={handleZoomIn} disabled={zoom >= 3} className="btn-ghost" aria-label="Zoom in">
+                    <button onClick={handleZoomIn} disabled={zoom !== null && zoom >= 4} className="btn-ghost" aria-label="Zoom in">
                       <ZoomIn className="w-4 h-4" strokeWidth={1.5} />
                     </button>
+                    {zoom !== null && (
+                      <button onClick={() => setZoom(null)} className="btn-ghost">Fit</button>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <button onClick={handleEditMosaic} className="btn-ghost flex items-center gap-2">
@@ -99,12 +123,19 @@ export function ResultsTabs() {
                     </button>
                   </div>
                 </div>
-                <div className="border border-border" style={{ borderRadius: '2px', padding: '16px', maxHeight: '600px', overflowY: 'auto', overflowX: 'auto' }}>
+                <div ref={previewBoxRef} className="border border-border" style={{ borderRadius: '2px', padding: '16px', maxHeight: '70vh', overflow: 'auto' }}>
                   <img
                     src={mosaicData.previewUrl}
                     alt="Mosaic preview"
-                    style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}
-                    className="max-w-none"
+                    onLoad={(e) => setNaturalWidth(e.currentTarget.naturalWidth)}
+                    style={{
+                      // Fit: as wide as the box, but never taller than it (mosaics are square)
+                      width: zoom === null ? 'min(100%, calc(70vh - 34px))' : `${naturalWidth * zoom}px`,
+                      height: 'auto',
+                      margin: zoom === null ? '0 auto' : undefined,
+                      imageRendering: 'pixelated',
+                    }}
+                    className="max-w-none block"
                   />
                 </div>
                 <div className="grid grid-cols-3 gap-3">
@@ -176,9 +207,9 @@ export function ResultsTabs() {
                   </p>
                 </div>
                 <div className="panel px-4 py-3">
-                  <p className="chip-label mb-1">Est. cost</p>
+                  <p className="chip-label mb-1">Approx. cost*</p>
                   <p className="font-sans text-text-primary font-semibold" style={{ fontSize: '18px', letterSpacing: '-0.02em' }}>
-                    ${(mosaicData.metadata.totalPieces * 0.06).toFixed(2)}
+                    ≈ ${Math.round(mosaicData.metadata.totalPieces * 0.06)}
                   </p>
                 </div>
               </div>
@@ -241,8 +272,8 @@ export function ResultsTabs() {
                 <li>Click "Upload List" and select the CSV file</li>
                 <li>All pieces will be added to your cart automatically</li>
               </ol>
-              <p className="font-sans text-text-muted" style={{ fontSize: '11px', marginTop: '12px' }}>
-                Price estimate based on ~$0.06 per 1×1 plate. Actual prices vary by region.
+              <p className="font-sans text-text-muted" style={{ fontSize: '12px', marginTop: '12px' }}>
+                * Rough estimate at ~$0.06 per 1×1 plate. Actual prices vary by shop, region and colour.
               </p>
             </div>
 
@@ -281,7 +312,7 @@ function InstructionsView({
           <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
             {shoppingList.map((item, index) => (
               <div key={item.colorId} className="border-b border-border" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 0' }}>
-                <span className="font-sans text-text-muted font-medium" style={{ fontSize: '11px', width: '20px', flexShrink: 0 }}>
+                <span className="font-sans text-text-muted font-medium" style={{ fontSize: '12px', width: '20px', flexShrink: 0 }}>
                   {index + 1}
                 </span>
                 <div className="border border-border" style={{ width: '20px', height: '20px', borderRadius: '2px', flexShrink: 0, backgroundColor: item.hex }} />
@@ -376,7 +407,7 @@ function BrickLinkPanel({
             <li>Use Easy Buy on the new wanted list to find stores that have most of your pieces</li>
             <li>For Brick Owl: Wishlist → Import → BrickLink XML</li>
           </ol>
-          <p className="font-sans text-text-muted" style={{ fontSize: '11px', marginTop: '12px' }}>
+          <p className="font-sans text-text-muted" style={{ fontSize: '12px', marginTop: '12px' }}>
             No per-color quantity limit, and often cheaper for large mosaics.
           </p>
         </div>

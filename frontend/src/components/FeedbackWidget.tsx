@@ -125,7 +125,7 @@ export function FeedbackWidget({ sessionId }: FeedbackWidgetProps) {
                       outline: 'none',
                     }}
                   />
-                  <p className="font-sans text-text-muted" style={{ fontSize: '10px', marginTop: '4px' }}>
+                  <p className="font-sans text-text-muted" style={{ fontSize: '11px', marginTop: '4px' }}>
                     {comment.length}/200
                   </p>
                 </div>

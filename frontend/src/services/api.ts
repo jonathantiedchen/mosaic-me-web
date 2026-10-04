@@ -26,7 +26,9 @@ class ApiService {
         code: 'UNKNOWN_ERROR',
         message: 'An unknown error occurred',
       }));
-      throw new Error(error.message || 'Request failed');
+      // FastAPI wraps our error payload in "detail"; 422 validation errors use a list there
+      const detail = error.detail;
+      throw new Error((detail && !Array.isArray(detail) && detail.message) || error.message || 'Request failed');
     }
 
     return response.json();
@@ -95,7 +97,9 @@ class ApiService {
     });
 
     if (!response.ok) {
-      throw new Error('Export failed');
+      // FastAPI wraps our error payload in "detail"
+      const body = await response.json().catch(() => null);
+      throw new Error(body?.detail?.message || 'Download failed. Please try again.');
     }
 
     return response.blob();

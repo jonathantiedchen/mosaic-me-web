@@ -3,8 +3,10 @@ from fastapi import APIRouter, HTTPException, Request, Depends
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Literal, List, Dict
+from typing import Literal, List, Dict, Tuple
+import io
 import logging
+import zipfile
 
 from ..services.export_service import ExportService
 from ..services.mosaic_generator import MosaicGenerator
@@ -65,10 +67,37 @@ def _build_grid(request: ExportRequest) -> List[List[Dict]]:
     return grid
 
 
+# Name inside the zip, media type
+FILE_EXPORTS: Dict[str, Tuple[str, str]] = {
+    'mosaic-png': ('mosaic.png', 'image/png'),
+    'instructions-png': ('instructions.png', 'image/png'),
+    'pickabrick-csv': ('pick-a-brick.csv', 'text/csv'),
+    'bricklink-xml': ('bricklink-wanted-list.xml', 'application/xml'),
+    'shopping-csv': ('shopping-list.csv', 'text/csv'),
+}
+
+
+def _generate(export_type: str, grid: List[List[Dict]], shopping_list: List[Dict], piece_type: str) -> bytes:
+    if export_type == 'mosaic-png':
+        return export_service.generate_mosaic_png(grid)
+    if export_type == 'instructions-png':
+        return export_service.generate_instructions_png(grid, shopping_list)
+    if export_type == 'shopping-csv':
+        return export_service.generate_shopping_csv(shopping_list, piece_type)
+    if export_type == 'pickabrick-csv':
+        return export_service.generate_pickabrick_csv(shopping_list)
+    color_matcher = color_matchers[piece_type]
+    bricklink_list = [
+        {**item, 'bricklinkColorId': color_matcher.get_color(item['colorId']).get('bricklinkColorId')}
+        for item in shopping_list
+    ]
+    return export_service.generate_bricklink_xml(bricklink_list, BRICKLINK_PARTS[piece_type])
+
+
 @router.post('/export/{export_type}')
 async def export_file(
     request: Request,
-    export_type: Literal['mosaic-png', 'instructions-png', 'shopping-csv', 'pickabrick-csv', 'bricklink-xml'],
+    export_type: Literal['mosaic-png', 'instructions-png', 'shopping-csv', 'pickabrick-csv', 'bricklink-xml', 'all-zip'],
     body: ExportRequest,
     db: AsyncSession = Depends(get_db)
 ):
@@ -77,33 +106,21 @@ async def export_file(
 
     The client sends the current grid (including any edits), so exports always
     match what the user sees and do not depend on server-side session state.
+    'all-zip' bundles every export into one archive.
     """
     grid = _build_grid(body)
     shopping_list = MosaicGenerator(color_matchers[body.pieceType]).generate_shopping_list(grid)
 
     try:
-        if export_type == 'mosaic-png':
-            file_bytes = export_service.generate_mosaic_png(grid)
-            media_type = "image/png"
-        elif export_type == 'instructions-png':
-            file_bytes = export_service.generate_instructions_png(grid, shopping_list)
-            media_type = "image/png"
-        elif export_type == 'shopping-csv':
-            file_bytes = export_service.generate_shopping_csv(shopping_list, body.pieceType)
-            media_type = "text/csv"
-        elif export_type == 'pickabrick-csv':
-            file_bytes = export_service.generate_pickabrick_csv(shopping_list)
-            media_type = "text/csv"
+        if export_type == 'all-zip':
+            buffer = io.BytesIO()
+            with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
+                for kind, (name, _) in FILE_EXPORTS.items():
+                    archive.writestr(name, _generate(kind, grid, shopping_list, body.pieceType))
+            file_bytes, media_type, filename = buffer.getvalue(), 'application/zip', 'mosaic.zip'
         else:
-            color_matcher = color_matchers[body.pieceType]
-            bricklink_list = [
-                {**item, 'bricklinkColorId': color_matcher.get_color(item['colorId']).get('bricklinkColorId')}
-                for item in shopping_list
-            ]
-            file_bytes = export_service.generate_bricklink_xml(
-                bricklink_list, BRICKLINK_PARTS[body.pieceType]
-            )
-            media_type = "application/xml"
+            name, media_type = FILE_EXPORTS[export_type]
+            file_bytes, filename = _generate(export_type, grid, shopping_list, body.pieceType), name
     except Exception:
         logger.exception("Failed to generate %s export", export_type)
         raise HTTPException(
@@ -129,11 +146,10 @@ async def export_file(
             # Log error but don't fail the request
             logger.error(f"Error tracking export download analytics: {e}")
 
-    extension = {'image/png': 'png', 'text/csv': 'csv', 'application/xml': 'xml'}[media_type]
     return Response(
         content=file_bytes,
         media_type=media_type,
         headers={
-            'Content-Disposition': f'attachment; filename="{export_type}.{extension}"'
+            'Content-Disposition': f'attachment; filename="{filename}"'
         }
     )

@@ -68,7 +68,7 @@ export interface UploadResponse {
   mosaic: MosaicData;
 }
 
-export type ExportType = 'mosaic-png' | 'instructions-png' | 'shopping-csv' | 'pickabrick-csv' | 'bricklink-xml';
+export type ExportType = 'mosaic-png' | 'instructions-png' | 'shopping-csv' | 'pickabrick-csv' | 'bricklink-xml' | 'all-zip';
 
 // Admin and Authentication Types
 export interface Admin {

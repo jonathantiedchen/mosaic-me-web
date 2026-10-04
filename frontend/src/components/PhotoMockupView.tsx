@@ -88,7 +88,7 @@ export default function PhotoMockupView({ scene, grid, pieceType }: PhotoMockupV
           </div>
         )}
       </div>
-      <p className="font-sans text-text-muted" style={{ fontSize: '11px' }}>
+      <p className="font-sans text-text-muted" style={{ fontSize: '12px' }}>
         True scale: {sideCm} × {sideCm} cm · Photo by{' '}
         <a href={scene.credit.url} target="_blank" rel="noopener noreferrer" className="underline hover:text-text-secondary">
           {scene.credit.name}

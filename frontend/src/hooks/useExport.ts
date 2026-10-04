@@ -23,7 +23,7 @@ export function useExport() {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Export failed';
+        const errorMessage = err instanceof Error ? err.message : 'Download failed. Please try again.';
         setExportError(errorMessage);
         console.error('Export error:', err);
       } finally {
@@ -33,9 +33,12 @@ export function useExport() {
     []
   );
 
+  const clearExportError = useCallback(() => setExportError(null), []);
+
   return {
     exportFile,
     isExporting,
     exportError,
+    clearExportError,
   };
 }

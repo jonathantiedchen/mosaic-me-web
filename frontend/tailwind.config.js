@@ -19,8 +19,8 @@ export default {
         surface: '#242018',
         border: '#2e2a26',
         'text-primary': '#f5f0e8',
-        'text-secondary': '#7a716c',
-        'text-muted': '#5a5450',
+        'text-secondary': '#aaa29b', // 6.4:1 on surface (WCAG AA)
+        'text-muted': '#968e87', // 5.0:1 on surface (WCAG AA)
         accent: '#c4a882',
         'accent-hover': '#d4b892',
         'text-subtle': '#c5bfb8',

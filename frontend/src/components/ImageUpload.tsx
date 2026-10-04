@@ -37,6 +37,12 @@ export function ImageUpload() {
     multiple: false,
   });
 
+  const loadExample = async (src: string, name: string) => {
+    const blob = await fetch(src).then((r) => r.blob());
+    const extension = src.split('.').pop();
+    setUploadedFile(new File([blob], `${name.toLowerCase().replace(/\s+/g, '-')}.${extension}`, { type: blob.type }));
+  };
+
   const handleClear = () => {
     setUploadedFile(null);
     clearMosaic();
@@ -66,7 +72,7 @@ export function ImageUpload() {
           <p className="text-sm font-medium text-text-primary truncate">
             {uploadedFile.name}
           </p>
-          <p className="text-text-muted" style={{ fontSize: '11px', marginTop: '2px' }}>
+          <p className="text-text-muted" style={{ fontSize: '12px', marginTop: '2px' }}>
             {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
           </p>
         </div>
@@ -83,7 +89,7 @@ export function ImageUpload() {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <div
         {...getRootProps()}
         className={`upload-zone${isDragActive ? ' drag-active' : ''}${hasErrors ? ' has-error' : ''}`}
@@ -98,16 +104,16 @@ export function ImageUpload() {
           alignItems: 'center',
           justifyContent: 'center',
           margin: '0 auto 12px',
-          color: '#6b6460',
+          color: '#968e87',
         }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
           </svg>
         </div>
-        <p className="font-sans" style={{ fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: '#d5cfc8' }}>
+        <p className="font-sans" style={{ fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: '#e3ddd5' }}>
           {isDragActive ? 'Drop it here' : 'Drop a photo, or click to browse'}
         </p>
-        <p className="font-sans text-text-muted" style={{ fontSize: '11px' }}>
+        <p className="font-sans text-text-muted" style={{ fontSize: '12px' }}>
           JPG, PNG, WEBP — up to 10 MB
         </p>
         {hasErrors && (
@@ -115,30 +121,25 @@ export function ImageUpload() {
         )}
       </div>
 
-      {/* Examples */}
-      <div className="border-t border-border" style={{ paddingTop: '20px' }}>
-        <p className="chip-label text-center" style={{ marginBottom: '14px' }}>
-          Examples
+      {/* Examples: one click loads the photo so people can try the app without their own */}
+      <div>
+        <p className="chip-label" style={{ marginBottom: '10px' }}>
+          No photo handy? Try an example
         </p>
-        <div className="flex flex-wrap gap-4 justify-center">
-          {SAMPLE_EXAMPLES.map((example, index) => (
-            <div key={index} className="panel" style={{ padding: '12px' }}>
-              <div className="flex gap-3">
-                <img
-                  src={example.raw}
-                  alt={`${example.name} - Original`}
-                  style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '2px' }}
-                />
-                <img
-                  src={example.mosaic}
-                  alt={`${example.name} - Mosaic`}
-                  style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '2px' }}
-                />
-              </div>
-              <p className="chip-label text-center" style={{ marginTop: '10px', marginBottom: 0 }}>
-                {example.name}
-              </p>
-            </div>
+        <div className="grid grid-cols-2 gap-3">
+          {SAMPLE_EXAMPLES.map((example) => (
+            <button
+              key={example.name}
+              type="button"
+              onClick={() => loadExample(example.raw, example.name)}
+              className="panel flex items-center gap-3 text-left transition-colors hover:border-accent"
+              style={{ padding: '8px' }}
+            >
+              <img src={example.raw} alt="" style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '2px' }} />
+              <span className="text-text-muted" aria-hidden>→</span>
+              <img src={example.mosaic} alt="" style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '2px', imageRendering: 'pixelated' }} />
+              <span className="sr-only">Use {example.name}</span>
+            </button>
           ))}
         </div>
       </div>

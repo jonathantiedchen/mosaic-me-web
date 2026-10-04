@@ -9,9 +9,12 @@ interface MosaicContextType {
   isLoading: boolean;
   error: string | null;
   uploadedFile: File | null;
+  /** The current mosaic has editor changes that regenerating would discard */
+  isEdited: boolean;
   setConfig: (config: MosaicConfig) => void;
   setUploadedFile: (file: File | null) => void;
-  generateMosaic: (file: File) => Promise<void>;
+  /** Generate from file; pass a config to use it before the state update lands */
+  generateMosaic: (file: File, configOverride?: MosaicConfig) => Promise<void>;
   clearMosaic: () => void;
   updateMosaicGrid: (newGrid: MosaicGridCell[][], newShoppingList: ShoppingListItem[]) => void;
 }
@@ -29,15 +32,17 @@ export function MosaicProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isEdited, setIsEdited] = useState(false);
 
   const generateMosaic = useCallback(
-    async (file: File) => {
+    async (file: File, configOverride?: MosaicConfig) => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const response = await apiService.uploadImage(file, config);
+        const response = await apiService.uploadImage(file, configOverride ?? config);
         setMosaicData(response.mosaic);
+        setIsEdited(false);
         setUploadedFile(file);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to generate mosaic';
@@ -53,6 +58,7 @@ export function MosaicProvider({ children }: { children: ReactNode }) {
   const clearMosaic = useCallback(() => {
     setMosaicData(null);
     setUploadedFile(null);
+    setIsEdited(false);
     setError(null);
   }, []);
 
@@ -61,6 +67,7 @@ export function MosaicProvider({ children }: { children: ReactNode }) {
 
     // Generate new preview from the edited grid
     const newPreviewUrl = generatePreviewFromGrid(newGrid);
+    setIsEdited(true);
 
     setMosaicData({
       ...mosaicData,
@@ -80,6 +87,7 @@ export function MosaicProvider({ children }: { children: ReactNode }) {
     isLoading,
     error,
     uploadedFile,
+    isEdited,
     setConfig,
     setUploadedFile,
     generateMosaic,
