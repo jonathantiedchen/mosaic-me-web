@@ -60,3 +60,6 @@ run_migration_local.py
 .vercel
 .env*
 !.env.example
+
+# oh-my-claudecode tool state
+.omc/
