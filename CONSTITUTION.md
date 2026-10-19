@@ -33,9 +33,8 @@ This application adheres to minimalist principles:
 - **File Storage**: Local filesystem (MVP), S3-compatible for production
 
 ### Infrastructure
-- **Frontend Hosting**: Vercel
-- **Backend Hosting**: Railway or Render
-- **Database**: Managed PostgreSQL service
+- **Hosting**: Vercel (frontend as static build, backend as a Python function under /api)
+- **Database**: Supabase (managed PostgreSQL)
 - **No separate cache layer** (in-memory caching only)
 - **No CDN initially** (add when traffic justifies)
 
