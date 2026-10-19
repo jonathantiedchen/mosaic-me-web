@@ -17,7 +17,7 @@ Preview deployments (one per branch/PR) take the place of a staging environment.
 | --- | --- |
 | `vercel.json` | Build command, output folder, function settings, rewrites, headers |
 | `api/index.py` | Python function entrypoint; imports `backend/src/main.py` |
-| `requirements.txt` | Points Vercel at `backend/requirements.txt` |
+| `requirements.txt` | Python dependencies (`backend/requirements.txt` includes it) |
 | `.python-version` | Python version for the function (3.12) |
 | `backend/migrations/*.sql` | Database schema, applied in order |
 
