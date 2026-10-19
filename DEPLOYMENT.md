@@ -45,18 +45,23 @@ Preview deployments (one per branch/PR) take the place of a staging environment.
    public anon key cannot read admin password hashes or call cleanup functions),
    and schedules the cleanup jobs.
 3. Under **Connect**, copy the **Transaction pooler** connection string (port
-   `6543`). This is the `DATABASE_URL` for Vercel. The backend turns off
+   `6543`), unless the Supabase integration provides it (step 2.2). The backend turns off
    prepared-statement caching, which the transaction pooler requires.
 
 ## 2. Vercel
 
 1. Import the GitHub repository as a new project. Leave the root directory as
    the repository root; `vercel.json` sets the build.
-2. Add environment variables (Production and Preview):
+2. Connect the database with the **Supabase integration** (Vercel Marketplace →
+   Supabase → link the existing `mosaic-me` project to this Vercel project). It
+   sets `POSTGRES_URL` (transaction pooler) and keeps it in sync; the backend
+   reads it when `DATABASE_URL` is not set and strips the URL parameters
+   asyncpg does not understand. Without the integration, set `DATABASE_URL` to
+   the transaction pooler URL (port 6543) yourself.
+3. Add the remaining environment variables (Production and Preview):
 
    | Variable | Value |
    | --- | --- |
-   | `DATABASE_URL` | Supabase transaction pooler URL (port 6543) |
    | `JWT_SECRET_KEY` | `openssl rand -hex 32` |
    | `ANALYTICS_SALT` | `openssl rand -hex 16` |
    | `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` (optional) |
@@ -64,7 +69,7 @@ Preview deployments (one per branch/PR) take the place of a staging environment.
 
    Keep `JWT_SECRET_KEY` and `ANALYTICS_SALT` the same as before a migration, or
    existing admin sessions end and daily visitor counts split on the switch day.
-3. Deploy. Check `https://<your-domain>/api/v1/health`.
+4. Deploy. Check `https://<your-domain>/api/v1/health`.
 
 ## 3. Admin user
 

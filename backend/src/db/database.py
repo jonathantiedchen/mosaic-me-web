@@ -1,5 +1,6 @@
 """Database connection and session management."""
 from typing import AsyncGenerator
+from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.pool import NullPool
@@ -10,10 +11,16 @@ from ..config import config
 
 logger = logging.getLogger(__name__)
 
-# Convert postgresql:// to postgresql+asyncpg://
-database_url = config.DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
-# SQLAlchemy keeps its own prepared-statement cache on top of asyncpg's
-database_url += ("&" if "?" in database_url else "?") + "prepared_statement_cache_size=0"
+# Accept libpq-style URLs (e.g. from the Supabase-Vercel integration), whose
+# query parameters asyncpg rejects: sslmode becomes asyncpg's ssl argument and
+# the rest (such as supa=base-pooler.x) are dropped.
+_url = make_url(config.DATABASE_URL)
+_ssl = _url.query.get("sslmode")
+database_url = _url.set(
+    drivername="postgresql+asyncpg",
+    # SQLAlchemy keeps its own prepared-statement cache on top of asyncpg's
+    query={"prepared_statement_cache_size": "0"},
+)
 
 # Serverless: each function instance is short-lived, so keep no pool of our own
 # and let Supabase's pooler (transaction mode) share connections. That pooler
@@ -25,6 +32,7 @@ engine = create_async_engine(
     connect_args={
         "statement_cache_size": 0,
         "prepared_statement_name_func": lambda: f"__asyncpg_{uuid.uuid4()}__",
+        **({"ssl": _ssl} if _ssl and _ssl != "disable" else {}),
     },
 )
 
@@ -74,7 +82,7 @@ async def init_db() -> None:
         async with engine.begin() as conn:
             # You could run migrations here or verify tables exist
             logger.info("Database connection established successfully")
-            logger.info(f"Connected to database: {database_url.split('@')[-1]}")
+            logger.info(f"Connected to database: {database_url.host}/{database_url.database}")
     except Exception as e:
         logger.error(f"Failed to connect to database: {e}")
         raise

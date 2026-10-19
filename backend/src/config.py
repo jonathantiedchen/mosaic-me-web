@@ -22,9 +22,11 @@ class Config:
     ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
 
     # Database
-    DATABASE_URL = os.getenv(
-        "DATABASE_URL",
-        "postgresql://postgres:postgres@localhost:5432/mosaicme"
+    # POSTGRES_URL is set by the Supabase-Vercel integration (transaction pooler)
+    DATABASE_URL = (
+        os.getenv("DATABASE_URL")
+        or os.getenv("POSTGRES_URL")
+        or "postgresql://postgres:postgres@localhost:5432/mosaicme"
     )
 
     # Session
