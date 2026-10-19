@@ -1,0 +1,184 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1792434953222,
+  "projectRoot": "/Users/jonathan/Library/Mobile Documents/com~apple~CloudDocs/GitProjects/mosaic-me-web/.claude/worktrees/keen-cori-4e6ef8",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "Python",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "requirements.txt"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {
+      "install:all": "cd frontend && npm install && cd ../backend && pip install -r requirements.txt",
+      "dev:frontend": "cd frontend && npm run dev",
+      "dev:backend": "cd backend && python -m uvicorn src.main:app --reload --port 8000",
+      "build:frontend": "cd frontend && npm run build",
+      "setup": "npm run install:all && cp frontend/.env.example frontend/.env && cp backend/.env.example backend/.env"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "docs"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "api": {
+      "path": "api",
+      "purpose": "API routes",
+      "fileCount": 1,
+      "lastAccessed": 1792434953175,
+      "keyFiles": [
+        "index.py"
+      ]
+    },
+    "backend": {
+      "path": "backend",
+      "purpose": null,
+      "fileCount": 4,
+      "lastAccessed": 1792434953189,
+      "keyFiles": [
+        "migrate.py",
+        "requirements.txt",
+        "run_feedback_migration.py"
+      ]
+    },
+    "data": {
+      "path": "data",
+      "purpose": "Data files",
+      "fileCount": 0,
+      "lastAccessed": 1792434953190,
+      "keyFiles": []
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 0,
+      "lastAccessed": 1792434953191,
+      "keyFiles": []
+    },
+    "frontend": {
+      "path": "frontend",
+      "purpose": null,
+      "fileCount": 9,
+      "lastAccessed": 1792434953191,
+      "keyFiles": [
+        "index.html",
+        "package-lock.json",
+        "package.json",
+        "postcss.config.js",
+        "tailwind.config.js"
+      ]
+    },
+    "sample_images": {
+      "path": "sample_images",
+      "purpose": null,
+      "fileCount": 4,
+      "lastAccessed": 1792434953192,
+      "keyFiles": [
+        "mosaic_1.png",
+        "mosaic_2.png",
+        "raw_1.jpg",
+        "raw_2.jpeg"
+      ]
+    },
+    "backend/migrations": {
+      "path": "backend/migrations",
+      "purpose": "Database migrations",
+      "fileCount": 5,
+      "lastAccessed": 1792434953194,
+      "keyFiles": [
+        "001_initial_schema.sql",
+        "002_admin_auth_analytics.sql",
+        "003_fix_visitor_count.sql"
+      ]
+    },
+    "backend/scripts": {
+      "path": "backend/scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 7,
+      "lastAccessed": 1792434953194,
+      "keyFiles": [
+        "__init__.py",
+        "copy_data.py",
+        "copy_from_railway.sql"
+      ]
+    },
+    "backend/src": {
+      "path": "backend/src",
+      "purpose": "Source code",
+      "fileCount": 3,
+      "lastAccessed": 1792434953196,
+      "keyFiles": [
+        "__init__.py",
+        "config.py",
+        "main.py"
+      ]
+    },
+    "data/examples": {
+      "path": "data/examples",
+      "purpose": "Example code",
+      "fileCount": 4,
+      "lastAccessed": 1792434953201,
+      "keyFiles": [
+        "bh_mosaic.png",
+        "bh_original.jpeg",
+        "tyler_mosaic.png"
+      ]
+    },
+    "frontend/public": {
+      "path": "frontend/public",
+      "purpose": "Public files",
+      "fileCount": 0,
+      "lastAccessed": 1792434953206,
+      "keyFiles": []
+    },
+    "frontend/src": {
+      "path": "frontend/src",
+      "purpose": "Source code",
+      "fileCount": 4,
+      "lastAccessed": 1792434953208,
+      "keyFiles": [
+        "App.tsx",
+        "index.css",
+        "main.tsx"
+      ]
+    }
+  },
+  "hotPaths": [],
+  "userDirectives": []
+}

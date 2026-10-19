@@ -89,7 +89,7 @@ This document outlines the technical specifications for developing a modern, ful
   - Cloudflare Pages
 
 - **Backend Hosting**:
-  - Railway
+  - Vercel Python functions (in use, with Supabase Postgres)
   - Render
   - AWS EC2/ECS
   - Google Cloud Run
@@ -1228,7 +1228,7 @@ backend/
 
 ### Infrastructure Costs
 - **Hosting (Frontend)**: $0-20 (Vercel/Netlify free tier or basic plan)
-- **Hosting (Backend)**: $20-50 (Railway, Render, or similar)
+- **Hosting (Backend)**: $0-20 (Vercel Python functions, same project as the frontend)
 - **Database (PostgreSQL)**: $15-25 (Managed service)
 - **Redis Cache**: $10-20 (Managed service or included with backend hosting)
 - **File Storage**: $5-20 (S3 or similar, depends on usage)
