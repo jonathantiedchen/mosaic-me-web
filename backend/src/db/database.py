@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.pool import NullPool
 import logging
+import uuid
 
 from ..config import config
 
@@ -11,14 +12,20 @@ logger = logging.getLogger(__name__)
 
 # Convert postgresql:// to postgresql+asyncpg://
 database_url = config.DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+# SQLAlchemy keeps its own prepared-statement cache on top of asyncpg's
+database_url += ("&" if "?" in database_url else "?") + "prepared_statement_cache_size=0"
 
-# Create async engine
+# Serverless: each function instance is short-lived, so keep no pool of our own
+# and let Supabase's pooler (transaction mode) share connections. That pooler
+# cannot keep prepared statements, so asyncpg's statement caches must be off.
 engine = create_async_engine(
     database_url,
     echo=False,  # Set to True for SQL query logging in development
-    pool_pre_ping=True,  # Verify connections before using them
-    pool_size=5,  # Number of connections to maintain in the pool
-    max_overflow=10,  # Maximum number of connections that can be created beyond pool_size
+    poolclass=NullPool,
+    connect_args={
+        "statement_cache_size": 0,
+        "prepared_statement_name_func": lambda: f"__asyncpg_{uuid.uuid4()}__",
+    },
 )
 
 # Create async session factory

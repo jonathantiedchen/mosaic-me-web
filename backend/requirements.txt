@@ -15,6 +15,7 @@ email-validator==2.1.0
 # Database ORM and Migrations
 sqlalchemy==2.0.25
 asyncpg==0.29.0
+greenlet==3.0.3  # SQLAlchemy async; not auto-installed on every platform
 alembic==1.13.1
 
 # Settings Management
