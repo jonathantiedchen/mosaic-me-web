@@ -31,6 +31,13 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM anon, authen
 ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON SEQUENCES FROM anon, authenticated;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC, anon, authenticated;
 
+-- Pin search_path so a function cannot be redirected to look-alike objects
+ALTER FUNCTION delete_expired_sessions() SET search_path = public;
+ALTER FUNCTION update_updated_at_column() SET search_path = public;
+ALTER FUNCTION refresh_analytics_summary() SET search_path = public;
+ALTER FUNCTION cleanup_old_analytics(integer) SET search_path = public;
+ALTER FUNCTION cleanup_expired_refresh_tokens() SET search_path = public;
+
 -- ============================================
 -- Scheduled cleanup (replaces the cleanup the server ran at startup)
 -- ============================================
