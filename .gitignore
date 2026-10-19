@@ -54,3 +54,9 @@ htmlcov/
 
 # Local scripts containing credentials
 run_migration_local.py
+
+# Database URLs for one-off data copies (backend/scripts/copy_data.py)
+.env.migration
+.vercel
+.env*
+!.env.example

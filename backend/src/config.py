@@ -20,13 +20,13 @@ class Config:
     # File Upload
     MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
     ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
-    UPLOAD_DIR = Path("temp/uploads")
-    EXPORT_DIR = Path("temp/exports")
 
     # Database
-    DATABASE_URL = os.getenv(
-        "DATABASE_URL",
-        "postgresql://postgres:postgres@localhost:5432/mosaicme"
+    # POSTGRES_URL is set by the Supabase-Vercel integration (transaction pooler)
+    DATABASE_URL = (
+        os.getenv("DATABASE_URL")
+        or os.getenv("POSTGRES_URL")
+        or "postgresql://postgres:postgres@localhost:5432/mosaicme"
     )
 
     # Session
@@ -45,7 +45,6 @@ class Config:
     # Analytics
     ANALYTICS_ENABLED = os.getenv("ANALYTICS_ENABLED", "true").lower() == "true"
     ANALYTICS_SALT = os.getenv("ANALYTICS_SALT", "change-me-in-production-random-salt")
-    ANALYTICS_RETENTION_DAYS = int(os.getenv("ANALYTICS_RETENTION_DAYS", 90))  # GDPR compliance: auto-delete old data
 
     # Initial Admin (for setup)
     INITIAL_ADMIN_EMAIL = os.getenv("INITIAL_ADMIN_EMAIL", "admin@example.com")
@@ -57,7 +56,3 @@ class Config:
     PALETTES_DIR = DATA_DIR / "palettes"
 
 config = Config()
-
-# Ensure directories exist
-config.UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-config.EXPORT_DIR.mkdir(parents=True, exist_ok=True)

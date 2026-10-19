@@ -1,0 +1,22 @@
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+pillow==10.2.0
+numpy==1.26.3
+psycopg2-binary==2.9.9
+python-dotenv==1.0.0
+
+# Authentication and Security
+passlib[bcrypt]==1.7.4
+bcrypt==3.2.2  # Pin to version compatible with passlib 1.7.4
+python-jose[cryptography]==3.3.0
+email-validator==2.1.0
+
+# Database ORM and Migrations
+sqlalchemy==2.0.25
+asyncpg==0.29.0
+greenlet==3.0.3  # SQLAlchemy async; not auto-installed on every platform
+alembic==1.13.1
+
+# Settings Management
+pydantic-settings==2.1.0

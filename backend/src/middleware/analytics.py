@@ -82,7 +82,7 @@ class AnalyticsMiddleware(BaseHTTPMiddleware):
         Returns:
             SHA256 hash of the daily visitor identifier
         """
-        # Get IP address from headers (Railway sets X-Forwarded-For)
+        # Get IP address from headers (Vercel sets X-Forwarded-For)
         ip_address = request.headers.get("x-forwarded-for", "").split(",")[0].strip()
         if not ip_address:
             ip_address = request.client.host if request.client else "unknown"

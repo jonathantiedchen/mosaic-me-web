@@ -1,8 +1,7 @@
 """Mosaic generation service."""
 from PIL import Image
 import numpy as np
-from typing import Tuple, List, Dict
-from pathlib import Path
+from typing import BinaryIO, Tuple, List, Dict
 import uuid
 from datetime import datetime
 
@@ -18,21 +17,21 @@ class MosaicGenerator:
 
     def process_image(
         self,
-        image_path: Path,
+        image: BinaryIO,
         baseplate_size: int
     ) -> Tuple[np.ndarray, List[List[Dict]]]:
         """
         Process an image and convert it to a mosaic grid.
 
         Args:
-            image_path: Path to the input image
+            image: The input image file
             baseplate_size: Target size (e.g., 48 for 48x48)
 
         Returns:
             Tuple of (processed image as numpy array, grid of color data)
         """
         # Open and process image
-        img = Image.open(image_path)
+        img = Image.open(image)
 
         # Convert to RGB if needed
         if img.mode != 'RGB':
@@ -98,7 +97,7 @@ class MosaicGenerator:
 
     def create_mosaic_data(
         self,
-        image_path: Path,
+        image: BinaryIO,
         baseplate_size: int,
         piece_type: str,
         preview_url: str
@@ -107,7 +106,7 @@ class MosaicGenerator:
         Create complete mosaic data structure.
 
         Args:
-            image_path: Path to the input image
+            image: The input image file
             baseplate_size: Size of the baseplate
             piece_type: Type of pieces ('round' or 'square')
             preview_url: URL to the preview image
@@ -116,7 +115,7 @@ class MosaicGenerator:
             Complete mosaic data dictionary
         """
         # Generate mosaic
-        img_array, grid = self.process_image(image_path, baseplate_size)
+        img_array, grid = self.process_image(image, baseplate_size)
         shopping_list = self.generate_shopping_list(grid)
 
         # Calculate metadata

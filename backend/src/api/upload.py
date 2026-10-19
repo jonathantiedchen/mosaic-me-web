@@ -3,7 +3,7 @@ from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Request, D
 from sqlalchemy.ext.asyncio import AsyncSession
 from pathlib import Path
 import base64
-import uuid
+import io
 from typing import Literal
 import logging
 
@@ -100,12 +100,8 @@ async def upload_image(
             }
         )
 
-    # Random name: the client-supplied filename must not reach the filesystem
-    temp_file = config.UPLOAD_DIR / f"upload_{uuid.uuid4().hex}.{file_ext}"
-
+    # Processed in memory: serverless functions have no writable disk to rely on
     try:
-        temp_file.write_bytes(contents)
-
         # Generate mosaic
         color_matcher = color_matchers[pieceType]
         generator = MosaicGenerator(color_matcher)
@@ -115,7 +111,7 @@ async def upload_image(
 
         # Generate mosaic data
         mosaic_data = generator.create_mosaic_data(
-            temp_file,
+            io.BytesIO(contents),
             baseplateSize,
             pieceType,
             preview_url
@@ -172,5 +168,3 @@ async def upload_image(
                 'message': 'Failed to generate mosaic'
             }
         )
-    finally:
-        temp_file.unlink(missing_ok=True)

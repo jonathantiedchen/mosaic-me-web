@@ -9,6 +9,44 @@ import type {
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
+// A mosaic is at most 128 studs wide, so 2048px loses nothing, and it keeps
+// uploads well under the hosting platform's 4.5 MB request limit.
+const UPLOAD_MAX_DIMENSION = 2048;
+
+async function shrinkForUpload(file: File): Promise<File> {
+  let bitmap: ImageBitmap;
+  try {
+    bitmap = await createImageBitmap(file);
+  } catch {
+    return file; // Let the server report unreadable images
+  }
+
+  const scale = Math.min(1, UPLOAD_MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
+  if (scale === 1 && file.size <= 3 * 1024 * 1024) {
+    bitmap.close();
+    return file;
+  }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  const context = canvas.getContext('2d');
+  if (!context) {
+    bitmap.close();
+    return file;
+  }
+  // Transparent areas would otherwise turn black in the JPEG
+  context.fillStyle = '#ffffff';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+  if (!blob) return file;
+  const name = file.name.replace(/\.[^.]+$/, '') + '.jpg';
+  return new File([blob], name, { type: 'image/jpeg' });
+}
+
 class ApiService {
   private async request<T>(
     endpoint: string,
@@ -39,7 +77,7 @@ class ApiService {
     config: MosaicConfig
   ): Promise<UploadResponse> {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', await shrinkForUpload(file));
     formData.append('baseplateSize', config.baseplateSize.toString());
     formData.append('pieceType', config.pieceType);
 
