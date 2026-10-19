@@ -1,0 +1,18 @@
+# Keep CLI uploads to what the build needs; never upload local secrets
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+.omc/
+**/.omc/
+**/node_modules/
+**/__pycache__/
+**/venv/
+**/.venv/
+backend/temp/
+temp/
+sample_images/
+data/
+docs/
+run_migration_local.py
