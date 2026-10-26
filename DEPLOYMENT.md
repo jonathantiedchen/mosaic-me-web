@@ -34,7 +34,7 @@ Preview deployments (one per branch/PR) take the place of a staging environment.
 
 1. Create a project (region: Frankfurt, `eu-central-1`, to sit next to the
    `fra1` Vercel function region).
-2. Apply the migrations in order, `001` to `005`, with the SQL editor or `psql`:
+2. Apply the migrations in order, `001` to `006`, with the SQL editor or `psql`:
 
    ```bash
    for f in backend/migrations/00*.sql; do psql "$SUPABASE_DIRECT_URL" -v ON_ERROR_STOP=1 -f "$f"; done
@@ -82,7 +82,7 @@ DATABASE_URL="<supabase direct or session pooler URL>" python scripts/create_adm
 
 ## Copying data from another Postgres
 
-Apply migrations `001`–`005` to the new database first, then copy only the data:
+Apply migrations `001`–`006` to the new database first, then copy only the data:
 
 ```bash
 pg_dump "$OLD_DATABASE_URL" --data-only --no-owner --no-privileges \

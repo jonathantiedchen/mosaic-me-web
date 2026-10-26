@@ -1,5 +1,6 @@
 """Feedback API endpoints (public submission, admin-only retrieval)."""
 from typing import Optional, List
+import uuid
 from fastapi import APIRouter, Depends, HTTPException, Request, status, Query
 from pydantic import BaseModel, Field, validator
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,7 +8,7 @@ import logging
 
 from ..db.database import get_db
 from ..db.models import Admin
-from ..services.feedback import feedback_service
+from ..services.feedback import feedback_service, COMMENT_MAX_LENGTH
 from .auth import get_current_admin
 
 logger = logging.getLogger(__name__)
@@ -19,9 +20,22 @@ router = APIRouter()
 
 class FeedbackSubmission(BaseModel):
     """User feedback submission."""
-    session_id: str = Field(..., description="UUID of the mosaic session")
+    session_id: Optional[str] = Field(None, description="UUID of the mosaic session; omit for general feedback")
     feedback_type: str = Field(..., description="'thumbs_up' or 'thumbs_down'")
-    comment: Optional[str] = Field(None, max_length=200, description="Optional comment (max 200 chars)")
+    comment: Optional[str] = Field(
+        None,
+        max_length=COMMENT_MAX_LENGTH,
+        description=f"Optional suggestion or comment (max {COMMENT_MAX_LENGTH} chars)"
+    )
+
+    @validator('session_id')
+    def validate_session_id(cls, v):
+        if v is None:
+            return v
+        try:
+            return str(uuid.UUID(v))
+        except ValueError:
+            raise ValueError("session_id must be a UUID")
 
     @validator('feedback_type')
     def validate_feedback_type(cls, v):
@@ -33,8 +47,8 @@ class FeedbackSubmission(BaseModel):
     def validate_comment(cls, v):
         if v is not None:
             v = v.strip()
-            if len(v) > 200:
-                raise ValueError("Comment must be 200 characters or less")
+            if len(v) > COMMENT_MAX_LENGTH:
+                raise ValueError(f"Comment must be {COMMENT_MAX_LENGTH} characters or less")
             if len(v) == 0:
                 return None  # Treat empty strings as None
         return v
@@ -52,6 +66,7 @@ class FeedbackStats(BaseModel):
     thumbs_up: int
     thumbs_down: int
     total: int
+    with_comment: int
     satisfaction_rate: float
     period_days: int
 
@@ -59,7 +74,7 @@ class FeedbackStats(BaseModel):
 class RecentFeedbackItem(BaseModel):
     """Single feedback item for admin view."""
     id: int
-    session_id: str
+    session_id: Optional[str]
     feedback_type: str
     comment: Optional[str]
     created_at: str
@@ -74,7 +89,7 @@ async def submit_feedback(
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Submit user feedback for a mosaic session.
+    Submit user feedback, for a mosaic session or the app in general.
 
     This is a public endpoint - no authentication required.
     Uses visitor_hash from middleware for privacy-preserving tracking.
@@ -106,7 +121,7 @@ async def submit_feedback(
         )
 
         logger.info(
-            f"Feedback submitted: {submission.feedback_type} for session {submission.session_id}"
+            f"Feedback submitted: {submission.feedback_type} for session {submission.session_id or 'none'}"
         )
 
         return FeedbackResponse(
@@ -159,6 +174,7 @@ async def get_feedback_stats(
             thumbs_up=stats["thumbs_up"],
             thumbs_down=stats["thumbs_down"],
             total=stats["total"],
+            with_comment=stats["with_comment"],
             satisfaction_rate=stats["satisfaction_rate"],
             period_days=days
         )
@@ -175,6 +191,7 @@ async def get_feedback_stats(
 async def get_recent_feedback(
     limit: int = Query(20, ge=1, le=100, description="Maximum results"),
     comments_only: bool = Query(False, description="Only show feedback with comments"),
+    days: Optional[int] = Query(None, ge=1, le=365, description="Only feedback from the last N days"),
     admin: Admin = Depends(get_current_admin),
     db: AsyncSession = Depends(get_db)
 ):
@@ -186,6 +203,7 @@ async def get_recent_feedback(
     Args:
         limit: Maximum number of results (1-100)
         comments_only: If True, only return feedback with comments
+        days: Only return feedback from the last N days (default: all time)
         admin: Current authenticated admin
         db: Database session
 
@@ -196,7 +214,8 @@ async def get_recent_feedback(
         feedback_items = await feedback_service.get_recent_feedback(
             db,
             limit=limit,
-            include_comments_only=comments_only
+            include_comments_only=comments_only,
+            days=days
         )
 
         logger.info(

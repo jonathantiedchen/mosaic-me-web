@@ -1,79 +1,77 @@
-import { ThumbsUp, ThumbsDown, MessageSquare, Calendar } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, MessageSquare } from 'lucide-react';
 import { RecentFeedbackItem } from '../../services/feedback';
 
 interface FeedbackListProps {
   feedback: RecentFeedbackItem[];
+  emptyText?: string;
 }
 
-export function FeedbackList({ feedback }: FeedbackListProps) {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const diffMs = Date.now() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString();
-  };
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString();
+};
 
+export function FeedbackList({ feedback, emptyText = 'No feedback yet' }: FeedbackListProps) {
   if (feedback.length === 0) {
     return (
-      <div className="panel p-8 text-center">
-        <MessageSquare className="w-12 h-12 text-text-muted/50 mx-auto mb-3" />
-        <p className="text-text-secondary">No feedback yet</p>
+      <div className="panel p-10 text-center">
+        <MessageSquare className="w-8 h-8 text-text-muted mx-auto mb-3" strokeWidth={1.5} />
+        <p className="text-sm text-text-secondary">{emptyText}</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {feedback.map((item) => (
-        <div key={item.id} className="panel p-4 hover:border-accent/30 transition-colors">
-          <div className="flex items-start gap-3">
-            <div className={`p-2 rounded-sm ${
-              item.feedback_type === 'thumbs_up'
-                ? 'bg-green-500/10'
-                : 'bg-red-500/10'
-            }`}>
-              {item.feedback_type === 'thumbs_up' ? (
-                <ThumbsUp className="w-5 h-5 text-green-400" />
+    <ul className="panel divide-y divide-border">
+      {feedback.map((item) => {
+        const positive = item.feedback_type === 'thumbs_up';
+        return (
+          <li key={item.id} className="p-4 flex items-start gap-3">
+            <div
+              className={`flex-shrink-0 border rounded-sm p-2 ${
+                positive ? 'border-green-500/30 text-green-400' : 'border-red-500/30 text-red-400'
+              }`}
+              title={positive ? 'Thumbs up' : 'Thumbs down'}
+            >
+              {positive ? (
+                <ThumbsUp className="w-4 h-4" strokeWidth={1.5} />
               ) : (
-                <ThumbsDown className="w-5 h-5 text-red-400" />
+                <ThumbsDown className="w-4 h-4" strokeWidth={1.5} />
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between gap-2 mb-1">
-                <span className={`text-sm font-medium ${
-                  item.feedback_type === 'thumbs_up'
-                    ? 'text-green-400'
-                    : 'text-red-400'
-                }`}>
-                  {item.feedback_type === 'thumbs_up' ? 'Positive' : 'Negative'}
+              <div className="flex items-center justify-between gap-2">
+                <span className="chip-label" style={{ marginBottom: 0 }}>
+                  {item.session_id ? 'After generating a mosaic' : 'General feedback'}
                 </span>
-                <span className="text-xs text-text-muted flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
+                <time
+                  dateTime={item.created_at}
+                  title={new Date(item.created_at).toLocaleString()}
+                  className="text-xs text-text-muted flex-shrink-0"
+                >
                   {formatDate(item.created_at)}
-                </span>
+                </time>
               </div>
-              {item.comment && (
-                <p className="text-sm text-text-subtle mt-2 leading-relaxed">
-                  "{item.comment}"
+              {item.comment ? (
+                <p className="text-sm text-text-subtle mt-1.5 leading-relaxed whitespace-pre-wrap break-words">
+                  {item.comment}
                 </p>
-              )}
-              {!item.comment && (
-                <p className="text-xs text-text-muted italic mt-1">
-                  No comment provided
-                </p>
+              ) : (
+                <p className="text-xs text-text-muted italic mt-1.5">Rating only, no comment</p>
               )}
             </div>
-          </div>
-        </div>
-      ))}
-    </div>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
