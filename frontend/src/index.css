@@ -9,7 +9,7 @@
 
   body {
     @apply min-h-screen bg-bg text-text-primary;
-    font-family: 'DM Sans', system-ui, sans-serif;
+    font-family: 'DM Sans Variable', system-ui, sans-serif;
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -147,5 +147,35 @@
     right: 0;
     height: 2px;
     background: #c4a882;
+  }
+}
+
+/* Long-form text on the Impressum and privacy pages */
+@layer components {
+  .legal-prose {
+    @apply text-text-subtle;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .legal-prose .lead {
+    @apply text-text-secondary mb-8;
+    font-size: 17px;
+  }
+  .legal-prose h2 {
+    @apply font-serif text-text-primary mt-10 mb-3;
+    font-size: 22px;
+  }
+  .legal-prose p,
+  .legal-prose ul {
+    @apply mb-4;
+  }
+  .legal-prose ul {
+    @apply list-disc pl-6 space-y-1;
+  }
+  .legal-prose a {
+    @apply text-accent underline hover:text-accent-hover;
+  }
+  .legal-prose strong {
+    @apply text-text-primary font-medium;
   }
 }

@@ -29,7 +29,7 @@ export default {
         'error-muted': '#a06060',
       },
       fontFamily: {
-        sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        sans: ['"DM Sans Variable"', 'system-ui', 'sans-serif'],
         serif: ['"DM Serif Display"', 'Georgia', 'serif'],
       },
     },
