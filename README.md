@@ -473,11 +473,11 @@ For issues and feature requests, please create an issue on GitHub.
 - ✅ Analytics tracking (visitors, mosaics, downloads)
 - ✅ Anonymous visitor fingerprinting
 - ✅ Automatic preview updates after editing
+- ✅ Feedback: thumbs up/down with suggestions, reviewed in the admin dashboard
 
 ## Roadmap
 
 See CONSTITUTION.md section "To be added features" for planned enhancements:
-- Feedback widget
 - PDF exports with step-by-step instructions
 - 3D Preview of completed mosaic
 - Estimated pricing calculator

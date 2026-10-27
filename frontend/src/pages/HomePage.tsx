@@ -1,6 +1,6 @@
 import { ConfigPanel } from '../components/ConfigPanel';
 import { ResultsTabs } from '../components/ResultsTabs';
-import { FeedbackWidget } from '../components/FeedbackWidget';
+import { FeedbackButton, FeedbackForm } from '../components/FeedbackWidget';
 import { DownloadsCard } from '../components/DownloadsCard';
 import { AlertCircle, Github } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
@@ -29,16 +29,19 @@ export function HomePage() {
         <span className="font-serif text-text-primary" style={{ fontSize: '17px' }}>
           Mosaic Me
         </span>
-        <a
-          href="https://github.com/jonathantiedchen/mosaic-me-web"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors"
-          style={{ fontSize: '12px' }}
-        >
-          <Github className="w-4 h-4" strokeWidth={1.5} />
-          GitHub ↗
-        </a>
+        <div className="flex items-center gap-5">
+          <FeedbackButton />
+          <a
+            href="https://github.com/jonathantiedchen/mosaic-me-web"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors"
+            style={{ fontSize: '12px' }}
+          >
+            <Github className="w-4 h-4" strokeWidth={1.5} />
+            GitHub ↗
+          </a>
+        </div>
       </nav>
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-10 sm:py-14">
@@ -135,9 +138,8 @@ export function HomePage() {
               <ConfigPanel />
               <DownloadsCard />
               {mosaicData?.sessionId && (
-                <div className="panel p-4 flex flex-col items-center gap-3">
-                  <p className="chip-label" style={{ marginBottom: 0 }}>How did we do?</p>
-                  <FeedbackWidget sessionId={mosaicData.sessionId} />
+                <div className="panel p-4">
+                  <FeedbackForm key={mosaicData.sessionId} sessionId={mosaicData.sessionId} title="How did we do?" />
                 </div>
               )}
             </aside>

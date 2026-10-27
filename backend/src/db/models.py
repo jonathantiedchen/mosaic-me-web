@@ -131,10 +131,11 @@ class UserFeedback(Base):
     __tablename__ = "user_feedback"
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    session_id = Column(UUID(as_uuid=True), nullable=False, index=True)
+    # NULL for general feedback that isn't about one generated mosaic
+    session_id = Column(UUID(as_uuid=True), nullable=True, index=True)
     visitor_hash = Column(String(64), nullable=False, index=True)
     feedback_type = Column(String(10), nullable=False, index=True)
-    comment = Column(String(200), nullable=True)
+    comment = Column(String(1000), nullable=True)
     created_at = Column(DateTime(timezone=True), default=datetime.utcnow, nullable=False, index=True)
 
     __table_args__ = (
@@ -143,7 +144,7 @@ class UserFeedback(Base):
             name="chk_feedback_type"
         ),
         CheckConstraint(
-            "char_length(comment) <= 200",
+            "char_length(comment) <= 1000",
             name="chk_comment_length"
         ),
         UniqueConstraint('session_id', 'visitor_hash', name='uq_feedback_session_visitor'),
