@@ -20,6 +20,10 @@ class Config:
     # File Upload
     MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
     ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
+    # Decoders Pillow may use, so uploaded bytes cannot pick another format
+    ALLOWED_IMAGE_FORMATS = ("JPEG", "PNG", "WEBP")
+    # A tiny file can declare enormous dimensions; reject those before decoding
+    MAX_IMAGE_PIXELS = 50_000_000
 
     # Database
     # POSTGRES_URL is set by the Supabase-Vercel integration (transaction pooler)
@@ -36,8 +40,8 @@ class Config:
     RATE_LIMIT_REQUESTS = int(os.getenv("RATE_LIMIT_REQUESTS", 60))
     RATE_LIMIT_WINDOW = int(os.getenv("RATE_LIMIT_WINDOW", 3600))  # 1 hour
 
-    # JWT Authentication
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-secret-key-change-in-production-min-32-chars")
+    # JWT Authentication (required: anyone who knows the key can sign admin tokens)
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "")
     JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
     ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
     REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", 7))
@@ -56,3 +60,17 @@ class Config:
     PALETTES_DIR = DATA_DIR / "palettes"
 
 config = Config()
+
+# Placeholders that have shipped in this repository's code and docs
+_PLACEHOLDER_JWT_SECRETS = {
+    "dev-secret-key-change-in-production-min-32-chars",
+    "your-secret-key-min-32-chars-change-in-production",
+    "your-secret-key-here",
+}
+
+# Fail closed: never start signing admin tokens with a missing or public key
+if len(config.JWT_SECRET_KEY) < 32 or config.JWT_SECRET_KEY in _PLACEHOLDER_JWT_SECRETS:
+    raise RuntimeError(
+        "JWT_SECRET_KEY must be set to a random value of at least 32 characters "
+        "(generate one with: openssl rand -hex 32)"
+    )

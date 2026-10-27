@@ -67,6 +67,9 @@ Preview deployments (one per branch/PR) take the place of a staging environment.
    | `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` (optional) |
    | `REFRESH_TOKEN_EXPIRE_DAYS` | `7` (optional) |
 
+   `JWT_SECRET_KEY` is required: without it (or with a placeholder) every API
+   request fails, so set it in every environment that deploys the API.
+
    Keep `JWT_SECRET_KEY` and `ANALYTICS_SALT` the same as before a migration, or
    existing admin sessions end and daily visitor counts split on the switch day.
 4. Deploy. Check `https://<your-domain>/api/v1/health`.

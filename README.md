@@ -111,7 +111,7 @@ REFRESH_TOKEN_EXPIRE_DAYS=7
 ANALYTICS_SALT=your-analytics-salt-here  # Generate with: openssl rand -hex 16
 ```
 
-**Important**: Generate secure random values for `JWT_SECRET_KEY` and `ANALYTICS_SALT`:
+**Important**: Generate secure random values for `JWT_SECRET_KEY` and `ANALYTICS_SALT`. The backend refuses to start when `JWT_SECRET_KEY` is missing, shorter than 32 characters, or a placeholder from this repository:
 ```bash
 # Generate JWT secret
 openssl rand -hex 32
