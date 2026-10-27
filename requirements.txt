@@ -1,7 +1,8 @@
-fastapi==0.109.0
+fastapi==0.143.1
+starlette==1.7.0  # Pinned so the multipart/form parser is not resolved fresh per build
 uvicorn[standard]==0.27.0
-python-multipart==0.0.6
-pillow==10.2.0
+python-multipart==0.0.32
+pillow==12.3.0
 numpy==1.26.3
 psycopg2-binary==2.9.9
 python-dotenv==1.0.0

@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime
 
 from .color_matcher import ColorMatcher
+from ..config import config
 
 
 class MosaicGenerator:
@@ -31,7 +32,14 @@ class MosaicGenerator:
             Tuple of (processed image as numpy array, grid of color data)
         """
         # Open and process image
-        img = Image.open(image)
+        img = Image.open(image, formats=config.ALLOWED_IMAGE_FORMATS)
+
+        # Pillow only raises above twice MAX_IMAGE_PIXELS (and merely warns
+        # below that), so enforce the cap here, before any pixels are decoded
+        if img.width * img.height > config.MAX_IMAGE_PIXELS:
+            raise Image.DecompressionBombError(
+                f"Image has {img.width * img.height} pixels, more than {config.MAX_IMAGE_PIXELS}"
+            )
 
         # Convert to RGB if needed
         if img.mode != 'RGB':

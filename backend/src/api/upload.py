@@ -1,5 +1,6 @@
 """Upload and mosaic generation API endpoint."""
 from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Request, Depends
+from fastapi.concurrency import run_in_threadpool
 from sqlalchemy.ext.asyncio import AsyncSession
 from pathlib import Path
 import base64
@@ -9,6 +10,7 @@ import logging
 
 from ..services.mosaic_generator import MosaicGenerator
 from ..services.color_matcher import ColorMatcher
+from ..services.export_service import ExportService
 from ..services.analytics import analytics_service
 from ..config import config
 from ..db.database import get_db
@@ -25,8 +27,19 @@ for palette_file in config.PALETTES_DIR.glob('*.json'):
 
 ALLOWED_BASEPLATE_SIZES = (32, 48, 64, 96, 128)
 
-# Reject decompression bombs: a tiny file can declare enormous dimensions
-Image.MAX_IMAGE_PIXELS = 50_000_000
+# Backstop for any other Pillow use; process_image enforces the exact cap
+Image.MAX_IMAGE_PIXELS = config.MAX_IMAGE_PIXELS
+
+
+def _generate_mosaic(contents: bytes, baseplate_size: int, piece_type: str) -> dict:
+    """Decode, color-match and render the preview (CPU-bound, so run off the event loop)."""
+    generator = MosaicGenerator(color_matchers[piece_type])
+    mosaic_data = generator.create_mosaic_data(io.BytesIO(contents), baseplate_size, piece_type, "")
+
+    preview_bytes = ExportService().generate_mosaic_png(mosaic_data['grid'])
+    preview_base64 = base64.b64encode(preview_bytes).decode('utf-8')
+    mosaic_data['previewUrl'] = f"data:image/png;base64,{preview_base64}"
+    return mosaic_data
 
 
 @router.post('/upload')
@@ -102,30 +115,7 @@ async def upload_image(
 
     # Processed in memory: serverless functions have no writable disk to rely on
     try:
-        # Generate mosaic
-        color_matcher = color_matchers[pieceType]
-        generator = MosaicGenerator(color_matcher)
-
-        # Create preview URL placeholder (will be replaced with actual data)
-        preview_url = ""
-
-        # Generate mosaic data
-        mosaic_data = generator.create_mosaic_data(
-            io.BytesIO(contents),
-            baseplateSize,
-            pieceType,
-            preview_url
-        )
-
-        # Generate preview image
-        from ..services.export_service import ExportService
-        export_service = ExportService()
-        preview_bytes = export_service.generate_mosaic_png(mosaic_data['grid'])
-
-        # Convert preview to base64 data URL
-        preview_base64 = base64.b64encode(preview_bytes).decode('utf-8')
-        preview_url = f"data:image/png;base64,{preview_base64}"
-        mosaic_data['previewUrl'] = preview_url
+        mosaic_data = await run_in_threadpool(_generate_mosaic, contents, baseplateSize, pieceType)
 
         # Track analytics event
         if config.ANALYTICS_ENABLED:
