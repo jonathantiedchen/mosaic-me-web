@@ -2,6 +2,7 @@ import { ConfigPanel } from '../components/ConfigPanel';
 import { ResultsTabs } from '../components/ResultsTabs';
 import { FeedbackButton, FeedbackForm } from '../components/FeedbackWidget';
 import { DownloadsCard } from '../components/DownloadsCard';
+import { SiteFooter } from '../components/SiteFooter';
 import { AlertCircle, Github } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 
@@ -151,30 +152,7 @@ export function HomePage() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer style={{ borderTop: '1px solid #2e2a26' }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-text-muted" style={{ fontSize: '12px', fontWeight: 300 }}>
-            <span className="font-serif text-text-secondary">Mosaic Me</span>
-            {' '}· Made with care
-          </p>
-          <div className="flex items-center gap-5">
-            <a
-              href="https://github.com/jonathantiedchen/mosaic-me-web"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-text-muted hover:text-text-primary transition-colors"
-              style={{ fontSize: '12px', fontWeight: 300 }}
-            >
-              <Github className="w-3.5 h-3.5" strokeWidth={1.5} />
-              GitHub
-            </a>
-            <span className="text-text-muted" style={{ fontSize: '12px', fontWeight: 300 }}>
-              Not affiliated with LEGO Group
-            </span>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

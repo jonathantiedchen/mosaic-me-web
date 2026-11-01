@@ -1,89 +1,53 @@
 # Privacy & Data Protection
 
-Mosaic-Me is designed with privacy as a core principle. This document explains our data practices and GDPR compliance.
+The published privacy policy is the `/privacy` page of the site
+(source: [`frontend/src/pages/PrivacyPage.tsx`](frontend/src/pages/PrivacyPage.tsx)).
+The controller is Jonathan Tiedchen (Denmark); the supervisory authority is the
+Danish Data Protection Agency (Datatilsynet). There is deliberately no legal
+notice/Impressum: this is a private, non-commercial project.
 
-## Analytics Data
+This file is the developer reference for what the code actually processes. When
+you change any of it, update the privacy page in the same change.
 
-### What We Collect
-We collect **truly anonymous** usage statistics to understand how the app is used:
-- Daily unique visitor counts
-- Number of mosaics created
-- Download statistics (PNG exports, CSV exports)
-- Baseplate size preferences
+## Data flows
 
-### What We DO NOT Collect
-- ❌ No names, email addresses, or contact information (for regular users)
-- ❌ No IP addresses stored in the database
-- ❌ No long-term tracking of individuals
-- ❌ No personal identifiable information
-- ❌ No cookies for tracking purposes
+| Data | Where | Stored? | Retention | Legal basis |
+|---|---|---|---|---|
+| Uploaded photo | `POST /api/v1/upload`, processed in memory | No (never written to disk, DB or logs) | none | Art. 6(1)(b) |
+| Export grid (color codes only) | `POST /api/v1/export/*` | No | none | Art. 6(1)(b) |
+| Usage events: type, time, baseplate size, piece type, export type, mosaic ID, visitor ID | `analytics_events` | Yes | 90 days (`cleanup_old_analytics`, migration 005) | Art. 6(1)(f) |
+| Daily totals (counts only) | `analytics_summary` materialized view | Yes | indefinitely (no personal data) | — |
+| Feedback: rating, comment (≤1000 chars), optional mosaic ID, visitor ID, time | `user_feedback` | Yes | 365 days (`cleanup_old_feedback`, migration 007) | Art. 6(1)(f) |
+| Admin email, password hash (bcrypt), login times, hashed refresh tokens | `admins`, `refresh_tokens` | Yes | until the admin is deleted; expired tokens cleaned up daily | Art. 6(1)(f) |
+| Request logs incl. IP address and user agent | Vercel (host) | By Vercel | per Vercel's plan | Art. 6(1)(f) |
 
-### How It Works (Technical Details)
+## Visitor ID
 
-Our analytics system uses **daily rotating hashes**:
+`backend/src/middleware/analytics.py` computes
+`sha256(first X-Forwarded-For IP or client IP : user agent : UTC date : ANALYTICS_SALT)`.
+The raw IP and user agent are not stored. The ID rotates daily.
 
-1. When you visit, we create a temporary hash from:
-   - Your IP address
-   - Your browser's user agent
-   - **The current date**
-   - A secret salt
+This is **pseudonymous, not anonymous** data:
 
-2. This hash:
-   - Is unique to you **for today only**
-   - Changes automatically every day
-   - Cannot be reversed to identify you
-   - Cannot link your behavior across days
+- The mosaic `session_id` can link events and feedback about one mosaic across days.
+- Anyone who holds `ANALYTICS_SALT` can test whether an IP address produced a given ID, because the IPv4 space is small enough to brute-force.
 
-**Example:**
-- Monday: You get hash `abc123...`
-- Tuesday: You get hash `xyz789...` (completely different)
+So GDPR applies. The legal basis is legitimate interest, and visitors can object
+under Art. 21. Nothing is stored on or read from the visitor's device, so the
+ePrivacy cookie-consent rules (Danish Executive Order on cookies) are not triggered.
 
-This means we can count "10 unique visitors on Monday" but we **cannot** tell if any of those 10 came back on Tuesday. This makes the data truly anonymous.
+Keep `ANALYTICS_SALT` secret and random. The app's logs include only the first 8
+hex characters of a visitor ID, never IP addresses.
 
-### Data Retention
+## Third parties
 
-- Analytics events are **automatically deleted after 90 days**
-- Cleanup runs on every application startup
-- No historical tracking beyond the retention period
+- **Vercel Inc. (USA)** hosts the site and runs the API in `fra1` (Frankfurt). It needs a data processing agreement, and transfers rely on the EU-US Data Privacy Framework and the SCCs.
+- **Supabase Inc.** runs the PostgreSQL database. It also needs a data processing agreement. Use an EU region.
+- **Fonts** are bundled with Fontsource (`@fontsource-variable/dm-sans`, `@fontsource/dm-serif-display`) and served from our own domain. No Google Fonts requests are made.
+- **No third-party scripts, analytics services or embeds.** External sites (LEGO, BrickLink, GitHub, Unsplash) are plain links.
 
-### Legal Basis
+## Browser storage
 
-Under GDPR, **truly anonymous data is not personal data**. Our analytics qualify as truly anonymous because:
-
-✅ Data cannot identify individuals
-✅ Data cannot link behavior over time
-✅ Data cannot be combined to re-identify someone
-✅ Hash changes daily, preventing long-term tracking
-
-Therefore, **no consent is required** for our analytics.
-
-## Admin Dashboard Data
-
-For site administrators only:
-- Admin email addresses (for authentication)
-- Password hashes (bcrypt)
-- Login timestamps
-
-This data is:
-- Used only for authentication
-- Not shared with third parties
-- Secured with industry-standard encryption
-
-## Data Protection Rights
-
-Even though our analytics data is truly anonymous, you still have rights:
-
-- **Right to Information**: This document explains what we collect
-- **Right to Object**: You can use ad blockers or disable JavaScript to prevent analytics
-- **Right to Erasure**: Contact us to request deletion of any data
-
-## Contact
-
-For privacy concerns or data deletion requests:
-- GitHub Issues: [mosaic-me-web/issues](https://github.com/jonathantiedchen/mosaic-me-web/issues)
-
-## Changes to This Policy
-
-We may update this privacy policy. Changes will be reflected in this document with the date below.
-
-**Last Updated**: 2025-12-25
+Only the admin dashboard uses browser storage: the `access_token` and
+`refresh_token` in `localStorage`, which are strictly necessary for login.
+Visitors get nothing stored.
