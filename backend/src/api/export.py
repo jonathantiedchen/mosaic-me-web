@@ -3,13 +3,14 @@ from fastapi import APIRouter, HTTPException, Request, Depends
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Literal, List, Dict, Tuple
+from typing import Literal, List, Dict, Optional, Tuple
 import io
 import logging
 import zipfile
 
 from ..services.export_service import ExportService
 from ..services.mosaic_generator import MosaicGenerator
+from ..services.ordering import with_spares, split_pickabrick_orders, baseplate_item
 from ..services.analytics import analytics_service
 from ..config import config
 from ..db.database import get_db
@@ -28,6 +29,9 @@ class ExportRequest(BaseModel):
     sessionId: str = Field(..., max_length=64)
     pieceType: Literal['round', 'square']
     grid: List[List[str]] = Field(..., description="Rows of palette color ids")
+    spares: bool = Field(False, description="Add 5% spare plates to the parts lists")
+    baseplates: bool = Field(True, description="Include the baseplate(s) in the shopping list and BrickLink XML")
+    part: Optional[int] = Field(None, ge=1, description="Which Pick-a-Brick order to download when split over several")
 
 
 def _build_grid(request: ExportRequest) -> List[List[Dict]]:
@@ -77,21 +81,34 @@ FILE_EXPORTS: Dict[str, Tuple[str, str]] = {
 }
 
 
-def _generate(export_type: str, grid: List[List[Dict]], shopping_list: List[Dict], piece_type: str) -> bytes:
+def _pickabrick_name(index: int, total: int) -> str:
+    return 'pick-a-brick.csv' if total == 1 else f'pick-a-brick-order-{index}-of-{total}.csv'
+
+
+def _generate(
+    export_type: str,
+    grid: List[List[Dict]],
+    shopping_list: List[Dict],
+    plates: List[Dict],
+    baseplate: Optional[Dict],
+    piece_type: str,
+    pickabrick_order: List[Dict],
+) -> bytes:
+    """Build one file. shopping_list is the exact count; plates adds spares if requested."""
     if export_type == 'mosaic-png':
         return export_service.generate_mosaic_png(grid)
     if export_type == 'instructions-png':
         return export_service.generate_instructions_png(grid, shopping_list)
     if export_type == 'shopping-csv':
-        return export_service.generate_shopping_csv(shopping_list, piece_type)
+        return export_service.generate_shopping_csv(plates, piece_type, baseplate)
     if export_type == 'pickabrick-csv':
-        return export_service.generate_pickabrick_csv(shopping_list)
+        return export_service.generate_pickabrick_csv(pickabrick_order)
     color_matcher = color_matchers[piece_type]
     bricklink_list = [
         {**item, 'bricklinkColorId': color_matcher.get_color(item['colorId']).get('bricklinkColorId')}
-        for item in shopping_list
+        for item in plates
     ]
-    return export_service.generate_bricklink_xml(bricklink_list, BRICKLINK_PARTS[piece_type])
+    return export_service.generate_bricklink_xml(bricklink_list, BRICKLINK_PARTS[piece_type], baseplate)
 
 
 @router.post('/export/{export_type}')
@@ -110,17 +127,40 @@ async def export_file(
     """
     grid = _build_grid(body)
     shopping_list = MosaicGenerator(color_matchers[body.pieceType]).generate_shopping_list(grid)
+    plates = with_spares(shopping_list) if body.spares else shopping_list
+    baseplate = baseplate_item(len(grid)) if body.baseplates else None
+    pickabrick_orders = split_pickabrick_orders(plates)
+
+    part = body.part or 1
+    if part > len(pickabrick_orders):
+        raise HTTPException(
+            status_code=400,
+            detail={
+                'code': 'INVALID_PART',
+                'message': f'This mosaic has {len(pickabrick_orders)} Pick-a-Brick order(s)'
+            }
+        )
+
+    def generate(kind: str, order: List[Dict] = pickabrick_orders[part - 1]) -> bytes:
+        return _generate(kind, grid, shopping_list, plates, baseplate, body.pieceType, order)
 
     try:
         if export_type == 'all-zip':
             buffer = io.BytesIO()
             with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
                 for kind, (name, _) in FILE_EXPORTS.items():
-                    archive.writestr(name, _generate(kind, grid, shopping_list, body.pieceType))
+                    if kind == 'pickabrick-csv':
+                        for index, order in enumerate(pickabrick_orders, start=1):
+                            archive.writestr(_pickabrick_name(index, len(pickabrick_orders)), generate(kind, order))
+                    else:
+                        archive.writestr(name, generate(kind))
             file_bytes, media_type, filename = buffer.getvalue(), 'application/zip', 'mosaic.zip'
+        elif export_type == 'pickabrick-csv':
+            file_bytes, media_type = generate(export_type), 'text/csv'
+            filename = _pickabrick_name(part, len(pickabrick_orders))
         else:
             name, media_type = FILE_EXPORTS[export_type]
-            file_bytes, filename = _generate(export_type, grid, shopping_list, body.pieceType), name
+            file_bytes, filename = generate(export_type), name
     except Exception:
         logger.exception("Failed to generate %s export", export_type)
         raise HTTPException(

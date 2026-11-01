@@ -3,6 +3,7 @@ import type {
   UploadResponse,
   ColorPalette,
   ExportType,
+  ExportOptions,
   MosaicConfig,
   MosaicData,
 } from '../types';
@@ -122,7 +123,8 @@ class ApiService {
 
   async exportFile(
     mosaic: MosaicData,
-    exportType: ExportType
+    exportType: ExportType,
+    options: ExportOptions = {}
   ): Promise<Blob> {
     const response = await fetch(`${API_BASE_URL}/export/${exportType}`, {
       method: 'POST',
@@ -131,6 +133,7 @@ class ApiService {
         sessionId: mosaic.sessionId,
         pieceType: mosaic.metadata.pieceType,
         grid: mosaic.grid.map(row => row.map(cell => cell.colorId)),
+        ...options,
       }),
     });
 

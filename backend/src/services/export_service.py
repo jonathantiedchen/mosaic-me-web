@@ -2,7 +2,7 @@
 from PIL import Image, ImageDraw, ImageFont
 import io
 import csv
-from typing import List, Dict
+from typing import List, Dict, Optional
 from xml.sax.saxutils import escape
 from pathlib import Path
 
@@ -160,7 +160,8 @@ class ExportService:
     def generate_shopping_csv(
         self,
         shopping_list: List[Dict],
-        piece_type: str
+        piece_type: str,
+        baseplate: Optional[Dict] = None
     ) -> bytes:
         """
         Generate a shopping list as CSV.
@@ -168,6 +169,7 @@ class ExportService:
         Args:
             shopping_list: List of colors with quantities
             piece_type: Type of pieces
+            baseplate: Optional baseplate row (see services.ordering.baseplate_item)
 
         Returns:
             CSV file bytes
@@ -187,6 +189,14 @@ class ExportService:
                 item['quantity'],
                 piece_name,
                 item['hex']
+            ])
+        if baseplate:
+            writer.writerow([
+                'baseplate',
+                baseplate['colorName'],
+                baseplate['count'],
+                baseplate['name'],
+                ''
             ])
 
         # Convert to bytes
@@ -232,7 +242,8 @@ class ExportService:
     def generate_bricklink_xml(
         self,
         shopping_list: List[Dict],
-        part_number: str
+        part_number: str,
+        baseplate: Optional[Dict] = None
     ) -> bytes:
         """
         Generate a BrickLink Wanted List in BrickLink XML format.
@@ -245,6 +256,7 @@ class ExportService:
             shopping_list: Colors with quantities and bricklinkColorId; colors
                 without a BrickLink id (not sold in this part) are skipped
             part_number: BrickLink part number, e.g. "3024" for Plate 1 x 1
+            baseplate: Optional baseplate to add (see services.ordering.baseplate_item)
 
         Returns:
             XML file bytes
@@ -259,6 +271,15 @@ class ExportService:
                 f'<ITEMID>{escape(part_number)}</ITEMID>'
                 f'<COLOR>{int(item["bricklinkColorId"])}</COLOR>'
                 f'<MINQTY>{int(item["quantity"])}</MINQTY>'
+                '</ITEM>'
+            )
+        if baseplate:
+            lines.append(
+                '  <ITEM>'
+                '<ITEMTYPE>P</ITEMTYPE>'
+                f'<ITEMID>{escape(baseplate["bricklinkPart"])}</ITEMID>'
+                f'<COLOR>{int(baseplate["bricklinkColorId"])}</COLOR>'
+                f'<MINQTY>{int(baseplate["count"])}</MINQTY>'
                 '</ITEM>'
             )
         lines.append('</INVENTORY>')
