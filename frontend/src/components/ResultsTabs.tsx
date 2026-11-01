@@ -5,7 +5,9 @@ import { useMosaic } from '../hooks/useMosaic';
 import { useExport } from '../hooks/useExport';
 import { MosaicEditor } from './MosaicEditor';
 import { apiService } from '../services/api';
-import type { ShoppingListItem, MosaicGridCell, ExportType } from '../types';
+import type { ShoppingListItem, MosaicGridCell, ExportType, ExportOptions } from '../types';
+import { OrderChecklist } from './OrderChecklist';
+import { orderQuantity } from '../utils/ordering';
 
 // three.js and the room photos are large; only load them when the tab is opened
 const MosaicVisualizer = lazy(() => import('./MosaicVisualizer'));
@@ -29,14 +31,19 @@ export function ResultsTabs() {
   const [naturalWidth, setNaturalWidth] = useState(0);
   const previewBoxRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
+  // Ordering options apply to every parts list download
+  const [spares, setSpares] = useState(false);
+  const [baseplates, setBaseplates] = useState(true);
 
   if (!mosaicData) {
     return null;
   }
 
-  const handleExport = (type: ExportType, filename: string) => {
-    exportFile(mosaicData, type, filename);
+  const handleExport = (type: ExportType, filename: string, options: ExportOptions = {}) => {
+    exportFile(mosaicData, type, filename, options);
   };
+  const orderOptions = { spares, baseplates };
+  const platesToOrder = mosaicData.shoppingList.reduce((sum, item) => sum + orderQuantity(item.quantity, spares), 0);
 
   const fitZoom = () => {
     const box = previewBoxRef.current;
@@ -201,79 +208,43 @@ export function ResultsTabs() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex gap-3">
                 <div className="panel px-4 py-3">
-                  <p className="chip-label mb-1">Total pieces</p>
+                  <p className="chip-label mb-1">Plates to order</p>
                   <p className="font-sans text-text-primary font-semibold" style={{ fontSize: '18px', letterSpacing: '-0.02em' }}>
-                    {mosaicData.metadata.totalPieces}
+                    {platesToOrder.toLocaleString()}
                   </p>
                 </div>
                 <div className="panel px-4 py-3">
                   <p className="chip-label mb-1">Approx. cost*</p>
                   <p className="font-sans text-text-primary font-semibold" style={{ fontSize: '18px', letterSpacing: '-0.02em' }}>
-                    ≈ ${Math.round(mosaicData.metadata.totalPieces * 0.06)}
+                    ≈ ${Math.round(platesToOrder * 0.06)}
                   </p>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleExport('pickabrick-csv', `pickabrick-${mosaicData.sessionId}.csv`)}
-                  disabled={isExporting}
-                  className="btn-generate"
-                  style={{ width: 'auto', padding: '9px 16px' }}
-                >
-                  <Download className="w-4 h-4" strokeWidth={1.5} />
-                  Pick-a-Brick
-                </button>
-                <button
-                  onClick={() => handleExport('shopping-csv', `shopping-list-${mosaicData.sessionId}.csv`)}
-                  disabled={isExporting}
-                  className="flex items-center gap-2 font-medium text-accent text-sm"
-                  style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                >
-                  <Download className="w-4 h-4" strokeWidth={1.5} />
-                  CSV
-                </button>
-              </div>
+              <button
+                onClick={() => handleExport('shopping-csv', `shopping-list-${mosaicData.sessionId}.csv`, orderOptions)}
+                disabled={isExporting}
+                className="flex items-center gap-2 font-medium text-accent text-sm"
+                style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+              >
+                <Download className="w-4 h-4" strokeWidth={1.5} />
+                Full parts list (CSV)
+              </button>
             </div>
 
-            {/* Warning for pieces exceeding 999 */}
-            {mosaicData.shoppingList.some(item => item.quantity > 999) && (
-              <div className="panel p-5 border-accent">
-                <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-accent" strokeWidth={1.5} />
-                  <div>
-                    <h4 className="font-sans text-text-primary font-semibold" style={{ fontSize: '13px', marginBottom: '6px' }}>
-                      Quantity Limit Warning
-                    </h4>
-                    <p className="text-sm text-text-secondary leading-relaxed">
-                      Some pieces exceed the Pick-a-Brick maximum of 999 per color. When uploading to LEGO's website, you'll need to split these orders or manually adjust quantities. The affected colors are:
-                    </p>
-                    <ul className="mt-3 space-y-1">
-                      {mosaicData.shoppingList
-                        .filter(item => item.quantity > 999)
-                        .map(item => (
-                          <li key={item.colorId} className="text-sm text-accent font-medium flex items-center gap-2">
-                            <div className="w-4 h-4 rounded border border-white/30" style={{ backgroundColor: item.hex }} />
-                            {item.colorName}: <span className="font-bold">{item.quantity}</span> pieces (exceeds by {item.quantity - 999})
-                          </li>
-                        ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="panel p-5">
-              <h4 className="font-sans text-text-primary font-semibold" style={{ fontSize: '13px', marginBottom: '12px' }}>
-                How to order from LEGO Pick-a-Brick
-              </h4>
-              <ol className="font-sans text-text-secondary" style={{ fontSize: '13px', lineHeight: 1.8, paddingLeft: '16px' }}>
-                <li>Download the Pick-a-Brick CSV file using the button above</li>
-                <li>Visit <a href="https://www.lego.com/pick-and-build/pick-a-brick" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-hover underline font-bold transition-colors">LEGO Pick-a-Brick</a></li>
-                <li>Click "Upload List" and select the CSV file</li>
-                <li>All pieces will be added to your cart automatically</li>
-              </ol>
-              <p className="font-sans text-text-muted" style={{ fontSize: '12px', marginTop: '12px' }}>
-                * Rough estimate at ~$0.06 per 1×1 plate. Actual prices vary by shop, region and colour.
+            <div className="space-y-2">
+              <OrderChecklist
+                key={mosaicData.sessionId}
+                mosaicData={mosaicData}
+                spares={spares}
+                onSparesChange={setSpares}
+                baseplates={baseplates}
+                onBaseplatesChange={setBaseplates}
+                isExporting={isExporting}
+                onExport={handleExport}
+                onShowInstructions={() => setActiveTab('instructions')}
+              />
+              <p className="font-sans text-text-muted" style={{ fontSize: '12px' }}>
+                * Rough estimate at ~$0.06 per 1×1 plate, baseplates not included. Actual prices vary by shop, region and colour.
               </p>
             </div>
 
@@ -281,7 +252,8 @@ export function ResultsTabs() {
               items={mosaicData.shoppingList}
               pieceType={mosaicData.metadata.pieceType}
               isExporting={isExporting}
-              onExport={() => handleExport('bricklink-xml', `bricklink-${mosaicData.sessionId}.xml`)}
+              includesBaseplates={baseplates}
+              onExport={() => handleExport('bricklink-xml', `bricklink-${mosaicData.sessionId}.xml`, orderOptions)}
             />
 
             <ShoppingListView items={mosaicData.shoppingList} />
@@ -365,11 +337,13 @@ function BrickLinkPanel({
   items,
   pieceType,
   isExporting,
+  includesBaseplates,
   onExport,
 }: {
   items: ShoppingListItem[];
   pieceType: 'round' | 'square';
   isExporting: boolean;
+  includesBaseplates: boolean;
   onExport: () => void;
 }) {
   // Colors not sold in this part on BrickLink are left out of the XML; name them so counts aren't silently short
@@ -409,6 +383,7 @@ function BrickLinkPanel({
           </ol>
           <p className="font-sans text-text-muted" style={{ fontSize: '12px', marginTop: '12px' }}>
             No per-color quantity limit, and often cheaper for large mosaics.
+            {includesBaseplates && ' The list includes the baseplate(s).'}
           </p>
         </div>
         <button

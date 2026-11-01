@@ -70,6 +70,15 @@ export interface UploadResponse {
 
 export type ExportType = 'mosaic-png' | 'instructions-png' | 'shopping-csv' | 'pickabrick-csv' | 'bricklink-xml' | 'all-zip';
 
+export interface ExportOptions {
+  /** Add 5% spare plates to the parts lists */
+  spares?: boolean;
+  /** Include the baseplate(s) in the shopping list and BrickLink XML (default true) */
+  baseplates?: boolean;
+  /** Which Pick-a-Brick order to download when the parts are split over several (1-based) */
+  part?: number;
+}
+
 // Admin and Authentication Types
 export interface Admin {
   id: string;

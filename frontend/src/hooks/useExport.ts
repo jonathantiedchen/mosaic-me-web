@@ -1,18 +1,18 @@
 import { useState, useCallback } from 'react';
 import { apiService } from '../services/api';
-import type { ExportType, MosaicData } from '../types';
+import type { ExportOptions, ExportType, MosaicData } from '../types';
 
 export function useExport() {
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
 
   const exportFile = useCallback(
-    async (mosaic: MosaicData, exportType: ExportType, filename: string) => {
+    async (mosaic: MosaicData, exportType: ExportType, filename: string, options: ExportOptions = {}) => {
       setIsExporting(true);
       setExportError(null);
 
       try {
-        const blob = await apiService.exportFile(mosaic, exportType);
+        const blob = await apiService.exportFile(mosaic, exportType, options);
 
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
