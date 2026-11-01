@@ -3,7 +3,6 @@ import { MosaicProvider } from './hooks/useMosaic';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
-import { ImpressumPage } from './pages/ImpressumPage';
 import { PrivacyPage } from './pages/PrivacyPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -15,7 +14,6 @@ function App() {
           <HomePage />
         </MosaicProvider>
       } />
-      <Route path="/impressum" element={<ImpressumPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/datenschutz" element={<Navigate to="/privacy" replace />} />
       <Route path="/admin/login" element={<LoginPage />} />

@@ -1,10 +1,9 @@
 # Privacy & Data Protection
 
 The published privacy policy is the `/privacy` page of the site
-(source: [`frontend/src/pages/PrivacyPage.tsx`](frontend/src/pages/PrivacyPage.tsx)),
-and the legal notice is `/impressum`
-([`frontend/src/pages/ImpressumPage.tsx`](frontend/src/pages/ImpressumPage.tsx)).
-Both contain highlighted placeholders that the operator must fill in before publishing.
+(source: [`frontend/src/pages/PrivacyPage.tsx`](frontend/src/pages/PrivacyPage.tsx)).
+It contains highlighted placeholders that the operator must fill in before publishing.
+There is deliberately no Impressum: this is a private, non-commercial project.
 
 This file is the developer reference for what the code actually processes. When
 you change any of it, update the privacy page in the same change.

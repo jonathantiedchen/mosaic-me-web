@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { LegalLayout, Placeholder } from '../components/LegalLayout';
 
 // Keep in sync with the code: retention periods live in backend/migrations/005 and 007
@@ -12,9 +11,8 @@ export function PrivacyPage() {
 
       <h2>1. Controller</h2>
       <p>
-        <Placeholder>Full name</Placeholder>, <Placeholder>street, postal code, city, country</Placeholder><br />
-        Email: <Placeholder>email address</Placeholder><br />
-        Full details are in the <Link to="/impressum">Impressum</Link>.
+        Mosaic-Me is a private, non-commercial project run by <Placeholder>Full name</Placeholder>.<br />
+        Email: <Placeholder>email address</Placeholder>
       </p>
 
       <h2>2. Hosting and server logs</h2>

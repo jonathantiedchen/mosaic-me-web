@@ -7,7 +7,7 @@ interface LegalLayoutProps {
   children: ReactNode;
 }
 
-/** Shared frame for the Impressum and privacy pages: nav back home, readable text column, footer. */
+/** Shared frame for legal pages: nav back home, readable text column, footer. */
 export function LegalLayout({ title, children }: LegalLayoutProps) {
   useEffect(() => {
     document.title = `${title} | Mosaic-Me`;
