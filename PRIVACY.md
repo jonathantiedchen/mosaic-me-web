@@ -44,7 +44,7 @@ hex characters of a visitor ID, never IP addresses.
 - **Vercel Inc. (USA)** hosts the site and runs the API in `fra1` (Frankfurt). It needs a data processing agreement, and transfers rely on the EU-US Data Privacy Framework and the SCCs.
 - **Supabase Inc.** runs the PostgreSQL database. It also needs a data processing agreement. Use an EU region.
 - **Fonts** are bundled with Fontsource (`@fontsource-variable/dm-sans`, `@fontsource/dm-serif-display`) and served from our own domain. No Google Fonts requests are made.
-- **No third-party scripts, analytics services or embeds.** External sites (LEGO, BrickLink, GitHub, Unsplash) are plain links.
+- **No third-party scripts, analytics services or embeds.** External sites (LEGO, BrickLink, Unsplash) are plain links.
 
 ## Browser storage
 
