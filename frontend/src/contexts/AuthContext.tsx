@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
+import { authFetch, refreshTokens, SESSION_EXPIRED_EVENT } from '../services/authFetch';
 
 interface Admin {
   id: string;
@@ -29,15 +30,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Check if user is already authenticated on mount
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem('access_token');
-      if (token) {
+      if (localStorage.getItem('access_token') || localStorage.getItem('refresh_token')) {
         try {
-          // Verify token by fetching current admin info
-          const response = await fetch(`${API_BASE_URL}/auth/me`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
+          // Verify the session; an expired access token is renewed with the refresh token
+          const response = await authFetch(`${API_BASE_URL}/auth/me`);
 
           if (response.ok) {
             const data = await response.json();
@@ -62,6 +58,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     checkAuth();
+  }, []);
+
+  // A failed token renewal anywhere in the app ends the session
+  useEffect(() => {
+    const onExpired = () => setAdmin(null);
+    window.addEventListener(SESSION_EXPIRED_EVENT, onExpired);
+    return () => window.removeEventListener(SESSION_EXPIRED_EVENT, onExpired);
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
@@ -129,35 +132,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const refreshToken = useCallback(async () => {
-    try {
-      const refreshTokenValue = localStorage.getItem('refresh_token');
-      if (!refreshTokenValue) {
-        throw new Error('No refresh token available');
-      }
-
-      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ refresh_token: refreshTokenValue })
-      });
-
-      if (!response.ok) {
-        throw new Error('Token refresh failed');
-      }
-
-      const data = await response.json();
-
-      localStorage.setItem('access_token', data.access_token);
-      localStorage.setItem('refresh_token', data.refresh_token);
-    } catch (error) {
-      console.error('Token refresh error:', error);
-      // If refresh fails, logout the user
-      await logout();
-      throw error;
+    // On failure refreshTokens clears the tokens and fires SESSION_EXPIRED_EVENT
+    if (!(await refreshTokens())) {
+      throw new Error('Token refresh failed');
     }
-  }, [logout]);
+  }, []);
 
   const value = {
     isAuthenticated,

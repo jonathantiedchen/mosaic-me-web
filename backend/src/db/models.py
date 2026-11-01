@@ -1,5 +1,5 @@
 """SQLAlchemy ORM models for database tables."""
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from sqlalchemy import (
     Boolean,
@@ -18,6 +18,11 @@ from sqlalchemy.orm import relationship
 import uuid
 
 from .database import Base
+
+
+def utcnow() -> datetime:
+    """Timezone-aware current time; timestamptz columns load as aware datetimes."""
+    return datetime.now(timezone.utc)
 
 
 class Admin(Base):
@@ -74,11 +79,11 @@ class RefreshToken(Base):
     def revoke(self) -> None:
         """Revoke this refresh token."""
         self.is_revoked = True
-        self.revoked_at = datetime.utcnow()
+        self.revoked_at = utcnow()
 
     def is_expired(self) -> bool:
         """Check if token is expired."""
-        return datetime.utcnow() > self.expires_at
+        return utcnow() > self.expires_at
 
     def is_valid(self) -> bool:
         """Check if token is valid (not revoked and not expired)."""

@@ -1,3 +1,5 @@
+import { authFetch } from './authFetch';
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
 export interface FeedbackStats {
@@ -40,23 +42,9 @@ class FeedbackService {
     }
   }
 
-  private getAuthHeader(): string {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      throw new Error('No authentication token found');
-    }
-    return `Bearer ${token}`;
-  }
 
   async getStats(days: number = 30): Promise<FeedbackStats> {
-    const response = await fetch(
-      `${API_BASE_URL}/feedback/stats?days=${days}`,
-      {
-        headers: {
-          'Authorization': this.getAuthHeader()
-        }
-      }
-    );
+    const response = await authFetch(`${API_BASE_URL}/feedback/stats?days=${days}`);
 
     if (!response.ok) {
       throw new Error('Failed to fetch feedback stats');
@@ -72,14 +60,7 @@ class FeedbackService {
   ): Promise<RecentFeedbackItem[]> {
     const params = new URLSearchParams({ limit: String(limit), comments_only: String(commentsOnly) });
     if (days) params.set('days', String(days));
-    const response = await fetch(
-      `${API_BASE_URL}/feedback/recent?${params}`,
-      {
-        headers: {
-          'Authorization': this.getAuthHeader()
-        }
-      }
-    );
+    const response = await authFetch(`${API_BASE_URL}/feedback/recent?${params}`);
 
     if (!response.ok) {
       throw new Error('Failed to fetch recent feedback');

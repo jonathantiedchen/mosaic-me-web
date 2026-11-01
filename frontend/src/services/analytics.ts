@@ -1,3 +1,5 @@
+import { authFetch } from './authFetch';
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
 export interface AnalyticsMetrics {
@@ -28,23 +30,9 @@ export interface PopularBaseplateSize {
 }
 
 class AnalyticsService {
-  private getAuthHeader(): string {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      throw new Error('No authentication token found');
-    }
-    return `Bearer ${token}`;
-  }
 
   async getMetrics(days: number = 30): Promise<AnalyticsMetrics> {
-    const response = await fetch(
-      `${API_BASE_URL}/analytics/metrics?days=${days}`,
-      {
-        headers: {
-          'Authorization': this.getAuthHeader()
-        }
-      }
-    );
+    const response = await authFetch(`${API_BASE_URL}/analytics/metrics?days=${days}`);
 
     if (!response.ok) {
       throw new Error('Failed to fetch analytics metrics');
@@ -61,14 +49,7 @@ class AnalyticsService {
     if (startDate) params.append('start_date', startDate.toISOString());
     if (endDate) params.append('end_date', endDate.toISOString());
 
-    const response = await fetch(
-      `${API_BASE_URL}/analytics/summary?${params}`,
-      {
-        headers: {
-          'Authorization': this.getAuthHeader()
-        }
-      }
-    );
+    const response = await authFetch(`${API_BASE_URL}/analytics/summary?${params}`);
 
     if (!response.ok) {
       throw new Error('Failed to fetch analytics summary');
@@ -81,14 +62,7 @@ class AnalyticsService {
     days: number = 30,
     limit: number = 5
   ): Promise<PopularBaseplateSize[]> {
-    const response = await fetch(
-      `${API_BASE_URL}/analytics/popular-sizes?days=${days}&limit=${limit}`,
-      {
-        headers: {
-          'Authorization': this.getAuthHeader()
-        }
-      }
-    );
+    const response = await authFetch(`${API_BASE_URL}/analytics/popular-sizes?days=${days}&limit=${limit}`);
 
     if (!response.ok) {
       throw new Error('Failed to fetch popular baseplate sizes');
@@ -102,14 +76,7 @@ class AnalyticsService {
     if (startDate) params.append('start_date', startDate.toISOString());
     if (endDate) params.append('end_date', endDate.toISOString());
 
-    const response = await fetch(
-      `${API_BASE_URL}/analytics/export?${params}`,
-      {
-        headers: {
-          'Authorization': this.getAuthHeader()
-        }
-      }
-    );
+    const response = await authFetch(`${API_BASE_URL}/analytics/export?${params}`);
 
     if (!response.ok) {
       throw new Error('Failed to export analytics data');
@@ -119,15 +86,7 @@ class AnalyticsService {
   }
 
   async refreshSummaryView(): Promise<void> {
-    const response = await fetch(
-      `${API_BASE_URL}/analytics/refresh`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': this.getAuthHeader()
-        }
-      }
-    );
+    const response = await authFetch(`${API_BASE_URL}/analytics/refresh`, { method: 'POST' });
 
     if (!response.ok) {
       throw new Error('Failed to refresh analytics view');
