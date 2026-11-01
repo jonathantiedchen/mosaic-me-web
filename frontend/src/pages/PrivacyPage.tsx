@@ -1,4 +1,4 @@
-import { LegalLayout, Placeholder } from '../components/LegalLayout';
+import { LegalLayout } from '../components/LegalLayout';
 
 // Keep in sync with the code: retention periods live in backend/migrations/005 and 007
 export function PrivacyPage() {
@@ -11,8 +11,8 @@ export function PrivacyPage() {
 
       <h2>1. Controller</h2>
       <p>
-        Mosaic-Me is a private, non-commercial project run by <Placeholder>Full name</Placeholder>.<br />
-        Email: <Placeholder>email address</Placeholder>
+        Mosaic-Me is a private, non-commercial project run by Jonathan Tiedchen, Denmark.<br />
+        Email: <a href="mailto:jonathantiedchen@gmail.com">jonathantiedchen@gmail.com</a>
       </p>
 
       <h2>2. Hosting and server logs</h2>
@@ -56,7 +56,7 @@ export function PrivacyPage() {
       </p>
       <p>
         Legal basis: Art. 6(1)(f) GDPR (our legitimate interest in understanding how the service is
-        used). Nothing is stored on or read from your device, so no consent under § 25 TDDDG is needed.
+        used). Nothing is stored on or read from your device, so no consent under the ePrivacy rules (in Denmark, the Executive Order on cookies) is needed.
         Individual events are deleted after 90 days; only daily totals (counts) are kept longer.
       </p>
 
@@ -71,7 +71,7 @@ export function PrivacyPage() {
 
       <h2>6. Database</h2>
       <p>
-        Usage statistics and feedback are stored in a PostgreSQL database run by Supabase Inc. in the region <Placeholder>Supabase project region, e.g. Frankfurt (eu-central-1)</Placeholder>.
+        Usage statistics and feedback are stored in a PostgreSQL database run by Supabase Inc. in Frankfurt, Germany (region eu-central-1).
         We have a data processing agreement with Supabase.
       </p>
 
@@ -105,12 +105,13 @@ export function PrivacyPage() {
           (Art. 21), and
         </li>
         <li>lodge a complaint with a data protection supervisory authority (Art. 77), for example
-          the one responsible for where you live or <Placeholder>authority for the controller's federal state</Placeholder>.</li>
+          the one where you live or the Danish Data Protection Agency (Datatilsynet,{' '}
+          <a href="https://www.datatilsynet.dk" target="_blank" rel="noopener noreferrer">datatilsynet.dk</a>).</li>
       </ul>
       <p>
         Because we cannot tell from the stored data who you are, please tell us enough for us to find
         your data (for example the time of your feedback and its wording). Contact:{' '}
-        <Placeholder>email address</Placeholder>.
+        <a href="mailto:jonathantiedchen@gmail.com">jonathantiedchen@gmail.com</a>.
       </p>
       <p>
         You are not obliged to provide any data, but without sending a photo the service cannot create a

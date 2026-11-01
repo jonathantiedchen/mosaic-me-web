@@ -38,11 +38,3 @@ export function LegalLayout({ title, children }: LegalLayoutProps) {
   );
 }
 
-/** Highlights text the site operator still has to fill in. */
-export function Placeholder({ children }: { children: ReactNode }) {
-  return (
-    <mark className="bg-accent/20 text-accent px-1 rounded-sm" title="Fill in before publishing">
-      [{children}]
-    </mark>
-  );
-}

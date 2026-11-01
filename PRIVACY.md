@@ -2,8 +2,9 @@
 
 The published privacy policy is the `/privacy` page of the site
 (source: [`frontend/src/pages/PrivacyPage.tsx`](frontend/src/pages/PrivacyPage.tsx)).
-It contains highlighted placeholders that the operator must fill in before publishing.
-There is deliberately no Impressum: this is a private, non-commercial project.
+The controller is Jonathan Tiedchen (Denmark); the supervisory authority is the
+Danish Data Protection Agency (Datatilsynet). There is deliberately no legal
+notice/Impressum: this is a private, non-commercial project.
 
 This file is the developer reference for what the code actually processes. When
 you change any of it, update the privacy page in the same change.
@@ -32,8 +33,8 @@ This is **pseudonymous, not anonymous** data:
 - Anyone who holds `ANALYTICS_SALT` can test whether an IP address produced a given ID, because the IPv4 space is small enough to brute-force.
 
 So GDPR applies. The legal basis is legitimate interest, and visitors can object
-under Art. 21. Nothing is stored on or read from the visitor's device, so § 25
-TDDDG (cookie consent) is not triggered.
+under Art. 21. Nothing is stored on or read from the visitor's device, so the
+ePrivacy cookie-consent rules (Danish Executive Order on cookies) are not triggered.
 
 Keep `ANALYTICS_SALT` secret and random. The app's logs include only the first 8
 hex characters of a visitor ID, never IP addresses.
