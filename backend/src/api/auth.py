@@ -1,5 +1,5 @@
 """Authentication API endpoints."""
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -7,10 +7,11 @@ from pydantic import BaseModel, EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 import logging
+import uuid
 
 from ..config import config
 from ..db.database import get_db
-from ..db.models import Admin, RefreshToken
+from ..db.models import Admin, RefreshToken, utcnow
 from ..services.auth import AuthService
 
 logger = logging.getLogger(__name__)
@@ -108,12 +109,12 @@ async def login(credentials: LoginRequest, db: AsyncSession = Depends(get_db)):
         db_refresh_token = RefreshToken(
             admin_id=admin.id,
             token_hash=token_hash,
-            expires_at=datetime.utcnow() + timedelta(days=config.REFRESH_TOKEN_EXPIRE_DAYS)
+            expires_at=utcnow() + timedelta(days=config.REFRESH_TOKEN_EXPIRE_DAYS)
         )
         db.add(db_refresh_token)
 
         # Update last login timestamp
-        admin.last_login_at = datetime.utcnow()
+        admin.last_login_at = utcnow()
 
         await db.commit()
 
@@ -132,6 +133,36 @@ async def login(credentials: LoginRequest, db: AsyncSession = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred during login"
         )
+
+
+# A rotated-out refresh token seen again within this window is a benign race
+# (two tabs refreshing at once); later than that it may have been stolen
+REFRESH_REUSE_GRACE = timedelta(seconds=30)
+
+
+async def _revoke_family_on_reuse(db: AsyncSession, token_hash: str, now) -> None:
+    """Revoke all of an admin's refresh tokens when a revoked one is replayed."""
+    result = await db.execute(
+        select(RefreshToken.admin_id, RefreshToken.revoked_at).where(
+            RefreshToken.token_hash == token_hash,
+            RefreshToken.is_revoked == True
+        )
+    )
+    reused = result.one_or_none()
+    if not reused or not reused.revoked_at or now - reused.revoked_at <= REFRESH_REUSE_GRACE:
+        return
+
+    await db.execute(
+        update(RefreshToken)
+        .where(
+            RefreshToken.admin_id == reused.admin_id,
+            RefreshToken.is_revoked == False
+        )
+        .values(is_revoked=True, revoked_at=now)
+    )
+    # Commit now: the 401 raised afterwards rolls back the request session
+    await db.commit()
+    logger.warning(f"Revoked all refresh tokens for admin {reused.admin_id}: rotated-out token reused")
 
 
 @router.post("/auth/refresh", response_model=TokenResponse)
@@ -165,17 +196,32 @@ async def refresh_token(request: RefreshRequest, db: AsyncSession = Depends(get_
                 detail="Invalid refresh token payload"
             )
 
-        # Verify refresh token exists in database and is valid
-        token_hash = auth_service.hash_refresh_token(request.refresh_token)
-        result = await db.execute(
-            select(RefreshToken).where(
-                RefreshToken.token_hash == token_hash,
-                RefreshToken.is_revoked == False
+        try:
+            admin_uuid = uuid.UUID(admin_id)
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid refresh token payload"
             )
-        )
-        db_refresh_token = result.scalar_one_or_none()
 
-        if not db_refresh_token or not db_refresh_token.is_valid():
+        # Claim the token atomically: of several requests presenting the same
+        # token, only one can flip is_revoked, so only one gets new tokens
+        token_hash = auth_service.hash_refresh_token(request.refresh_token)
+        now = utcnow()
+        claimed = await db.execute(
+            update(RefreshToken)
+            .where(
+                RefreshToken.token_hash == token_hash,
+                RefreshToken.admin_id == admin_uuid,
+                RefreshToken.is_revoked == False,
+                RefreshToken.expires_at > now
+            )
+            .values(is_revoked=True, revoked_at=now)
+            .returning(RefreshToken.id)
+        )
+
+        if claimed.scalar_one_or_none() is None:
+            await _revoke_family_on_reuse(db, token_hash, now)
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Refresh token is invalid or expired"
@@ -183,7 +229,7 @@ async def refresh_token(request: RefreshRequest, db: AsyncSession = Depends(get_
 
         # Get admin
         result = await db.execute(
-            select(Admin).where(Admin.id == admin_id)
+            select(Admin).where(Admin.id == admin_uuid)
         )
         admin = result.scalar_one_or_none()
 
@@ -192,9 +238,6 @@ async def refresh_token(request: RefreshRequest, db: AsyncSession = Depends(get_
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Admin account is invalid or inactive"
             )
-
-        # Revoke old refresh token
-        db_refresh_token.revoke()
 
         # Create new tokens
         access_token = auth_service.create_access_token(
@@ -212,7 +255,7 @@ async def refresh_token(request: RefreshRequest, db: AsyncSession = Depends(get_
         new_db_refresh_token = RefreshToken(
             admin_id=admin.id,
             token_hash=new_token_hash,
-            expires_at=datetime.utcnow() + timedelta(days=config.REFRESH_TOKEN_EXPIRE_DAYS)
+            expires_at=utcnow() + timedelta(days=config.REFRESH_TOKEN_EXPIRE_DAYS)
         )
         db.add(new_db_refresh_token)
 
@@ -273,7 +316,7 @@ async def logout(
                 RefreshToken.admin_id == admin_id,
                 RefreshToken.is_revoked == False
             )
-            .values(is_revoked=True, revoked_at=datetime.utcnow())
+            .values(is_revoked=True, revoked_at=utcnow())
         )
 
         await db.commit()
