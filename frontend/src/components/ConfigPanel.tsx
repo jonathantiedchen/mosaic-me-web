@@ -46,6 +46,9 @@ export function ConfigPanel() {
   } = useMosaic();
 
   const hasResults = !!mosaicData;
+  // Saved and shared mosaics may come without their photo, so they cannot be rebuilt
+  const canRebuild = !hasResults || !!uploadedFile;
+  const noPhotoHint = canRebuild ? undefined : 'Upload the photo again to change this';
   const [expandedChip, setExpandedChip] = useState<Chip | null>(null);
 
   const handleGenerate = () => {
@@ -87,7 +90,14 @@ export function ConfigPanel() {
     <div className="space-y-3">
       <Steps current={step} />
 
-      <ImageUpload />
+      {canRebuild ? (
+        <ImageUpload />
+      ) : (
+        <p className="panel p-4 font-sans text-text-secondary" style={{ fontSize: '13px', lineHeight: 1.6 }}>
+          This mosaic was opened without its photo, so its size and piece type are fixed. You can still
+          edit it, save it and download everything.
+        </p>
+      )}
 
       {/* Settings */}
       <div className="flex gap-[10px]">
@@ -95,7 +105,8 @@ export function ConfigPanel() {
           className="setting-chip text-left"
           onClick={() => toggleChip('size')}
           aria-expanded={expandedChip === 'size'}
-          disabled={isLoading}
+          disabled={isLoading || !canRebuild}
+          title={noPhotoHint}
         >
           <div className="flex items-start justify-between gap-1">
             <div>
@@ -113,7 +124,8 @@ export function ConfigPanel() {
           className="setting-chip text-left"
           onClick={() => toggleChip('type')}
           aria-expanded={expandedChip === 'type'}
-          disabled={isLoading}
+          disabled={isLoading || !canRebuild}
+          title={noPhotoHint}
         >
           <div className="flex items-start justify-between gap-1">
             <div>

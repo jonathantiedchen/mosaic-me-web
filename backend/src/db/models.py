@@ -168,3 +168,25 @@ class UserFeedback(Base):
             "comment": self.comment,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
+
+
+class SharedMosaic(Base):
+    """A mosaic saved behind a share link: only its colors, never the photo."""
+
+    __tablename__ = "shared_mosaics"
+
+    # Random, unguessable link id (secrets.token_urlsafe)
+    id = Column(String(16), primary_key=True)
+    piece_type = Column(String(10), nullable=False)
+    baseplate_size = Column(Integer, nullable=False)
+    # Palette color ids used by the mosaic; cells index into this list
+    colors = Column(JSON, nullable=False)
+    # Base64 of one byte per stud, row by row
+    cells = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False, index=True)
+    # Retention runs from the last time the link was opened
+    last_opened_at = Column(DateTime(timezone=True), default=utcnow, nullable=False, index=True)
+
+    __table_args__ = (
+        CheckConstraint("piece_type IN ('square', 'round')", name="chk_shared_piece_type"),
+    )

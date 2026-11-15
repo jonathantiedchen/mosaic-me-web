@@ -4,16 +4,16 @@ import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { PrivacyPage } from './pages/PrivacyPage';
+import { SharedMosaicPage } from './pages/SharedMosaicPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
   return (
+    // One provider for both routes, so a mosaic opened from a link stays loaded on the main page
+    <MosaicProvider>
     <Routes>
-      <Route path="/" element={
-        <MosaicProvider>
-          <HomePage />
-        </MosaicProvider>
-      } />
+      <Route path="/" element={<HomePage />} />
+      <Route path="/m/:id" element={<SharedMosaicPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/datenschutz" element={<Navigate to="/privacy" replace />} />
       <Route path="/admin/login" element={<LoginPage />} />
@@ -24,6 +24,7 @@ function App() {
       } />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </MosaicProvider>
   );
 }
 

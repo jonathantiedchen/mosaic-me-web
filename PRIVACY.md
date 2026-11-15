@@ -17,6 +17,7 @@ you change any of it, update the privacy page in the same change.
 | Export grid (color codes only) | `POST /api/v1/export/*` | No | none | Art. 6(1)(b) |
 | Usage events: type, time, baseplate size, piece type, export type, mosaic ID, visitor ID | `analytics_events` | Yes | 90 days (`cleanup_old_analytics`, migration 005) | Art. 6(1)(f) |
 | Daily totals (counts only) | `analytics_summary` materialized view | Yes | indefinitely (no personal data) | — |
+| Share links: brick color codes, size, piece type, created and last-opened time (no photo, nothing about who saved it) | `shared_mosaics` | Yes | 365 days after the link was last opened (`cleanup_unused_shared_mosaics`, migration 008) | Art. 6(1)(b) |
 | Feedback: rating, comment (≤1000 chars), optional mosaic ID, visitor ID, time | `user_feedback` | Yes | 365 days (`cleanup_old_feedback`, migration 007) | Art. 6(1)(f) |
 | Admin email, password hash (bcrypt), login times, hashed refresh tokens | `admins`, `refresh_tokens` | Yes | until the admin is deleted; expired tokens cleaned up daily | Art. 6(1)(f) |
 | Request logs incl. IP address and user agent | Vercel (host) | By Vercel | per Vercel's plan | Art. 6(1)(f) |
@@ -48,6 +49,13 @@ hex characters of a visitor ID, never IP addresses.
 
 ## Browser storage
 
-Only the admin dashboard uses browser storage: the `access_token` and
-`refresh_token` in `localStorage`, which are strictly necessary for login.
-Visitors get nothing stored.
+Everything stored on the visitor's device is there because they asked for it,
+so it is strictly necessary for the requested service and needs no consent under
+ePrivacy Art. 5(3):
+
+- **Saved mosaics** (`frontend/src/services/savedMosaics.ts`): IndexedDB database
+  `mosaic-me`, written only after the visitor clicks "Save in this browser". It
+  holds the mosaic, a thumbnail and the original photo. None of it is sent to the
+  server. The visitor deletes entries in the app or by clearing site data.
+- **Order checklist** (`OrderChecklist.tsx`): ticked steps per mosaic in `localStorage`.
+- **Admin login**: `access_token` and `refresh_token` in `localStorage`.

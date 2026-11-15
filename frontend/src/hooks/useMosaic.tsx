@@ -1,7 +1,8 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import type { MosaicData, MosaicConfig, MosaicGridCell, ShoppingListItem } from '../types';
 import { apiService } from '../services/api';
 import { generatePreviewFromGrid } from '../utils/canvasUtils';
+import { saveMosaic } from '../services/savedMosaics';
 
 interface MosaicContextType {
   mosaicData: MosaicData | null;
@@ -17,6 +18,12 @@ interface MosaicContextType {
   generateMosaic: (file: File, configOverride?: MosaicConfig) => Promise<void>;
   clearMosaic: () => void;
   updateMosaicGrid: (newGrid: MosaicGridCell[][], newShoppingList: ShoppingListItem[]) => void;
+  /** Show a saved or shared mosaic; without its photo the size and piece type cannot be changed */
+  loadMosaic: (data: MosaicData, photo: File | null, options?: { savedLocally?: boolean }) => void;
+  /** The current mosaic is saved in this browser; edits are saved automatically */
+  isSavedLocally: boolean;
+  /** Save the current mosaic in this browser */
+  saveLocally: () => Promise<void>;
 }
 
 const defaultConfig: MosaicConfig = {
@@ -33,6 +40,7 @@ export function MosaicProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isEdited, setIsEdited] = useState(false);
+  const [isSavedLocally, setIsSavedLocally] = useState(false);
 
   const generateMosaic = useCallback(
     async (file: File, configOverride?: MosaicConfig) => {
@@ -43,6 +51,7 @@ export function MosaicProvider({ children }: { children: ReactNode }) {
         const response = await apiService.uploadImage(file, configOverride ?? config);
         setMosaicData(response.mosaic);
         setIsEdited(false);
+        setIsSavedLocally(false);
         setUploadedFile(file);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to generate mosaic';
@@ -59,8 +68,36 @@ export function MosaicProvider({ children }: { children: ReactNode }) {
     setMosaicData(null);
     setUploadedFile(null);
     setIsEdited(false);
+    setIsSavedLocally(false);
     setError(null);
   }, []);
+
+  const loadMosaic = useCallback((data: MosaicData, photo: File | null, options?: { savedLocally?: boolean }) => {
+    setMosaicData(data);
+    setConfig({
+      baseplateSize: data.metadata.baseplateSize as MosaicConfig['baseplateSize'],
+      pieceType: data.metadata.pieceType,
+    });
+    setUploadedFile(photo);
+    setIsEdited(false);
+    setIsSavedLocally(!!options?.savedLocally);
+    setError(null);
+  }, []);
+
+  const saveLocally = useCallback(async () => {
+    if (!mosaicData) return;
+    await saveMosaic(mosaicData, uploadedFile);
+    setIsSavedLocally(true);
+  }, [mosaicData, uploadedFile]);
+
+  // Once saved, edits are written back so the saved copy never falls behind
+  useEffect(() => {
+    if (!isSavedLocally || !isEdited || !mosaicData) return;
+    const timer = setTimeout(() => {
+      saveMosaic(mosaicData, uploadedFile).catch(err => console.error('Auto-save failed:', err));
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [isSavedLocally, isEdited, mosaicData, uploadedFile]);
 
   const updateMosaicGrid = useCallback((newGrid: MosaicGridCell[][], newShoppingList: ShoppingListItem[]) => {
     if (!mosaicData) return;
@@ -93,6 +130,9 @@ export function MosaicProvider({ children }: { children: ReactNode }) {
     generateMosaic,
     clearMosaic,
     updateMosaicGrid,
+    loadMosaic,
+    isSavedLocally,
+    saveLocally,
   };
 
   return <MosaicContext.Provider value={value}>{children}</MosaicContext.Provider>;

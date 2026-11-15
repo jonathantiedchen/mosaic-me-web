@@ -1,11 +1,11 @@
 import { LegalLayout } from '../components/LegalLayout';
 
-// Keep in sync with the code: retention periods live in backend/migrations/005 and 007
+// Keep in sync with the code: retention periods live in backend/migrations/005, 007 and 008
 export function PrivacyPage() {
   return (
     <LegalLayout title="Privacy policy">
       <p className="lead">
-        Mosaic-Me needs no account, sets no cookies, loads no third-party scripts and does not store
+        Mosaic-Me needs no account, sets no cookies, loads no third-party scripts and does not keep
         the photos you upload. This page explains what is processed anyway and why.
       </p>
 
@@ -56,11 +56,31 @@ export function PrivacyPage() {
       </p>
       <p>
         Legal basis: Art. 6(1)(f) GDPR (our legitimate interest in understanding how the service is
-        used). Nothing is stored on or read from your device, so no consent under the ePrivacy rules (in Denmark, the Executive Order on cookies) is needed.
+        used). These statistics store nothing on your device.
         Individual events are deleted after 90 days; only daily totals (counts) are kept longer.
       </p>
 
-      <h2>5. Feedback</h2>
+      <h2>5. Saving mosaics</h2>
+      <p>
+        <strong>In this browser.</strong> When you click "Save in this browser", the mosaic, a small
+        preview and your original photo are stored in your browser's own storage (IndexedDB) on your
+        device. They are never sent to us. The order checklist also remembers which steps you ticked in
+        your browser's local storage. You can delete saved mosaics in the app at any time, or by
+        clearing this site's data in your browser.
+      </p>
+      <p>
+        <strong>Share links.</strong> When you click "Get a share link", we store the mosaic's brick
+        colors, its size and piece type under a random link, together with when it was created and last
+        opened. Your photo is not stored, and nothing about who created the link. Anyone who has the
+        link can open the mosaic. A link is deleted 365 days after it was last opened.
+      </p>
+      <p>
+        Legal basis: Art. 6(1)(b) GDPR (providing the service you request). Storing data on your device
+        only happens when you ask for it, so it is strictly necessary for that service and needs no
+        consent under the ePrivacy rules (in Denmark, the Executive Order on cookies).
+      </p>
+
+      <h2>6. Feedback</h2>
       <p>
         If you send feedback, we store your rating (thumbs up or down), your optional comment (up to
         1000 characters), the mosaic ID if the feedback is about a mosaic, the visitor ID described
@@ -69,32 +89,32 @@ export function PrivacyPage() {
       </p>
       <p>Legal basis: Art. 6(1)(f) GDPR (our legitimate interest in improving the service).</p>
 
-      <h2>6. Database</h2>
+      <h2>7. Database</h2>
       <p>
-        Usage statistics and feedback are stored in a PostgreSQL database run by Supabase Inc. in Frankfurt, Germany (region eu-central-1).
+        Usage statistics, share links and feedback are stored in a PostgreSQL database run by Supabase Inc. in Frankfurt, Germany (region eu-central-1).
         We have a data processing agreement with Supabase.
       </p>
 
-      <h2>7. Fonts</h2>
+      <h2>8. Fonts</h2>
       <p>
         The fonts on this site (DM Sans and DM Serif Display) are served from our own domain. Your
         browser does not connect to Google or any other font provider.
       </p>
 
-      <h2>8. External links</h2>
+      <h2>9. External links</h2>
       <p>
         We link to LEGO Pick-a-Brick, BrickLink, GitHub and Unsplash. These sites are only contacted if
         you click a link; from then on their own privacy policies apply.
       </p>
 
-      <h2>9. Admin area</h2>
+      <h2>10. Admin area</h2>
       <p>
         The admin dashboard is only for the site operator. Logging in stores a session token in that
         browser's local storage. Admin email addresses, password hashes and login times are stored to
         secure the account. Visitors are never asked to log in.
       </p>
 
-      <h2>10. Your rights</h2>
+      <h2>11. Your rights</h2>
       <p>You have the right to:</p>
       <ul>
         <li>access the data we hold about you (Art. 15 GDPR),</li>
@@ -118,8 +138,8 @@ export function PrivacyPage() {
         mosaic. There is no automated decision-making or profiling.
       </p>
 
-      <h2>11. Changes</h2>
-      <p>We update this policy when the service changes. Last updated: 27 October 2026.</p>
+      <h2>12. Changes</h2>
+      <p>We update this policy when the service changes. Last updated: 15 November 2026.</p>
     </LegalLayout>
   );
 }

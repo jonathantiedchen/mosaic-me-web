@@ -4,8 +4,7 @@ import type { MosaicGridCell } from '../types';
  * Generate a preview image from grid data using HTML Canvas
  * Each cell is rendered as a colored square
  */
-export function generatePreviewFromGrid(grid: MosaicGridCell[][]): string {
-  const cellSize = 10; // Size of each cell in pixels
+export function generatePreviewFromGrid(grid: MosaicGridCell[][], cellSize = 10): string {
   const rows = grid.length;
   const cols = grid[0].length;
 
