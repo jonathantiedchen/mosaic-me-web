@@ -34,10 +34,10 @@ class ExportRequest(BaseModel):
     part: Optional[int] = Field(None, ge=1, description="Which Pick-a-Brick order to download when split over several")
 
 
-def _build_grid(request: ExportRequest) -> List[List[Dict]]:
+def build_grid(piece_type: str, rows: List[List[str]]) -> List[List[Dict]]:
     """Rebuild full cell data from color ids using the server-side palette."""
-    size = len(request.grid)
-    if size not in ALLOWED_BASEPLATE_SIZES or any(len(row) != size for row in request.grid):
+    size = len(rows)
+    if size not in ALLOWED_BASEPLATE_SIZES or any(len(row) != size for row in rows):
         raise HTTPException(
             status_code=400,
             detail={
@@ -46,9 +46,9 @@ def _build_grid(request: ExportRequest) -> List[List[Dict]]:
             }
         )
 
-    color_matcher = color_matchers[request.pieceType]
+    color_matcher = color_matchers[piece_type]
     grid = []
-    for row in request.grid:
+    for row in rows:
         grid_row = []
         for color_id in row:
             color = color_matcher.get_color(color_id)
@@ -57,7 +57,7 @@ def _build_grid(request: ExportRequest) -> List[List[Dict]]:
                     status_code=400,
                     detail={
                         'code': 'INVALID_COLOR',
-                        'message': f'Unknown color for {request.pieceType} pieces: {color_id[:64]}'
+                        'message': f'Unknown color for {piece_type} pieces: {color_id[:64]}'
                     }
                 )
             grid_row.append({
@@ -125,7 +125,7 @@ async def export_file(
     match what the user sees and do not depend on server-side session state.
     'all-zip' bundles every export into one archive.
     """
-    grid = _build_grid(body)
+    grid = build_grid(body.pieceType, body.grid)
     shopping_list = MosaicGenerator(color_matchers[body.pieceType]).generate_shopping_list(grid)
     plates = with_spares(shopping_list) if body.spares else shopping_list
     baseplate = baseplate_item(len(grid)) if body.baseplates else None

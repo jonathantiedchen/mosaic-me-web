@@ -7,6 +7,7 @@ import type {
   MosaicConfig,
   MosaicData,
 } from '../types';
+import { generatePreviewFromGrid } from '../utils/canvasUtils';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -144,6 +145,37 @@ class ApiService {
     }
 
     return response.blob();
+  }
+
+  /** Save the mosaic's colors on the server; returns the id for its share link */
+  async createShareLink(mosaic: MosaicData): Promise<string> {
+    const response = await this.request<ApiResponse<{ id: string }>>('/mosaics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        pieceType: mosaic.metadata.pieceType,
+        grid: mosaic.grid.map(row => row.map(cell => cell.colorId)),
+      }),
+    });
+
+    if (!response.success || !response.data) {
+      throw new Error(response.error?.message || 'Could not create a link');
+    }
+
+    return response.data.id;
+  }
+
+  async openSharedMosaic(id: string): Promise<MosaicData> {
+    const response = await this.request<ApiResponse<{ mosaic: Omit<MosaicData, 'previewUrl'> }>>(
+      `/mosaics/${encodeURIComponent(id)}`
+    );
+
+    if (!response.success || !response.data) {
+      throw new Error(response.error?.message || 'Could not open this mosaic');
+    }
+
+    const { mosaic } = response.data;
+    return { ...mosaic, previewUrl: generatePreviewFromGrid(mosaic.grid) };
   }
 
   async healthCheck(): Promise<{ status: string; version: string }> {

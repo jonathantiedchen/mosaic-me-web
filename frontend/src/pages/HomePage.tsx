@@ -2,6 +2,8 @@ import { ConfigPanel } from '../components/ConfigPanel';
 import { ResultsTabs } from '../components/ResultsTabs';
 import { FeedbackButton, FeedbackForm } from '../components/FeedbackWidget';
 import { DownloadsCard } from '../components/DownloadsCard';
+import { SaveCard } from '../components/SaveCard';
+import { SavedMosaics } from '../components/SavedMosaics';
 import { SiteFooter } from '../components/SiteFooter';
 import { AlertCircle, Github } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
@@ -85,6 +87,8 @@ export function HomePage() {
               </div>
             </section>
 
+            <SavedMosaics />
+
             {/* Showcase: real renders at true scale sell the idea */}
             <section className="mt-24 sm:mt-32" aria-labelledby="showcase-title">
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
@@ -138,6 +142,7 @@ export function HomePage() {
             <aside className="space-y-5 lg:sticky lg:top-6">
               <ConfigPanel />
               <DownloadsCard />
+              {mosaicData && <SaveCard key={mosaicData.sessionId} />}
               {mosaicData?.sessionId && (
                 <div className="panel p-4">
                   <FeedbackForm key={mosaicData.sessionId} sessionId={mosaicData.sessionId} title="How did we do?" />
