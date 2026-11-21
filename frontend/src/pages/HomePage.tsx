@@ -5,7 +5,7 @@ import { DownloadsCard } from '../components/DownloadsCard';
 import { SaveCard } from '../components/SaveCard';
 import { SavedMosaics } from '../components/SavedMosaics';
 import { SiteFooter } from '../components/SiteFooter';
-import { AlertCircle, Github } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { useMosaic } from '../hooks/useMosaic';
 
 const SHOWCASE = [
@@ -34,16 +34,6 @@ export function HomePage() {
         </span>
         <div className="flex items-center gap-5">
           <FeedbackButton />
-          <a
-            href="https://github.com/jonathantiedchen/mosaic-me-web"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors"
-            style={{ fontSize: '12px' }}
-          >
-            <Github className="w-4 h-4" strokeWidth={1.5} />
-            GitHub ↗
-          </a>
         </div>
       </nav>
 

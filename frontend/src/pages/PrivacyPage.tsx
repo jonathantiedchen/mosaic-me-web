@@ -103,7 +103,7 @@ export function PrivacyPage() {
 
       <h2>9. External links</h2>
       <p>
-        We link to LEGO Pick-a-Brick, BrickLink, GitHub and Unsplash. These sites are only contacted if
+        We link to LEGO Pick-a-Brick, BrickLink and Unsplash. These sites are only contacted if
         you click a link; from then on their own privacy policies apply.
       </p>
 
